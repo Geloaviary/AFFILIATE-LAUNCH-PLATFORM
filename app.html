@@ -132,34 +132,24 @@
     </div>
   </div>
 
-  <script>
-
+    <script>
     // Auth check
-if (localStorage.getItem('auth') !== 'true') {
-  window.location.href = '/login.html';
-}
-    const CLERK_PUBLISHABLE_KEY = "pk_test_YOUR_CLERK_KEY";
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
-    script.onload = async () => {
-      await Clerk.load({ publishableKey: CLERK_PUBLISHABLE_KEY });
-      if (!Clerk.user) { window.location.href = '/login.html'; return; }
-      initDashboard(Clerk.user);
-    };
-    document.head.appendChild(script);
-
-    let activeCampaignId = null, campaigns = [], currentData = null, userId = null;
-
-    async function initDashboard(user) {
-      userId = user.id;
-      document.getElementById('logoutBtnContainer').innerHTML = `<span>👤 ${user.primaryEmailAddress?.emailAddress}</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>`;
-      document.getElementById('logoutBtn').addEventListener('click', () => Clerk.signOut());
-      loadCampaigns();
+    if (localStorage.getItem('auth') !== 'true') {
+      window.location.href = '/login.html';
     }
 
+    let activeCampaignId = null, campaigns = [], currentData = null, userId = 'admin';
+
+    document.getElementById('logoutBtnContainer').innerHTML = `<span>👤 Admin</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>`;
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('auth');
+      window.location.href = '/login.html';
+    });
+
+    loadCampaigns();
+
     async function apiCall(endpoint, method = 'GET', body = null) {
-      const token = await Clerk.session?.getToken();
-      const opts = { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } };
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch('/api/' + endpoint, opts);
       return res.json();
@@ -216,31 +206,35 @@ if (localStorage.getItem('auth') !== 'true') {
       const niche = document.getElementById('nicheInput').value.trim();
       const div = document.getElementById('productResults');
       div.innerHTML = '<p><span class="spinner"></span>🔍 <span class="running-text">Scanning market...</span></p>';
-      const data = await apiCall('research-products', 'POST', { niche });
-      if (data.error) { div.innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
-      const products = data.products || [];
-      if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
-      let html = '<h3>Recommended Products</h3>';
-      products.forEach(p => {
-        html += `<div class="card"><h3>${p.name}</h3><p>${p.description}</p><p><strong>Commission:</strong> ${p.commission}</p><button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select</button></div>`;
-      });
-      div.innerHTML = html;
-      document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', function() {
-        document.getElementById('urlInput').value = this.dataset.url;
-        div.innerHTML = `<p>✅ ${this.dataset.name} loaded.</p>`;
-      }));
+      try {
+        const data = await apiCall('research-products', 'POST', { niche });
+        if (data.error) { div.innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
+        const products = data.products || [];
+        if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
+        let html = '<h3>Recommended Products</h3>';
+        products.forEach(p => {
+          html += `<div class="card"><h3>${p.name}</h3><p>${p.description}</p><p><strong>Commission:</strong> ${p.commission}</p><button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select</button></div>`;
+        });
+        div.innerHTML = html;
+        document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', function() {
+          document.getElementById('urlInput').value = this.dataset.url;
+          div.innerHTML = `<p>✅ ${this.dataset.name} loaded.</p>`;
+        }));
+      } catch(e) { div.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
     });
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
       if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
-      document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p style="margin-top:10px;">🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
-      const data = await apiCall('generate', 'POST', { url });
-      if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
-      currentData = data;
-      await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
-      document.getElementById('result').innerHTML = formatPackage(data);
-      attachListeners();
+      document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p>🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
+      try {
+        const data = await apiCall('generate', 'POST', { url });
+        if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
+        currentData = data;
+        await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
+        document.getElementById('result').innerHTML = formatPackage(data);
+        attachListeners();
+      } catch(e) { document.getElementById('result').innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
     });
 
     function formatPackage(pkg) {
@@ -274,11 +268,11 @@ if (localStorage.getItem('auth') !== 'true') {
         let progress = 0;
         const interval = setInterval(() => {
           progress = Math.min(progress + 15, 90);
-          prev.innerHTML = `<div style="background:#e2e8f0; border-radius:8px; height:10px;"><div style="background:#2563eb; height:10px; border-radius:8px; width:${progress}%;"></div></div><p>Rendering... ${progress}%</p>`;
+          prev.innerHTML = `<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div></div><p>Rendering... ${progress}%</p>`;
         }, 2000);
         const url = await poll(jobId);
         clearInterval(interval);
-        prev.innerHTML = `<video controls src="${url}"></video><a href="${url}" download>⬇️ Download</a>`;
+        prev.innerHTML = `<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div><p>✅ Complete!</p><video controls src="${url}"></video><a href="${url}" download>⬇️ Download</a>`;
         btn.textContent = '✅ Ready'; btn.disabled = false;
       } catch(e) { prev.innerHTML = `<p style="color:red;">${e.message}</p>`; btn.textContent = 'Retry'; btn.disabled = false; }
     }
@@ -317,26 +311,13 @@ if (localStorage.getItem('auth') !== 'true') {
 
     document.getElementById('loadAnalyticsBtn').addEventListener('click', async () => {
       const div = document.getElementById('analyticsTableContainer');
-      div.innerHTML = '<p>Loading...</p>';
+      div.innerHTML = '<p><span class="spinner"></span> Loading...</p>';
       const data = await apiCall('get-analytics', 'POST', { campaignId: activeCampaignId, userId });
       if (data.error || !data.records?.length) { div.innerHTML = '<p>No posts yet.</p>'; return; }
       let h = '<table><tr><th>Style</th><th>Platform</th><th>Views</th><th>Likes</th></tr>';
       data.records.forEach(r => { const a = r.analytics||{}; h += `<tr><td>${r.style||''}</td><td>${r.platform}</td><td>${a.views||0}</td><td>${a.likes||0}</td></tr>`; });
       h += '</table>';
       div.innerHTML = h;
-      // Clone winner button
-      let bestStyle = '', bestEng = 0;
-      data.records.forEach(r => { if ((r.analytics?.engagement||0) > bestEng) { bestEng = r.analytics?.engagement||0; bestStyle = r.style; } });
-      if (bestStyle) {
-        div.innerHTML += `<button id="cloneWinnerBtn" class="btn-blue btn-sm" style="margin-top:0.5rem;">🚀 Clone Winner (${bestStyle})</button>`;
-        document.getElementById('cloneWinnerBtn').addEventListener('click', async () => {
-          const btn = document.getElementById('cloneWinnerBtn');
-          btn.disabled = true; btn.textContent = 'Generating...';
-          const d = await apiCall('utils?action=clone-winner', 'POST', { campaignId: activeCampaignId, winningStyle: bestStyle });
-          alert(d.error ? `Error: ${d.error}` : `✅ 5 new "${bestStyle}" videos ready!`);
-          btn.disabled = false; btn.textContent = `🚀 Clone Winner (${bestStyle})`;
-        });
-      }
     });
 
     document.getElementById('rotationBtn').addEventListener('click', async () => {
