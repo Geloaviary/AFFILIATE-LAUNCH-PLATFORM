@@ -40,6 +40,49 @@
     .image-row div { flex: 1; min-width: 200px; }
     video { max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem; }
     @media (max-width: 600px) { body { padding: 0.5rem; } .container { padding: 1rem; } }
+         .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e2e8f0;
+      border-top: 3px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .progress-container {
+      margin: 10px 0;
+    }
+    .progress-bar {
+      background: #e2e8f0;
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.4s;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .running-text {
+      display: inline-block;
+      animation: bounce 0.5s infinite alternate;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
   </style>
 </head>
 <body>
@@ -172,7 +215,7 @@ if (localStorage.getItem('auth') !== 'true') {
     document.getElementById('findProductsBtn').addEventListener('click', async () => {
       const niche = document.getElementById('nicheInput').value.trim();
       const div = document.getElementById('productResults');
-      div.innerHTML = '<p>Searching...</p>';
+      div.innerHTML = '<p><span class="spinner"></span>🔍 <span class="running-text">Scanning market...</span></p>';
       const data = await apiCall('research-products', 'POST', { niche });
       if (data.error) { div.innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
       const products = data.products || [];
@@ -191,7 +234,7 @@ if (localStorage.getItem('auth') !== 'true') {
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
       if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
-      document.getElementById('result').innerHTML = '<p>Generating...</p>';
+      document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p style="margin-top:10px;">🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
       const data = await apiCall('generate', 'POST', { url });
       if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
       currentData = data;
@@ -223,7 +266,7 @@ if (localStorage.getItem('auth') !== 'true') {
       const prev = document.getElementById(`daily-preview-${idx}`);
       const btn = document.querySelector(`#daily-card-${idx} .gen-vid-btn`);
       btn.disabled = true; btn.textContent = 'Submitting...';
-      prev.innerHTML = '<p>Starting render...</p>';
+      prev.innerHTML = '<p><span class="spinner"></span>🎬 Creating viral video...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:10%;"></div></div></div>';
       try {
         const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily', useTrending: document.getElementById('useTrending').checked });
         if (data.error) throw new Error(data.error);
