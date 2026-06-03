@@ -32,7 +32,8 @@ async function scrapeProduct(url) {
 }
 
 async function generateLaunchPackage(productInfo) {
-  const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
+  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/\s+/g, "").trim();
+  const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
 
   const prompt = `You are an affiliate marketing strategist. Create a launch package for this product:\nTitle: ${productInfo.title}\nDescription: ${productInfo.description}\nPrice: ${productInfo.price}\n\nReturn JSON with: niche, targetAudience {demographics, painPoints, contentStyle}, platforms {facebook, tiktok, instagram, youtube} each with handle, profileName, bio, category, imagePrompts {profilePicture, banner}, dailyVideoPack array of 4 objects with style, hook, script, visuals, captions, hashtags, musicSuggestion, duration.`;
@@ -49,7 +50,8 @@ async function generateLaunchPackage(productInfo) {
 }
 
 async function generateImages(imagePrompts) {
-  const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
+  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/\s+/g, "").trim();
+  const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
   try {
     const [profileRes, bannerRes] = await Promise.all([
