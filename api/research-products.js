@@ -32,7 +32,7 @@ exports.default = async function handler(req, res) {
     try {
       const completion = await openai.createChatCompletion({
         model: "gpt-4",
-        messages: [{ role: "user", content: `Recommend 5 high-demand affiliate products with RECURRING commissions ${nichePrompt}. Return JSON array with: name, description, demandReason, commission, cookieDuration, affiliateUrl. Use REAL affiliate sign-up URLs when possible.` }],
+        messages: [{ role: "user", content: `Recommend 5 high-demand affiliate products with RECURRING commissions ${nichePrompt}. Return JSON array with: name, description, demandReason, commission, cookieDuration, affiliateUrl, productUrl. The productUrl should be the main product landing page.` }],
         temperature: 0.8,
       });
       const content = completion.data.choices[0].message.content;

@@ -213,7 +213,14 @@
         if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
         let html = '<h3>Recommended Products</h3>';
         products.forEach(p => {
-          html += `<div class="card"><h3>${p.name}</h3><p>${p.description}</p><p><strong>Commission:</strong> ${p.commission}</p><p style="font-size:0.8rem;color:#2563eb;">🔗 ${p.affiliateUrl || 'URL not provided'}</p><button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select</button></div>`;
+          html += `<div class="card">
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <p><strong>💰 Commission:</strong> ${p.commission}</p>
+            <p style="font-size:0.8rem;">🔗 <strong>Affiliate:</strong> <a href="${p.affiliateUrl}" target="_blank">${p.affiliateUrl || 'N/A'}</a></p>
+            <p style="font-size:0.8rem;">🌐 <strong>Product:</strong> <a href="${p.productUrl || p.affiliateUrl}" target="_blank">${p.productUrl || 'N/A'}</a></p>
+            <button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select & Generate</button>
+          </div>`;
         });
         div.innerHTML = html;
         document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', function() {
