@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Affiliate Launch Tool | Dashboard</title>
+  <title>Affiliate Launch Platform | Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.6; font-size: 16px; padding: 1rem; }
@@ -34,7 +34,6 @@
     .table-wrap { overflow-x: auto; }
     .alert { padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
     .alert-warning { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
-    .alert-info { background: #dbeafe; border: 1px solid #3b82f6; color: #1e40af; }
     .hidden { display: none !important; }
     img { max-width: 100%; height: auto; border-radius: 0.5rem; }
     .image-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
@@ -123,9 +122,8 @@
         const res = await fetch('/api/utils?action=usage');
         const data = await res.json();
         if (!data.error && data.warning) {
-          const alertDiv = document.getElementById('usageAlert');
-          alertDiv.className = 'alert alert-warning';
-          alertDiv.classList.remove('hidden');
+          document.getElementById('usageAlert').className = 'alert alert-warning';
+          document.getElementById('usageAlert').classList.remove('hidden');
           document.getElementById('usageText').innerHTML = '⚠️ Usage approaching limits.';
         }
       } catch {}
@@ -278,6 +276,19 @@
       data.records.forEach(r => { const a = r.analytics||{}; h += `<tr><td>${r.style||''}</td><td>${r.platform}</td><td>${a.views||0}</td><td>${a.likes||0}</td></tr>`; });
       h += '</table>';
       div.innerHTML = h;
+      // Clone winner button
+      let bestStyle = '', bestEng = 0;
+      data.records.forEach(r => { if ((r.analytics?.engagement||0) > bestEng) { bestEng = r.analytics?.engagement||0; bestStyle = r.style; } });
+      if (bestStyle) {
+        div.innerHTML += `<button id="cloneWinnerBtn" class="btn-blue btn-sm" style="margin-top:0.5rem;">🚀 Clone Winner (${bestStyle})</button>`;
+        document.getElementById('cloneWinnerBtn').addEventListener('click', async () => {
+          const btn = document.getElementById('cloneWinnerBtn');
+          btn.disabled = true; btn.textContent = 'Generating...';
+          const d = await apiCall('utils?action=clone-winner', 'POST', { campaignId: activeCampaignId, winningStyle: bestStyle });
+          alert(d.error ? `Error: ${d.error}` : `✅ 5 new "${bestStyle}" videos ready!`);
+          btn.disabled = false; btn.textContent = `🚀 Clone Winner (${bestStyle})`;
+        });
+      }
     });
 
     document.getElementById('rotationBtn').addEventListener('click', async () => {
