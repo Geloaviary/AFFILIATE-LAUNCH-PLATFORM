@@ -35,20 +35,27 @@
   <!-- Hidden Clerk sign-in trigger -->
   <div id="clerk-signin" style="display:none;"></div>
 
-  <script
+    <script
     data-clerk-publishable-key="pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
   ></script>
 
   <script>
-    window.addEventListener('load', async () => {
-      await window.Clerk?.load();
+    window.addEventListener('load', () => {
+      if (!window.Clerk) {
+        document.querySelector('.card').innerHTML = '<p style="color:red;">Clerk failed to load. Refresh the page.</p>';
+        return;
+      }
 
-      if (window.Clerk?.user) {
+      if (window.Clerk.user) {
         showUser(window.Clerk.user);
       }
 
-      window.Clerk?.addListener(({ user }) => {
+      document.getElementById('signin-btn').addEventListener('click', () => {
+        window.Clerk.openSignIn();
+      });
+
+      window.Clerk.addListener(({ user }) => {
         if (user) {
           showUser(user);
           setTimeout(() => window.location.href = '/app.html', 500);
