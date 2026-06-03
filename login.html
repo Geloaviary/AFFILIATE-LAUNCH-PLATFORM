@@ -10,17 +10,41 @@
     .card { background: #fff; padding: 2.5rem 2rem; border-radius: 1.25rem; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 60px rgba(0,0,0,0.3); }
     .logo { font-size: 3rem; margin-bottom: 0.5rem; }
     h1 { font-size: 1.75rem; color: #0f172a; margin-bottom: 0.5rem; }
-    p { color: #64748b; margin-bottom: 1.5rem; }
-    a { display: block; width: 100%; padding: 0.9rem; font-size: 1rem; font-weight: 600; border-radius: 0.75rem; background: #0f172a; color: #fff; text-decoration: none; }
-    a:hover { background: #1e293b; }
+    p { color: #64748b; margin-bottom: 1rem; }
+    input { width: 100%; padding: 0.9rem; font-size: 1rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 0.75rem; text-align: center; }
+    button { width: 100%; padding: 0.9rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 0.75rem; background: #0f172a; color: #fff; cursor: pointer; }
+    button:hover { background: #1e293b; }
+    .error { color: #dc2626; font-size: 0.9rem; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">🛠️</div>
     <h1>Affiliate Launch Platform</h1>
-    <p>Sign in to manage your campaigns and generate videos.</p>
-    <a href="https://certain-ladybug-11.clerk.accounts.dev/sign-in?redirect_url=https://affiliate-launch-platform.vercel.app/app.html">🔐 Sign In</a>
+    <p>Enter your password to continue</p>
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">🔐 Sign In</button>
+    <p class="error" id="error"></p>
   </div>
+
+  <script>
+    // Set your master password here
+    const MASTER_PASSWORD = "admin4774";
+
+    function login() {
+      const pw = document.getElementById('password').value;
+      if (pw === MASTER_PASSWORD) {
+        localStorage.setItem('auth', 'true');
+        window.location.href = '/app.html';
+      } else {
+        document.getElementById('error').textContent = 'Incorrect password';
+      }
+    }
+
+    // If already logged in, redirect
+    if (localStorage.getItem('auth') === 'true') {
+      window.location.href = '/app.html';
+    }
+  </script>
 </body>
 </html>
