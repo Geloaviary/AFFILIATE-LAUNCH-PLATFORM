@@ -58,7 +58,10 @@ async function generateImages(imagePrompts) {
     const [profileRes, bannerRes] = await Promise.all([
       fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_KEY}` },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + OPENAI_KEY,
+         },
         body: JSON.stringify({ model: "dall-e-3", prompt: `${imagePrompts.profilePicture} – simple clean logo, no text`, n: 1, size: "1024x1024", quality: "standard" }),
       }).then(r => r.json()),
       fetch("https://api.openai.com/v1/images/generations", {
