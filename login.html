@@ -6,68 +6,21 @@
   <title>Login | Affiliate Launch Platform</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #0f172a, #1e293b); padding: 1rem; }
-    .card { background: #fff; padding: 2.5rem 2rem; border-radius: 1.25rem; box-shadow: 0 25px 60px rgba(0,0,0,0.3); text-align: center; max-width: 420px; width: 100%; }
+    body { font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #0f172a, #1e293b); padding: 1rem; }
+    .card { background: #fff; padding: 2.5rem 2rem; border-radius: 1.25rem; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 60px rgba(0,0,0,0.3); }
     .logo { font-size: 3rem; margin-bottom: 0.5rem; }
     h1 { font-size: 1.75rem; color: #0f172a; margin-bottom: 0.5rem; }
     p { color: #64748b; margin-bottom: 1.5rem; }
-    button { width: 100%; padding: 0.9rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 0.75rem; cursor: pointer; background: #0f172a; color: #fff; }
-    button:hover { background: #1e293b; }
-    .hidden { display: none !important; }
+    a { display: block; width: 100%; padding: 0.9rem; font-size: 1rem; font-weight: 600; border-radius: 0.75rem; background: #0f172a; color: #fff; text-decoration: none; }
+    a:hover { background: #1e293b; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div id="logged-out-view">
-      <div class="logo">🛠️</div>
-      <h1>Affiliate Launch Platform</h1>
-      <p>Sign in to manage your campaigns and generate videos.</p>
-      <button id="signin-btn" onclick="document.querySelector('#clerk-signin').click()">🔐 Sign In</button>
-    </div>
-    <div id="logged-in-view" class="hidden">
-      <div class="logo">✅</div>
-      <h2>Welcome!</h2>
-      <p id="user-email"></p>
-      <button onclick="window.location.href='/app.html'">🚀 Go to Dashboard</button>
-    </div>
+    <div class="logo">🛠️</div>
+    <h1>Affiliate Launch Platform</h1>
+    <p>Sign in to manage your campaigns and generate videos.</p>
+    <a href="https://certain-ladybug-11.clerk.accounts.dev/sign-in?redirect_url=https://affiliate-launch-platform.vercel.app/app.html">🔐 Sign In</a>
   </div>
-
-  <!-- Hidden Clerk sign-in trigger -->
-  <div id="clerk-signin" style="display:none;"></div>
-
-    <script
-    data-clerk-publishable-key="pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-  ></script>
-
-  <script>
-    window.addEventListener('load', () => {
-      if (!window.Clerk) {
-        document.querySelector('.card').innerHTML = '<p style="color:red;">Clerk failed to load. Refresh the page.</p>';
-        return;
-      }
-
-      if (window.Clerk.user) {
-        showUser(window.Clerk.user);
-      }
-
-      document.getElementById('signin-btn').addEventListener('click', () => {
-        window.Clerk.openSignIn();
-      });
-
-      window.Clerk.addListener(({ user }) => {
-        if (user) {
-          showUser(user);
-          setTimeout(() => window.location.href = '/app.html', 500);
-        }
-      });
-    });
-
-    function showUser(user) {
-      document.getElementById('logged-out-view').classList.add('hidden');
-      document.getElementById('logged-in-view').classList.remove('hidden');
-      document.getElementById('user-email').textContent = user.primaryEmailAddress?.emailAddress || '';
-    }
-  </script>
 </body>
 </html>
