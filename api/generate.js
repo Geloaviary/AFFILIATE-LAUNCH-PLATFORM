@@ -32,7 +32,7 @@ async function scrapeProduct(url) {
 }
 
 async function generateLaunchPackage(productInfo) {
-  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/\s+/g, "").trim();
+  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
   const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
 
@@ -50,7 +50,7 @@ async function generateLaunchPackage(productInfo) {
 }
 
 async function generateImages(imagePrompts) {
-  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/\s+/g, "").trim();
+  const apiKey = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
   const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
   try {
