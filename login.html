@@ -22,7 +22,7 @@
       <div class="logo">🛠️</div>
       <h1>Affiliate Launch Platform</h1>
       <p>Sign in to manage your campaigns and generate videos.</p>
-      <button id="signin-btn">🔐 Sign In</button>
+      <button id="signin-btn" onclick="document.querySelector('#clerk-signin').click()">🔐 Sign In</button>
     </div>
     <div id="logged-in-view" class="hidden">
       <div class="logo">✅</div>
@@ -32,34 +32,34 @@
     </div>
   </div>
 
-    <script>
-    const CLERK_KEY = "pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ";
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
-    s.async = true;
-    s.onload = async () => {
-      // Wait for Clerk to be fully available
-      let attempts = 0;
-      while (!window.Clerk && attempts < 50) {
-        await new Promise(r => setTimeout(r, 200));
-        attempts++;
+  <!-- Hidden Clerk sign-in trigger -->
+  <div id="clerk-signin" style="display:none;"></div>
+
+  <script
+    data-clerk-publishable-key="pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  ></script>
+
+  <script>
+    window.addEventListener('load', async () => {
+      await window.Clerk?.load();
+
+      if (window.Clerk?.user) {
+        showUser(window.Clerk.user);
       }
-      if (!window.Clerk) {
-        document.querySelector('.card').innerHTML = '<p style="color:red;">Failed to load Clerk. Please refresh.</p>';
-        return;
-      }
-      await window.Clerk.load({ publishableKey: CLERK_KEY });
-      if (window.Clerk.user) show(window.Clerk.user);
-      document.getElementById('signin-btn').onclick = () => window.Clerk.openSignIn();
-      window.Clerk.addListener(({ user }) => {
-        if (user) { show(user); setTimeout(() => location.href = '/app.html', 500); }
+
+      window.Clerk?.addListener(({ user }) => {
+        if (user) {
+          showUser(user);
+          setTimeout(() => window.location.href = '/app.html', 500);
+        }
       });
-    };
-    document.head.appendChild(s);
-    function show(u) {
+    });
+
+    function showUser(user) {
       document.getElementById('logged-out-view').classList.add('hidden');
       document.getElementById('logged-in-view').classList.remove('hidden');
-      document.getElementById('user-email').textContent = u.primaryEmailAddress?.emailAddress || '';
+      document.getElementById('user-email').textContent = user.primaryEmailAddress?.emailAddress || '';
     }
   </script>
 </body>
