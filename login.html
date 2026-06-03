@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Affiliate Launch Tool</title>
+  <script async src="https://js.clerk.com/accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?client_id=REPLACE_WITH_YOUR_CLERK_FRONTEND_API&response_type=token&redirect_uri=https://YOUR_VERCEL_DOMAIN.vercel.app&scope=profile%20email"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      padding: 1rem;
+    }
+    .card {
+      background: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+    }
+    .logo { font-size: 3rem; margin-bottom: 0.5rem; }
+    h1 { font-size: 1.75rem; color: #0f172a; margin-bottom: 0.5rem; }
+    p { color: #64748b; margin-bottom: 1.5rem; }
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      background: #0f172a;
+      color: #fff;
+    }
+    button:hover { background: #1e293b; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="logged-out-view">
+      <div class="logo">🛠️</div>
+      <h1>Affiliate Launch Tool</h1>
+      <p>Sign in to manage your campaigns and generate videos.</p>
+      <button id="signin-btn">🔐 Sign In with Clerk</button>
+    </div>
+    <div id="logged-in-view" class="hidden">
+      <div class="logo">✅</div>
+      <h2>Welcome!</h2>
+      <p id="user-email"></p>
+      <button onclick="window.location.href='/app.html'">🚀 Go to Dashboard</button>
+    </div>
+  </div>
+
+  <script>
+    // Replace with your Clerk Publishable Key
+    const CLERK_PUBLISHABLE_KEY = "pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ";
+
+    // Load Clerk
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    script.onload = async () => {
+      await Clerk.load({ publishableKey: CLERK_PUBLISHABLE_KEY });
+
+      if (Clerk.user) {
+        showLoggedIn(Clerk.user);
+      }
+
+      document.getElementById('signin-btn').addEventListener('click', () => {
+        Clerk.openSignIn();
+      });
+
+      Clerk.addListener(({ user }) => {
+        if (user) {
+          showLoggedIn(user);
+          setTimeout(() => window.location.href = '/app.html', 500);
+        }
+      });
+    };
+    document.head.appendChild(script);
+
+    function showLoggedIn(user) {
+      document.getElementById('logged-out-view').classList.add('hidden');
+      document.getElementById('logged-in-view').classList.remove('hidden');
+      document.getElementById('user-email').textContent = user.primaryEmailAddress?.emailAddress || '';
+    }
+  </script>
+</body>
+</html>
