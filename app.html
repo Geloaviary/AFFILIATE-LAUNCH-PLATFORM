@@ -115,6 +115,7 @@
     <div id="productResults"></div>
     <input type="text" id="urlInput" placeholder="Product page URL (for AI research)" />
     <input type="text" id="affiliateUrlInput" placeholder="Your affiliate link (for videos & bios)" style="margin-top:0.5rem;" />
+    <input type="text" id="productNameOverride" placeholder="Product name override (optional)" style="margin-top:0.5rem;" />
     <div style="display:flex; flex-wrap:wrap; gap:1rem; margin:0.75rem 0; font-size:0.9rem;">
       <label><input type="checkbox" id="hookTester" checked> A/B 3 Hooks</label>
       <label><input type="checkbox" id="multiLang" checked> Multi-Lang</label>
@@ -262,10 +263,11 @@
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
+      const productName = document.getElementById('productNameOverride')?.value?.trim() || '';
       if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
       document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p>🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
       try {
-        const data = await apiCall('generate', 'POST', { url });
+        const data = await apiCall('generate', 'POST', { url, productName });
         if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
         currentData = data;
         await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
