@@ -32,15 +32,28 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const CLERK_KEY = "pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ";
     const s = document.createElement('script');
     s.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    s.async = true;
     s.onload = async () => {
-      await Clerk.load({ publishableKey: CLERK_KEY });
-      if (Clerk.user) show(Clerk.user);
-      document.getElementById('signin-btn').onclick = () => Clerk.openSignIn();
-      Clerk.addListener(({ user }) => { if (user) { show(user); setTimeout(() => location.href = '/app.html', 500); } });
+      // Wait for Clerk to be fully available
+      let attempts = 0;
+      while (!window.Clerk && attempts < 50) {
+        await new Promise(r => setTimeout(r, 200));
+        attempts++;
+      }
+      if (!window.Clerk) {
+        document.querySelector('.card').innerHTML = '<p style="color:red;">Failed to load Clerk. Please refresh.</p>';
+        return;
+      }
+      await window.Clerk.load({ publishableKey: CLERK_KEY });
+      if (window.Clerk.user) show(window.Clerk.user);
+      document.getElementById('signin-btn').onclick = () => window.Clerk.openSignIn();
+      window.Clerk.addListener(({ user }) => {
+        if (user) { show(user); setTimeout(() => location.href = '/app.html', 500); }
+      });
     };
     document.head.appendChild(s);
     function show(u) {
