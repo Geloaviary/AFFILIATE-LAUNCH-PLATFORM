@@ -100,7 +100,8 @@
       <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
     </div>
     <div id="productResults"></div>
-    <input type="text" id="urlInput" placeholder="Paste product affiliate link here" />
+    <input type="text" id="urlInput" placeholder="Product page URL (for AI research)" />
+    <input type="text" id="affiliateUrlInput" placeholder="Your affiliate link (for videos & bios)" style="margin-top:0.5rem;" />
     <div style="display:flex; flex-wrap:wrap; gap:1rem; margin:0.75rem 0; font-size:0.9rem;">
       <label><input type="checkbox" id="hookTester" checked> A/B 3 Hooks</label>
       <label><input type="checkbox" id="multiLang" checked> Multi-Lang</label>
@@ -123,6 +124,7 @@
         <h2>New Campaign</h2>
         <input type="text" id="modalCampaignName" placeholder="Campaign Name" />
         <input type="text" id="modalProductUrl" placeholder="Product Affiliate URL" />
+        <input type="text" id="modalAffiliateUrl" placeholder="Your Affiliate Link (for commissions)" />
         <input type="text" id="modalNiche" placeholder="Niche (optional)" />
         <div class="button-group">
           <button id="saveCampaignBtn" class="btn-green">Create Campaign</button>
@@ -183,6 +185,7 @@
       if (!c) return;
       document.getElementById('activeCampaignName').textContent = `Active: ${c.name}`;
       document.getElementById('urlInput').value = c.productUrl || '';
+      document.getElementById('affiliateUrlInput').value = c.affiliateUrl || '';
       if (c.package) { currentData = c.package; document.getElementById('result').innerHTML = formatPackage(currentData); attachListeners(); }
       else { currentData = null; document.getElementById('result').innerHTML = '<p>No package yet.</p>'; }
     }
@@ -193,6 +196,10 @@
     document.getElementById('saveCampaignBtn').addEventListener('click', async () => {
       const name = document.getElementById('modalCampaignName').value.trim();
       const productUrl = document.getElementById('modalProductUrl').value.trim();
+      const affiliateUrl = document.getElementById('modalAffiliateUrl')?.value?.trim() || '';
+
+    // In the API call body, add:
+    { name, productUrl, niche, affiliateUrl, userId }
       const niche = document.getElementById('modalNiche').value.trim();
       if (!name || !productUrl) return alert('Name and URL required.');
       const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche, userId });
