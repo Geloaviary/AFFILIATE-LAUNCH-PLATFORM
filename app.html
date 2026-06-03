@@ -6,140 +6,33 @@
   <title>Affiliate Launch Tool | Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
-      line-height: 1.6;
-      font-size: 16px;
-      padding: 1rem;
-    }
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.6; font-size: 16px; padding: 1rem; }
+    .container { max-width: 960px; margin: 0 auto; background: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
     h1 { font-size: 1.5rem; text-align: center; margin-bottom: 0.25rem; }
     h2 { font-size: 1.25rem; margin: 1rem 0 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem; }
     h3 { font-size: 1.1rem; margin: 0.5rem 0; }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.7rem 0.9rem;
-      font-size: 1rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 0.5rem;
-      margin-top: 0.3rem;
-      transition: border 0.2s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-    button {
-      display: inline-block;
-      padding: 0.7rem 1.2rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      min-height: 44px;
-      background: #0f172a;
-      color: #fff;
-    }
-    button:hover { background: #1e293b; transform: translateY(-1px); }
-    button:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
-    .btn-blue { background: #2563eb; }
-    .btn-blue:hover { background: #1d4ed8; }
-    .btn-green { background: #16a34a; }
-    .btn-green:hover { background: #15803d; }
+    input, select, textarea { width: 100%; padding: 0.7rem 0.9rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; margin-top: 0.3rem; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    button { display: inline-block; padding: 0.7rem 1.2rem; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; min-height: 44px; background: #0f172a; color: #fff; }
+    button:hover { background: #1e293b; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .btn-blue { background: #2563eb; } .btn-blue:hover { background: #1d4ed8; }
+    .btn-green { background: #16a34a; } .btn-green:hover { background: #15803d; }
     .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; min-height: 36px; }
     .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
     .button-group button { flex: 1; min-width: 120px; }
-    .card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-left: 4px solid #2563eb;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      margin: 0.75rem 0;
-    }
-    .card h3 { margin-top: 0; }
-    .tag {
-      display: inline-block;
-      background: #2563eb;
-      color: #fff;
-      padding: 0.2rem 0.7rem;
-      border-radius: 1rem;
-      font-size: 0.8rem;
-      margin-right: 0.4rem;
-      margin-bottom: 0.4rem;
-    }
-    .progress-log {
-      background: #1e293b;
-      color: #e2e8f0;
-      border-radius: 0.5rem;
-      padding: 0.75rem;
-      max-height: 200px;
-      overflow-y: auto;
-      font-family: monospace;
-      font-size: 0.85rem;
-      margin: 0.5rem 0;
-    }
-    .progress-log p { margin: 0.2rem 0; }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 1rem;
-      max-width: 450px;
-      width: 90%;
-    }
-    .campaign-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; border-radius: 0.5rem; padding: 1rem; margin: 0.75rem 0; }
+    .tag { display: inline-block; background: #2563eb; color: #fff; padding: 0.2rem 0.7rem; border-radius: 1rem; font-size: 0.8rem; margin-right: 0.4rem; }
+    .progress-log { background: #1e293b; color: #e2e8f0; border-radius: 0.5rem; padding: 0.75rem; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: #fff; padding: 2rem; border-radius: 1rem; max-width: 450px; width: 90%; }
+    .campaign-bar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .campaign-bar select { flex: 1; min-width: 150px; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-    th, td {
-      text-align: left;
-      padding: 0.6rem 0.4rem;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    th { background: #f1f5f9; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    th:hover { background: #e2e8f0; }
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .alert {
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+    th, td { text-align: left; padding: 0.6rem 0.4rem; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    .alert { padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
     .alert-warning { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
     .alert-info { background: #dbeafe; border: 1px solid #3b82f6; color: #1e40af; }
     .hidden { display: none !important; }
@@ -147,46 +40,32 @@
     .image-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
     .image-row div { flex: 1; min-width: 200px; }
     video { max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem; }
-    @media (max-width: 600px) {
-      body { padding: 0.5rem; }
-      .container { padding: 1rem; }
-      h1 { font-size: 1.25rem; }
-      .button-group button { flex: 1 1 100%; }
-    }
+    @media (max-width: 600px) { body { padding: 0.5rem; } .container { padding: 1rem; } }
   </style>
 </head>
 <body>
   <div class="container">
-    <div id="logoutBtnContainer" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap;"></div>
-
-    <div id="usageAlert" class="alert hidden">
-      <span id="usageText"></span>
-      <button id="dismissUsageBtn" class="btn-sm" style="background:none; color:inherit; text-decoration:underline;">Dismiss</button>
-    </div>
-
+    <div id="logoutBtnContainer" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"></div>
+    <div id="usageAlert" class="alert hidden"><span id="usageText"></span><button id="dismissUsageBtn" class="btn-sm" style="background:none;">Dismiss</button></div>
     <div class="campaign-bar">
-      <label style="font-weight:600;">📁 Campaign:</label>
+      <label>📁 Campaign:</label>
       <select id="campaignSelect"><option value="">-- Select Campaign --</option></select>
       <button id="newCampaignBtn" class="btn-blue btn-sm">+ New</button>
-      <span id="activeCampaignName" style="font-weight:600;"></span>
+      <span id="activeCampaignName"></span>
     </div>
-
     <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
       <input type="text" id="nicheInput" placeholder="Niche (optional)" style="flex:1;" />
       <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
     </div>
     <div id="productResults"></div>
-
     <input type="text" id="urlInput" placeholder="Paste product affiliate link here" />
-
     <div style="display:flex; flex-wrap:wrap; gap:1rem; margin:0.75rem 0; font-size:0.9rem;">
       <label><input type="checkbox" id="hookTester" checked> A/B 3 Hooks</label>
       <label><input type="checkbox" id="multiLang" checked> Multi-Lang</label>
       <label><input type="checkbox" id="useTrending" checked> Trending Sounds</label>
       <label><input type="checkbox" id="postStories" checked> Post Stories</label>
-      <input type="text" id="commentKeyword" placeholder="Comment keyword" value="SENDIT" style="width:160px; padding:0.3rem;" />
+      <input type="text" id="commentKeyword" value="SENDIT" style="width:160px; padding:0.3rem;" />
     </div>
-
     <div class="button-group">
       <button id="generateBtn">⚡ Generate Full Package</button>
       <button id="createLandingBtn" class="btn-blue">📄 Create Landing Page</button>
@@ -195,14 +74,8 @@
       <button id="autoGenerateBtn" class="btn-green">🚀 Generate & Post All Daily Videos</button>
       <button id="rotationBtn" class="btn-blue">🔄 Check Rotation</button>
     </div>
-
     <div id="result"></div>
-
-    <div style="margin-top:1rem;">
-      <button id="loadAnalyticsBtn">📊 Refresh Analytics</button>
-      <div id="analyticsTableContainer" class="table-wrap" style="margin-top:0.5rem;"></div>
-    </div>
-
+    <div style="margin-top:1rem;"><button id="loadAnalyticsBtn">📊 Refresh Analytics</button><div id="analyticsTableContainer" class="table-wrap"></div></div>
     <div id="campaignModal" class="modal">
       <div class="modal-content">
         <h2>New Campaign</h2>
@@ -218,9 +91,7 @@
   </div>
 
   <script>
-    const CLERK_PUBLISHABLE_KEY = "pk_test_Y2VydGFpbi1sYWR5YnVnLTExLmNsZXJrLmFjY291bnRzLmRldiQ";
-
-    // Load Clerk
+    const CLERK_PUBLISHABLE_KEY = "pk_test_YOUR_CLERK_KEY";
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
     script.onload = async () => {
@@ -230,34 +101,39 @@
     };
     document.head.appendChild(script);
 
-    let activeCampaignId = null;
-    let campaigns = [];
-    let currentData = null;
-    let userId = null;
+    let activeCampaignId = null, campaigns = [], currentData = null, userId = null;
 
     async function initDashboard(user) {
       userId = user.id;
-      document.getElementById('logoutBtnContainer').innerHTML = `
-        <span>👤 <strong>${user.primaryEmailAddress?.emailAddress}</strong></span>
-        <button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>
-      `;
+      document.getElementById('logoutBtnContainer').innerHTML = `<span>👤 ${user.primaryEmailAddress?.emailAddress}</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>`;
       document.getElementById('logoutBtn').addEventListener('click', () => Clerk.signOut());
       loadCampaigns();
     }
 
     async function apiCall(endpoint, method = 'GET', body = null) {
       const token = await Clerk.session?.getToken();
-      const opts = {
-        method,
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-      };
+      const opts = { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch('/api/' + endpoint, opts);
       return res.json();
     }
 
+    async function checkUsage() {
+      try {
+        const res = await fetch('/api/utils?action=usage');
+        const data = await res.json();
+        if (!data.error && data.warning) {
+          const alertDiv = document.getElementById('usageAlert');
+          alertDiv.className = 'alert alert-warning';
+          alertDiv.classList.remove('hidden');
+          document.getElementById('usageText').innerHTML = '⚠️ Usage approaching limits.';
+        }
+      } catch {}
+    }
+    document.getElementById('dismissUsageBtn').addEventListener('click', () => document.getElementById('usageAlert').classList.add('hidden'));
+
     async function loadCampaigns() {
-      const data = await apiCall('manage-campaigns');
+      const data = await apiCall('manage-campaigns', 'POST', { userId });
       campaigns = data.campaigns || [];
       const select = document.getElementById('campaignSelect');
       select.innerHTML = '<option value="">-- Select Campaign --</option>';
@@ -271,14 +147,8 @@
       if (!c) return;
       document.getElementById('activeCampaignName').textContent = `Active: ${c.name}`;
       document.getElementById('urlInput').value = c.productUrl || '';
-      if (c.package) {
-        currentData = c.package;
-        document.getElementById('result').innerHTML = formatPackage(currentData);
-        attachListeners();
-      } else {
-        currentData = null;
-        document.getElementById('result').innerHTML = '<p>📦 No package yet. Click "Generate Full Package".</p>';
-      }
+      if (c.package) { currentData = c.package; document.getElementById('result').innerHTML = formatPackage(currentData); attachListeners(); }
+      else { currentData = null; document.getElementById('result').innerHTML = '<p>No package yet.</p>'; }
     }
 
     document.getElementById('campaignSelect').addEventListener('change', function() { if (this.value) switchCampaign(this.value); });
@@ -289,7 +159,7 @@
       const productUrl = document.getElementById('modalProductUrl').value.trim();
       const niche = document.getElementById('modalNiche').value.trim();
       if (!name || !productUrl) return alert('Name and URL required.');
-      const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche });
+      const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche, userId });
       if (data.error) return alert(data.error);
       document.getElementById('campaignModal').style.display = 'none';
       await loadCampaigns();
@@ -304,35 +174,34 @@
       if (data.error) { div.innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
       const products = data.products || [];
       if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
-      let html = '<h3>📦 Recommended Products</h3>';
+      let html = '<h3>Recommended Products</h3>';
       products.forEach(p => {
         html += `<div class="card"><h3>${p.name}</h3><p>${p.description}</p><p><strong>Commission:</strong> ${p.commission}</p><button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select</button></div>`;
       });
       div.innerHTML = html;
-      document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', async function() {
+      document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', function() {
         document.getElementById('urlInput').value = this.dataset.url;
-        div.innerHTML = `<p>✅ <strong>${this.dataset.name}</strong> loaded.</p>`;
+        div.innerHTML = `<p>✅ ${this.dataset.name} loaded.</p>`;
       }));
     });
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
-      if (!url) return alert('Enter a product URL.');
-      if (!activeCampaignId) return alert('Select a campaign.');
-      document.getElementById('result').innerHTML = '<p>⏳ Generating package...</p>';
+      if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
+      document.getElementById('result').innerHTML = '<p>Generating...</p>';
       const data = await apiCall('generate', 'POST', { url });
       if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
       currentData = data;
-      await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data });
+      await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
       document.getElementById('result').innerHTML = formatPackage(data);
       attachListeners();
     });
 
     function formatPackage(pkg) {
-      let h = `<h2>🎯 Niche & Audience</h2><p>Niche: ${pkg.niche}</p><p>Audience: ${pkg.targetAudience?.demographics}</p>`;
-      h += `<h2>📱 Account Setup</h2>`;
+      let h = `<h2>Niche & Audience</h2><p>Niche: ${pkg.niche}</p><p>Audience: ${pkg.targetAudience?.demographics}</p>`;
+      h += `<h2>Account Setup</h2>`;
       for (const [plat, cfg] of Object.entries(pkg.platforms||{})) h += `<p><strong>${plat}:</strong> @${cfg.handle} - ${cfg.bio}</p>`;
-      h += `<h2>📦 Daily Video Pack</h2>`;
+      h += `<h2>Daily Video Pack</h2>`;
       if (pkg.dailyVideoPack) pkg.dailyVideoPack.forEach((v,i) => {
         h += `<div class="card" id="daily-card-${i}"><h3><span class="tag">${v.style}</span></h3><p>${v.hook}</p><button class="gen-vid-btn btn-blue btn-sm" data-idx="${i}">🎥 Generate Video</button><div id="daily-preview-${i}"></div></div>`;
       });
@@ -352,26 +221,20 @@
       const btn = document.querySelector(`#daily-card-${idx} .gen-vid-btn`);
       btn.disabled = true; btn.textContent = 'Submitting...';
       prev.innerHTML = '<p>Starting render...</p>';
-
       try {
         const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily', useTrending: document.getElementById('useTrending').checked });
         if (data.error) throw new Error(data.error);
         const jobId = data.jobId;
-
         let progress = 0;
         const interval = setInterval(() => {
           progress = Math.min(progress + 15, 90);
           prev.innerHTML = `<div style="background:#e2e8f0; border-radius:8px; height:10px;"><div style="background:#2563eb; height:10px; border-radius:8px; width:${progress}%;"></div></div><p>Rendering... ${progress}%</p>`;
         }, 2000);
-
         const url = await poll(jobId);
         clearInterval(interval);
         prev.innerHTML = `<video controls src="${url}"></video><a href="${url}" download>⬇️ Download</a>`;
         btn.textContent = '✅ Ready'; btn.disabled = false;
-      } catch(e) {
-        prev.innerHTML = `<p style="color:red;">${e.message}</p>`;
-        btn.textContent = 'Retry'; btn.disabled = false;
-      }
+      } catch(e) { prev.innerHTML = `<p style="color:red;">${e.message}</p>`; btn.textContent = 'Retry'; btn.disabled = false; }
     }
 
     async function poll(jobId, attempt=0) {
@@ -394,7 +257,7 @@
           const concept = currentData.dailyVideoPack[i];
           const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily' });
           const url = await poll(data.jobId);
-          log(`✅ Video ${i+1} ready: ${url}`);
+          log(`✅ Video ${i+1}: ${url}`);
         } catch(e) { log(`❌ Error: ${e.message}`); }
       }
       log('🎉 All done!');
@@ -402,26 +265,23 @@
 
     document.getElementById('createLandingBtn').addEventListener('click', async () => {
       if (!activeCampaignId) return alert('Select a campaign.');
-      const data = await apiCall('create-landing-page', 'POST', { campaignId: activeCampaignId });
-      alert(data.error ? data.error : `✅ Landing page: ${data.url}`);
+      const data = await apiCall('create-landing-page', 'POST', { campaignId: activeCampaignId, userId });
+      alert(data.error ? data.error : `✅ ${data.url}`);
     });
 
     document.getElementById('loadAnalyticsBtn').addEventListener('click', async () => {
       const div = document.getElementById('analyticsTableContainer');
       div.innerHTML = '<p>Loading...</p>';
-      const data = await apiCall('get-analytics', 'POST', { campaignId: activeCampaignId });
+      const data = await apiCall('get-analytics', 'POST', { campaignId: activeCampaignId, userId });
       if (data.error || !data.records?.length) { div.innerHTML = '<p>No posts yet.</p>'; return; }
       let h = '<table><tr><th>Style</th><th>Platform</th><th>Views</th><th>Likes</th></tr>';
-      data.records.forEach(r => {
-        const a = r.analytics || {};
-        h += `<tr><td>${r.style||''}</td><td>${r.platform}</td><td>${a.views||0}</td><td>${a.likes||0}</td></tr>`;
-      });
+      data.records.forEach(r => { const a = r.analytics||{}; h += `<tr><td>${r.style||''}</td><td>${r.platform}</td><td>${a.views||0}</td><td>${a.likes||0}</td></tr>`; });
       h += '</table>';
       div.innerHTML = h;
     });
 
     document.getElementById('rotationBtn').addEventListener('click', async () => {
-      const data = await apiCall('optimal-time');
+      const data = await apiCall('utils?action=optimal-time');
       alert(`🕐 Best posting time: ${data.time || '11:00 AM'}`);
     });
   </script>

@@ -11,7 +11,6 @@ const FALLBACK_MUSIC = "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
-
   if (action === "check") return checkVideo(req, res);
   if (action === "story") return generateStory(req, res);
   return generateVideo(req, res);
@@ -21,7 +20,16 @@ async function generateVideo(req, res) {
   const { videoConcept, platform, useTrending } = req.body;
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
   try {
-    if (useTrending) { /* skip for brevity */ }
+    if (useTrending) {
+      try {
+        const tr = await fetch((process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "") + "/api/utils?action=trending", {
+          method: "POST", body: JSON.stringify({ platform }), headers: { "Content-Type": "application/json" }
+        });
+        const td = await tr.json();
+        if (td.sound) videoConcept.musicSuggestion = td.sound;
+        if (td.hashtag) videoConcept.hashtags = (videoConcept.hashtags || "") + " " + td.hashtag;
+      } catch {}
+    }
     const audioUrl = await tts(videoConcept.script);
     const clips = await getClips(videoConcept);
     const bgMusic = await getMusic(videoConcept);
@@ -90,7 +98,7 @@ async function getClips(concept) {
   }
   const { Configuration, OpenAIApi } = require("openai");
   const openai = new OpenAIApi(new Configuration({ apiKey: OPENAI_API_KEY }));
-  const img = await openai.createImage({ prompt: "Vertical phone wallpaper: " + concept.hook, n: 1, size: "1024x1792" });
+  const img = await openai.createImage({ prompt: "Vertical phone wallpaper: " + concept.hook + ", no text", n: 1, size: "1024x1792" });
   return [{ src: img.data.data[0].url, duration: 8, isImage: true }];
 }
 
