@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
-const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").trim();
+const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
 exports.default = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });

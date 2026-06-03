@@ -1,10 +1,10 @@
 const fetch = require("node-fetch");
 
-const CREATOMATE_API_KEY = process.env.CREATOMATE_API_KEY;
-const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const CREATOMATE_API_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const PEXELS_API_KEY = (process.env.PEXELS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const ELEVENLABS_API_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const PIXABAY_API_KEY = (process.env.PIXABAY_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const OPENAI_API_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const VOICE_ID = "pNInz6obpgDQGcFmaJgB";
 const ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/" + VOICE_ID;
 const FALLBACK_MUSIC = "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3";
