@@ -219,14 +219,24 @@
             <p><strong>💰 Commission:</strong> ${p.commission}</p>
             <p style="font-size:0.8rem;">🔗 <strong>Affiliate:</strong> <a href="${p.affiliateUrl}" target="_blank">${p.affiliateUrl || 'N/A'}</a></p>
             <p style="font-size:0.8rem;">🌐 <strong>Product:</strong> <a href="${p.productUrl || p.affiliateUrl}" target="_blank">${p.productUrl || 'N/A'}</a></p>
-            <button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-name="${p.name}">✅ Select & Generate</button>
+            <button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-product-url="${p.productUrl || p.affiliateUrl}" data-name="${p.name}">✅ Select & Generate</button>
           </div>`;
         });
         div.innerHTML = html;
-        document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', function() {
-          document.getElementById('urlInput').value = this.dataset.url;
-          div.innerHTML = `<p>✅ ${this.dataset.name} loaded.</p>`;
-        }));
+        document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', async function() {
+  const name = this.dataset.name;
+  const affiliateUrl = this.dataset.url;
+  const productUrl = this.dataset.productUrl || affiliateUrl;
+
+  // Auto-create campaign
+  const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche: '', userId });
+  if (data.error) return alert(data.error);
+
+  await loadCampaigns();
+  switchCampaign(data.campaignId);
+  document.getElementById('urlInput').value = productUrl;
+  div.innerHTML = `<p>✅ <strong>${name}</strong> campaign created! Click "Generate Full Package".</p>`;
+}));
       } catch(e) { div.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
     });
 
