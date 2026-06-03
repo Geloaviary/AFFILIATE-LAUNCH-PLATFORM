@@ -354,7 +354,7 @@
       prev.innerHTML = '<p>Starting render...</p>';
 
       try {
-        const data = await apiCall('generate-video', 'POST', { videoConcept: concept, platform: 'daily', useTrending: document.getElementById('useTrending').checked });
+        const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily', useTrending: document.getElementById('useTrending').checked });
         if (data.error) throw new Error(data.error);
         const jobId = data.jobId;
 
@@ -375,7 +375,7 @@
     }
 
     async function poll(jobId, attempt=0) {
-      const data = await apiCall('check-video', 'POST', { jobId });
+      const data = await apiCall('video?action=check', 'POST', { jobId });
       if (data.status === 'done') return data.videoUrl;
       if (data.status === 'failed') throw new Error('Render failed');
       if (attempt > 90) throw new Error('Timeout');
@@ -392,7 +392,7 @@
         log(`⏳ Video ${i+1}...`);
         try {
           const concept = currentData.dailyVideoPack[i];
-          const data = await apiCall('generate-video', 'POST', { videoConcept: concept, platform: 'daily' });
+          const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily' });
           const url = await poll(data.jobId);
           log(`✅ Video ${i+1} ready: ${url}`);
         } catch(e) { log(`❌ Error: ${e.message}`); }
