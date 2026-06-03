@@ -38,7 +38,7 @@ async function generateLaunchPackage(productInfo) {
   const prompt = `You are an affiliate marketing strategist. Create a launch package for this product:\nTitle: ${productInfo.title}\nDescription: ${productInfo.description}\nPrice: ${productInfo.price}\n\nReturn JSON with: niche, targetAudience {demographics, painPoints, contentStyle}, platforms {facebook, tiktok, instagram, youtube} each with handle, profileName, bio, category, imagePrompts {profilePicture, banner}, dailyVideoPack array of 4 objects with style, hook, script, visuals, captions, hashtags, musicSuggestion, duration.`;
 
   const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
   });

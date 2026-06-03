@@ -30,7 +30,7 @@ exports.default = async function handler(req, res) {
     try {
       const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
       const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: [{ role: "user", content: `Generate 5 new video concepts in "${winningStyle}" style. Return JSON array with: style, hook, script, visuals, captions, hashtags, musicSuggestion, duration.` }],
         temperature: 0.9,
       });
