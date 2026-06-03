@@ -96,9 +96,22 @@
       <span id="activeCampaignName"></span>
     </div>
     <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-      <input type="text" id="nicheInput" placeholder="Niche (optional)" style="flex:1;" />
-      <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
-    </div>
+  <select id="nicheSelect" style="flex:1;">
+    <option value="">🔽 Choose a niche or type below...</option>
+    <option value="web hosting">🌐 Web Hosting — $65-$200/sale (One-time)</option>
+    <option value="saas software">💻 SaaS / Software — 20-30% (🔄 Recurring)</option>
+    <option value="vpn services">🔒 VPN Services — 30-50% (🔄 Recurring)</option>
+    <option value="email marketing">📧 Email Marketing Tools — 20-30% (🔄 Recurring)</option>
+    <option value="website builders">🏗️ Website Builders — $50-$150/sale (One-time)</option>
+    <option value="cybersecurity">🛡️ Cybersecurity — 25-40% (🔄 Recurring)</option>
+    <option value="ai tools">🤖 AI Tools — 20-30% (🔄 Recurring)</option>
+    <option value="online courses">🎓 Online Courses — 15-50% (One-time)</option>
+    <option value="fitness supplements">💪 Fitness/Supplements — 10-30% (One-time)</option>
+    <option value="finance crypto">💰 Finance/Crypto — $50-$300/sale (Varies)</option>
+  </select>
+  <input type="text" id="nicheInput" placeholder="Or type custom niche..." style="flex:1;" />
+  <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
+</div>
     <div id="productResults"></div>
     <input type="text" id="urlInput" placeholder="Product page URL (for AI research)" />
     <input type="text" id="affiliateUrlInput" placeholder="Your affiliate link (for videos & bios)" style="margin-top:0.5rem;" />
@@ -210,7 +223,7 @@
     });
 
     document.getElementById('findProductsBtn').addEventListener('click', async () => {
-      const niche = document.getElementById('nicheInput').value.trim();
+      const niche = document.getElementById('nicheSelect').value || document.getElementById('nicheInput').value.trim();
       const div = document.getElementById('productResults');
       div.innerHTML = '<p><span class="spinner"></span>🔍 <span class="running-text">Scanning market...</span></p>';
       try {
