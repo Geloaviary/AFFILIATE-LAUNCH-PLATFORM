@@ -149,11 +149,11 @@
     loadCampaigns();
 
     async function apiCall(endpoint, method = 'GET', body = null) {
-      const opts = { method, headers: { 'Content-Type': 'application/json' } };
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch('/api/' + endpoint, opts);
-      return res.json();
-    }
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch('/api/' + endpoint, opts);
+  return res.json();
+}
 
     async function checkUsage() {
       try {
