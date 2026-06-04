@@ -1,11 +1,10 @@
 const fetch = require("node-fetch");
 
-const SHOTSTACK_KEY = (process.env.SHOTSTACK_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const CREATOMATE_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const PEXELS_KEY = (process.env.PEXELS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const ELEVENLABS_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
 const VOICE_ID = "pNInz6obpgDQGcFmaJgB";
-const VIDEO_LENGTH = 25;
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
@@ -18,97 +17,111 @@ async function generateVideo(req, res) {
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
 
   try {
-    // Generate TTS
-    let audioSrc = null;
+    // Get Pexels footage
+    let videoSource = null;
     try {
-      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-        method: "POST",
-        headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ text: videoConcept.script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
-      });
-      if (r.ok) {
-        const buf = await r.buffer();
-        audioSrc = "data:audio/mpeg;base64," + buf.toString("base64");
-      }
-    } catch (e) {}
-
-    // Get footage or use gradient
-    let videoSrc = null;
-    try {
-      const q = encodeURIComponent((videoConcept.hook || "").split(" ").slice(0, 5).join(" "));
-      const r = await fetch(`https://api.pexels.com/videos/search?query=${q}&per_page=1&orientation=portrait`, {
+      const q = encodeURIComponent((videoConcept.hook || "technology").split(" ").slice(0, 3).join(" "));
+      const r = await fetch(`https://api.pexels.com/videos/search?query=${q}&per_page=3&orientation=portrait`, {
         headers: { "Authorization": PEXELS_KEY }
       });
       const d = await r.json();
-        if (d.videos?.length) {
-      const vf = d.videos[0].video_files.find(f => f.width === 1080 && f.height === 1920) || d.videos[0].video_files[0];
-      if (vf && vf.link && (vf.link.startsWith("http://") || vf.link.startsWith("https://"))) {
-       videoSrc = vf.link;
-       }
-     }
+      if (d.videos?.length) {
+        for (const v of d.videos) {
+          const vf = v.video_files.find(f => f.width <= 1080 && f.height >= 1920) 
+            || v.video_files.find(f => f.quality === "hd") 
+            || v.video_files[0];
+          if (vf?.link?.startsWith("http")) {
+            videoSource = vf.link;
+            break;
+          }
+        }
+      }
     } catch (e) {}
 
-    // Build clips - SIMPLE, FLAT array
-    const clips = [];
+    // Build elements
+    const elements = [];
 
-    // Background clip
-    if (videoSrc) {
-      clips.push({
-        asset: { type: "video", src: videoSrc, volume: 0 },
-        start: 0,
-        length: VIDEO_LENGTH,
+    // Background video or gradient
+    if (videoSource) {
+      elements.push({
+        type: "video",
+        source: videoSource,
+        fit: "cover",
+        x: "0%", y: "0%", width: "100%", height: "100%",
+        duration: 25,
       });
     } else {
-      clips.push({
-        asset: { type: "html", html: `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1e3a5f,#7c3aed);display:flex;align-items:center;justify-content:center"><p style="color:white;font-size:40px;font-weight:bold;text-align:center;padding:30px">${videoConcept.hook}</p></div>` },
-        start: 0,
-        length: VIDEO_LENGTH,
+      elements.push({
+        type: "shape",
+        shape: "rectangle",
+        x: "0%", y: "0%", width: "100%", height: "100%",
+        fillColor: "#1e3a5f",
+        duration: 25,
       });
     }
 
-    // Text overlay
-    clips.push({
-      asset: { type: "title", text: videoConcept.hook, style: "minimal", size: "large", background: "#00000099", position: "center" },
-      start: 0,
-      length: VIDEO_LENGTH,
+    // Hook text
+    elements.push({
+      type: "text",
+      text: videoConcept.hook,
+      x: "50%", y: "45%", width: "90%",
+      duration: 25,
+      fontSize: 36,
+      fontWeight: 800,
+      fillColor: "#ffffff",
+      backgroundColor: "rgba(0,0,0,0.6)",
+      alignment: "center",
     });
 
-        // AI Narration (Shotstack's built-in TTS)
-clips.push({
-  asset: { 
-    type: "text-to-speech",
-    text: videoConcept.script,
-    voice: "Amy"
-  },
-  start: 0,
-  length: VIDEO_LENGTH,
-});
+    // CTA
+    elements.push({
+      type: "text",
+      text: "Link in bio! 🔗",
+      x: "50%", y: "85%", width: "70%",
+      duration: 25,
+      fontSize: 24,
+      fontWeight: 700,
+      fillColor: "#ffffff",
+      backgroundColor: "#2563eb",
+      alignment: "center",
+    });
 
-    console.log("Video src:", videoSrc);
-    console.log("Narration:", "Shotstack built-in TTS");
+    // TTS if available
+    if (ELEVENLABS_KEY) {
+      try {
+        const ttsR = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+          method: "POST",
+          headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ text: videoConcept.script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
+        });
+        if (ttsR.ok) {
+          const buf = await ttsR.buffer();
+          const audioUrl = "data:audio/mpeg;base64," + buf.toString("base64");
+          elements.push({
+            type: "audio",
+            source: audioUrl,
+            duration: 25,
+            volume: 1,
+          });
+        }
+      } catch (e) {}
+    }
 
-const json = {
-  timeline: {
-    soundtrack: { src: "https://shotstack-assets.s3.ap-southeast-2.amazonaws.com/music/disco.mp3", effect: "fadeInFadeOut", volume: 0.3 },
-    background: "#000000",
-    tracks: [{ clips }],
-  },
-  output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
-};
-
-    const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
+    // Submit to Creatomate
+    const body = { source: { output_format: "mp4", width: 1080, height: 1920, elements } };
+    const cr = await fetch("https://api.creatomate.com/v1/renders", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": SHOTSTACK_KEY },
-      body: JSON.stringify(json),
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+      body: JSON.stringify(body),
     });
-    const sd = await sr.json();
-      console.log("SHOTSTACK FULL RESPONSE:", JSON.stringify(sd));
-    
-       if (!sd.success) {
-     return res.status(500).json({ error: "Shotstack failed", details: sd });
-   }
+    const d = await cr.json();
+    const result = Array.isArray(d) ? d[0] : d;
 
-    return res.status(200).json({ jobId: sd.response.id });
+    if (!result?.id) {
+      return res.status(500).json({ error: "Creatomate failed", raw: d });
+    }
+
+    return res.status(200).json({ jobId: result.id });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -116,12 +129,14 @@ const json = {
 
 async function checkVideo(req, res) {
   const { jobId } = req.body;
-  const r = await fetch(`https://api.shotstack.io/edit/stage/render/${jobId}`, {
-    headers: { "x-api-key": SHOTSTACK_KEY },
+  const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
+    headers: { "Authorization": "Bearer " + CREATOMATE_KEY },
   });
-  const d = await r.json();
+  let d = await r.json();
+  if (Array.isArray(d)) d = d[0];
+  const done = d?.status === "completed" || d?.status === "succeeded";
   return res.status(200).json({
-    status: (d.response?.url || d.response?.status === "done") ? "done" : "processing",
-    videoUrl: d.response?.url || null,
+    status: done ? "done" : "processing",
+    videoUrl: done ? (d.url || null) : null,
   });
 }
