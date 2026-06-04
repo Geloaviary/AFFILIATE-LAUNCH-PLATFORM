@@ -95,10 +95,11 @@ async function generateVideo(req, res) {
       body: JSON.stringify(json),
     });
     const sd = await sr.json();
+      console.log("SHOTSTACK FULL RESPONSE:", JSON.stringify(sd));
     
-    if (!sd.success) {
-      return res.status(500).json({ error: "Shotstack failed", details: sd });
-    }
+       if (!sd.success) {
+     return res.status(500).json({ error: "Shotstack failed", details: sd });
+   }
 
     return res.status(200).json({ jobId: sd.response.id });
   } catch (e) {
