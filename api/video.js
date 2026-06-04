@@ -1,8 +1,6 @@
 const fetch = require("node-fetch");
 
 const CREATOMATE_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
-const ELEVENLABS_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
-const VOICE_ID = "pNInz6obpgDQGcFmaJgB";
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
@@ -15,7 +13,6 @@ async function generateVideo(req, res) {
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
 
   const elements = [
-    // Background
     {
       type: "shape",
       shape: "rectangle",
@@ -23,7 +20,6 @@ async function generateVideo(req, res) {
       fillColor: "#1e3a5f",
       duration: 25,
     },
-    // Hook text
     {
       type: "text",
       text: videoConcept.hook,
@@ -35,7 +31,6 @@ async function generateVideo(req, res) {
       backgroundColor: "rgba(0,0,0,0.5)",
       alignment: "center",
     },
-    // CTA
     {
       type: "text",
       text: "Link in bio!",
@@ -49,29 +44,7 @@ async function generateVideo(req, res) {
     },
   ];
 
-  // Add TTS audio if available
-  if (ELEVENLABS_KEY) {
-    try {
-      const ttsR = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-        method: "POST",
-        headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ text: videoConcept.script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
-      });
-      if (ttsR.ok) {
-        const buf = await ttsR.buffer();
-        elements.push({
-          type: "audio",
-          source: "data:audio/mpeg;base64," + buf.toString("base64"),
-          duration: 25,
-          volume: 1,
-        });
-      }
-    } catch (e) { console.log("TTS skipped"); }
-  }
-
-  const body = { 
-    source: { output_format: "mp4", width: 1080, height: 1920, elements },
-  };
+  const body = { source: { output_format: "mp4", width: 1080, height: 1920, elements } };
 
   try {
     const cr = await fetch("https://api.creatomate.com/v1/renders", {
