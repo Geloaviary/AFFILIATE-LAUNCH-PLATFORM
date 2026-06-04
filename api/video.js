@@ -48,7 +48,7 @@ async function generateVideo(req, res) {
       }
     } catch (e) { console.log("No Pexels"); }
 
-    const totalDuration = Math.max(videoConcept.script.split(/\s+/).length * 0.4, 8);
+    const totalDuration = 25; // Fixed 25 seconds - consistent length
 
     // Build Shotstack JSON
     const videoClips = [];
