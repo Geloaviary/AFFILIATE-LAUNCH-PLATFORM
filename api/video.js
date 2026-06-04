@@ -81,11 +81,10 @@ async function generateVideo(req, res) {
     console.log("Music src:", "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3");
 
      const json = {
-       timeline: {
-        soundtrack: { src: "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3", effect: "fadeInFadeOut", volume: audioSrc ? 0.2 : 0.6 },
-        background: "#000000",
-        tracks: [{ clips }],
-      },
+         timeline: {
+         background: "#000000",
+         tracks: [{ clips }],
+        },
       output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
     };
 
