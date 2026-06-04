@@ -72,7 +72,10 @@ async function generateVideo(req, res) {
     const d = await cr.json();
     if (!d.id) throw new Error(d.message || "Render failed");
     return res.status(200).json({ jobId: d.id, lang: lang || "en" });
-  } catch (e) { return res.status(500).json({ error: e.message }); }
+  } catch (e) {
+  console.error("VIDEO ERROR:", e.message, e.stack);
+  return res.status(500).json({ error: e.message, stack: e.stack });
+}
 }
 
 // ============ MULTI-LANGUAGE GENERATOR ============
