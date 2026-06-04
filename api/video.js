@@ -108,7 +108,7 @@ async function generateVideo(req, res) {
     if (clips.length > 0) {
       clips.forEach((src, i) => {
         videoClips.push({
-          asset: { type: "video", src, volume: 0, fit: "crop" },
+          asset: { type: "video", src, volume: 0, fit: "cover" },
           start: i * clipDuration,
           length: clipDuration,
           transition: i > 0 ? { in: "crossfade" } : undefined,
