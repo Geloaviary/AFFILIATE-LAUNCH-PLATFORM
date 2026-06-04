@@ -74,16 +74,16 @@ async function generateVideo(req, res) {
     });
 
         // AI Narration (Shotstack's built-in TTS)
-    clips.push({
-      asset: { 
-        type: "narration", 
-        text: videoConcept.script,
-        voice: "joanna",
-        language: "en-US"
-      },
-      start: 0,
-      length: VIDEO_LENGTH,
-    });
+clips.push({
+  asset: { 
+    type: "text-to-speech",
+    text: videoConcept.script,
+    voice: "joanna",
+    language: "en-US"
+  },
+  start: 0,
+  length: VIDEO_LENGTH,
+});
 
     console.log("Video src:", videoSrc);
     console.log("Narration:", "Shotstack built-in TTS");
