@@ -40,10 +40,12 @@ async function generateVideo(req, res) {
         headers: { "Authorization": PEXELS_KEY }
       });
       const d = await r.json();
-      if (d.videos?.length) {
-        const vf = d.videos[0].video_files.find(f => f.width === 1080 && f.height === 1920) || d.videos[0].video_files[0];
-        if (vf) videoSrc = vf.link;
-      }
+        if (d.videos?.length) {
+      const vf = d.videos[0].video_files.find(f => f.width === 1080 && f.height === 1920) || d.videos[0].video_files[0];
+      if (vf && vf.link && (vf.link.startsWith("http://") || vf.link.startsWith("https://"))) {
+       videoSrc = vf.link;
+       }
+     }
     } catch (e) {}
 
     // Build clips - SIMPLE, FLAT array
