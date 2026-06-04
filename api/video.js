@@ -201,7 +201,7 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
     elements.push({
       type: c.isImage ? "image" : "video",
       source: c.src, fit: "cover",
-      x: 0, y: 0, width: 100, height: 100,
+      x: "0%", y: "0%", width: "100%", height: "100%",
       duration: clipDuration, time: t,
     });
     t += clipDuration;
@@ -227,6 +227,6 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
 
   return {
     source: { output_format: "mp4", width: 1080, height: 1920, elements },
-    options: { audio_track: { source: audioUrl, volume: 1 }, background_music: { source: bgMusic, volume: 0.25 } },
+    options: { audio_track: audioUrl ? { source: audioUrl, volume: 1 } : null, background_music: { source: bgMusic, volume: 0.4 } },
   };
 }
