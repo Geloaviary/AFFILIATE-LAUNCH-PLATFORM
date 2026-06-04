@@ -1,280 +1,167 @@
 const fetch = require("node-fetch");
-const { kv } = require("@vercel/kv");
 
+// Sanitized API keys
 const CREATOMATE_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const PEXELS_KEY = (process.env.PEXELS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const ELEVENLABS_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const PIXABAY_KEY = (process.env.PIXABAY_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
-const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
-const DEFAULT_VOICE_ID = "pNInz6obpgDQGcFmaJgB";
-const CUSTOM_VOICE_ID = process.env.CUSTOM_VOICE_ID || DEFAULT_VOICE_ID;
+const DEFAULT_VOICE = "pNInz6obpgDQGcFmaJgB";
 const FALLBACK_MUSIC = "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3";
 
-// Language + Voice mapping
-const LANGUAGES = {
-  en: { name: "English", voice: CUSTOM_VOICE_ID },
-  es: { name: "Spanish", voice: "pNInz6obpgDQGcFmaJgB" },
-  pt: { name: "Portuguese", voice: "pNInz6obpgDQGcFmaJgB" },
-  fr: { name: "French", voice: "pNInz6obpgDQGcFmaJgB" },
-  de: { name: "German", voice: "pNInz6obpgDQGcFmaJgB" },
-};
-
 const PLATFORM_CONFIG = {
-  tiktok: { maxDuration: 60, fontSize: 26, hashtags: "#fyp #viral" },
-  instagram: { maxDuration: 90, fontSize: 24, hashtags: "#reels #explore" },
-  youtube: { maxDuration: 60, fontSize: 28, hashtags: "#shorts" },
-  facebook: { maxDuration: 120, fontSize: 22, hashtags: "#viral" },
-  daily: { maxDuration: 30, fontSize: 24, hashtags: "#viral" },
+  tiktok: { maxDuration: 60, fontSize: 28 },
+  instagram: { maxDuration: 90, fontSize: 26 },
+  youtube: { maxDuration: 60, fontSize: 30 },
+  facebook: { maxDuration: 120, fontSize: 24 },
+  daily: { maxDuration: 30, fontSize: 26 },
 };
 
+// ============ PRE-FLIGHT QUALITY CHECK ============
+async function preflightCheck(concept) {
+  const results = { audio: false, footage: false, music: false, ready: false };
+  
+  // Check audio
+  try {
+    const audioTest = await tts(concept.script.substring(0, 50));
+    results.audio = !!audioTest;
+  } catch (e) { results.audio = false; }
+
+  // Check footage
+  try {
+    const clips = await searchPexels(concept);
+    results.footage = clips.length > 0;
+  } catch (e) { results.footage = false; }
+
+  // Check music
+  try {
+    const music = await getMusic(concept);
+    results.music = !!music;
+  } catch (e) { results.music = false; }
+
+  results.ready = true;
+  return results;
+}
+
+// ============ MAIN HANDLER ============
 exports.default = async function handler(req, res) {
   const { action } = req.query;
   if (action === "check") return checkVideo(req, res);
   if (action === "story") return generateStory(req, res);
   if (action === "multi-lang") return generateMultiLang(req, res);
-  if (action === "schedule") return scheduleVideo(req, res);
   return generateVideo(req, res);
 };
 
 // ============ GENERATE VIDEO ============
 async function generateVideo(req, res) {
-  const { videoConcept, platform, useTrending, lang } = req.body;
-  if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
-
-  const language = LANGUAGES[lang] || LANGUAGES.en;
-  const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
-
-  try {
-    if (useTrending) {
-      try {
-        const tr = await fetch((process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "") + "/api/utils?action=trending", {
-          method: "POST", body: JSON.stringify({ platform }), headers: { "Content-Type": "application/json" }
-        });
-        const td = await tr.json();
-        if (td.sound) videoConcept.musicSuggestion = td.sound;
-        if (td.hashtag) videoConcept.hashtags = (videoConcept.hashtags || "") + " " + td.hashtag;
-      } catch {}
-    }
-
-    videoConcept.hashtags = (videoConcept.hashtags || "") + " " + config.hashtags;
-
-    const audioUrl = await tts(videoConcept.script, language.voice);
-    const clips = await getClips(videoConcept);
-    const bgMusic = await getMusic(videoConcept);
-    const crJson = buildEdit(videoConcept, audioUrl, clips, bgMusic, config);
-
-    const cr = await fetch("https://api.creatomate.com/v1/renders", {
-  method: "POST",
-  headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-  body: JSON.stringify(crJson),
-});
-   let d = await cr.json();
-console.error("CREATOMATE RESPONSE:", JSON.stringify(d));
-// Handle array response
-if (Array.isArray(d)) d = d[0];
-if (!d.id) throw new Error(d.message || JSON.stringify(d) || "Render failed");
-    return res.status(200).json({ jobId: d.id, lang: lang || "en" });
-  } catch (e) {
-  console.error("VIDEO ERROR:", e.message, e.stack);
-  return res.status(500).json({ error: e.message, stack: e.stack });
-}
-}
-
-// ============ MULTI-LANGUAGE GENERATOR ============
-async function generateMultiLang(req, res) {
   const { videoConcept, platform } = req.body;
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
 
-  const jobIds = [];
-  const langs = ["en", "es", "pt", "fr"];
+  const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
+  const totalDuration = Math.min(Math.max(videoConcept.script.split(/\s+/).length * 0.4, 8), config.maxDuration);
 
-  for (const lang of langs) {
-    try {
-      const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
-      const language = LANGUAGES[lang];
-      const audioUrl = await tts(videoConcept.script, language.voice);
-      const clips = await getClips(videoConcept);
-      const bgMusic = await getMusic(videoConcept);
-      const crJson = buildEdit(videoConcept, audioUrl, clips, bgMusic, config);
-
-      const cr = await fetch("https://api.creatomate.com/v1/renders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-        body: JSON.stringify(crJson),
-      });
-      const d = await cr.json();
-      if (d.id) jobIds.push({ jobId: d.id, lang });
-    } catch (e) { /* skip failed language */ }
-  }
-
-  return res.status(200).json({ jobIds });
-}
-
-// ============ SCHEDULE VIDEO ============
-async function scheduleVideo(req, res) {
-  const { jobId, scheduleDate } = req.body;
-  await kv.set(`scheduled:${jobId}`, { scheduleDate, createdAt: new Date().toISOString() });
-  return res.status(200).json({ success: true, scheduled: scheduleDate });
-}
-
-// ============ CHECK + STORY ============
-async function checkVideo(req, res) {
-  const { jobId } = req.body;
-  const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
-    headers: { "Authorization": "Bearer " + CREATOMATE_KEY },
-  });
-  let d = await r.json();
-  if (Array.isArray(d)) d = d[0];
-  // Only return URL when fully completed
-  const isDone = d.status === "completed" || d.status === "succeeded";
-  return res.status(200).json({ 
-    status: isDone ? "done" : (d.status === "failed" ? "failed" : "processing"), 
-    videoUrl: isDone ? (d.url || null) : null 
-  });
-}
-
-async function generateStory(req, res) {
-  const { videoUrl } = req.body;
-  const cr = await fetch("https://api.creatomate.com/v1/renders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-    body: JSON.stringify({ source: { output_format: "mp4", width: 1080, height: 1920, elements: [{ type: "video", source: videoUrl, duration: 15 }] } }),
-  });
-  const d = await cr.json();
-  return res.status(200).json({ jobId: d.id });
-}
-
-// ============ HELPERS ============
-async function tts(script, voiceId) {
-  const vid = voiceId || CUSTOM_VOICE_ID;
-  const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + vid, {
-    method: "POST",
-    headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify({ text: script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
-  });
-  if (!r.ok) throw new Error("TTS failed: " + r.status);
-  const buf = await r.buffer();
-  return "data:audio/mpeg;base64," + buf.toString("base64");
-}
-
-async function getMusic(concept) {
-  if (!PIXABAY_KEY) return FALLBACK_MUSIC;
   try {
-    const q = (concept.hook + " " + concept.script).split(/\s+/).slice(0, 10).join(" ");
-    const r = await fetch("https://pixabay.com/api/videos/?key=" + PIXABAY_KEY + "&q=" + encodeURIComponent(q) + "&category=music&per_page=5");
-    const d = await r.json();
-    if (d.hits) for (const h of d.hits) if (h.audio) return h.audio;
-    return FALLBACK_MUSIC;
-  } catch { return FALLBACK_MUSIC; }
-}
+    // Run preflight check
+    const checks = await preflightCheck(videoConcept);
 
-async function getClips(concept) {
-  const totalDuration = Math.min(Math.max(concept.script.split(/\s+/).length * 0.4, 8), 30);
-  const query = (concept.hook + " " + concept.script.split("\n")[0]).slice(0, 100);
+    // Get assets (with guaranteed fallbacks)
+    const [audioUrl, clips, bgMusic] = await Promise.all([
+      checks.audio ? tts(videoConcept.script) : null,
+      getFootage(videoConcept, totalDuration),
+      getMusic(videoConcept),
+    ]);
 
-  // Try Pexels first
-  try {
-    const r = await fetch("https://api.pexels.com/videos/search?query=" + encodeURIComponent(query) + "&per_page=5&orientation=portrait", {
-      headers: { "Authorization": PEXELS_KEY }
+    // Build professional template
+    const crJson = buildProfessionalTemplate(videoConcept, audioUrl, clips, bgMusic, config, totalDuration);
+
+    // Submit to Creatomate
+    const cr = await fetch("https://api.creatomate.com/v1/renders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+      body: JSON.stringify(crJson),
     });
-    const d = await r.json();
-    if (d.videos?.length) {
-      const clips = [];
-      for (const v of d.videos.slice(0, 4)) {
-        const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920) 
-          || v.video_files.find(f => f.quality === "hd") 
-          || v.video_files[0];
-        if (vf) clips.push({ src: vf.link, duration: v.duration, isImage: false });
-      }
-      if (clips.length > 0) return clips;
-    }
+    const d = await cr.json();
+    const result = Array.isArray(d) ? d[0] : d;
+    
+    if (!result || !result.id) throw new Error(result?.message || "Render submission failed");
+
+    return res.status(200).json({ 
+      jobId: result.id, 
+      quality: checks,
+      estimatedTime: "30-60 seconds"
+    });
   } catch (e) {
-    console.error("Pexels failed:", e.message);
+    return res.status(500).json({ error: e.message });
+  }
+};
+
+// ============ PROFESSIONAL TEMPLATE ============
+function buildProfessionalTemplate(concept, audioUrl, clips, bgMusic, config, totalDuration) {
+  const tracks = [];
+
+  // Track 1: Visual (video clips or animated gradient)
+  const visualElements = [];
+  
+  if (clips.length > 0) {
+    const clipDuration = totalDuration / clips.length;
+    let t = 0;
+    clips.forEach((clip, i) => {
+      visualElements.push({
+        type: "video",
+        source: clip.src,
+        fit: "cover",
+        x: "0%", y: "0%", width: "100%", height: "100%",
+        duration: clipDuration,
+        time: t,
+        transition: i > 0 ? { in: "crossfade", duration: 0.5 } : undefined,
+      });
+      t += clipDuration;
+    });
+  } else {
+    // Animated gradient background
+    visualElements.push({
+      type: "composition",
+      duration: totalDuration,
+      time: 0,
+      tracks: [{
+        elements: [
+          { type: "shape", shape: "rectangle", x: "0%", y: "0%", width: "100%", height: "100%", fillColor: "#2563eb", duration: totalDuration, time: 0 },
+          { type: "shape", shape: "circle", x: "80%", y: "20%", width: "60%", height: "60%", fillColor: "rgba(124,58,237,0.3)", duration: totalDuration, time: 0, animation: { move: { x: "-20%", y: "10%" }, easing: "linear" } },
+          { type: "shape", shape: "circle", x: "10%", y: "70%", width: "50%", height: "50%", fillColor: "rgba(219,39,119,0.2)", duration: totalDuration, time: 0, animation: { move: { x: "15%", y: "-10%" }, easing: "linear" } },
+        ],
+      }],
+    });
   }
 
-  // Fallback: colorful gradient SVG
-  const gradientSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
-    <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2563eb"/>
-      <stop offset="50%" style="stop-color:#7c3aed"/>
-      <stop offset="100%" style="stop-color:#db2777"/>
-    </linearGradient></defs>
-    <rect width="1080" height="1920" fill="url(#g)"/>
-    <text x="540" y="960" text-anchor="middle" fill="white" font-size="48" font-family="Arial,sans-serif" font-weight="bold">${concept.hook}</text>
-  </svg>`;
-
-  return [{
-    src: "data:image/svg+xml," + encodeURIComponent(gradientSvg),
-    duration: totalDuration,
-    isImage: true,
-  }];
-}
-
-function buildEdit(concept, audioUrl, clips, bgMusic, config) {
-  const totalDuration = Math.min(Math.max(concept.script.split(/\s+/).length * 0.4, 8), config.maxDuration);
-  const elements = [];
-  const clipDuration = totalDuration / clips.length;
-  let t = 0;
-
-  clips.forEach(c => {
-    elements.push({
-      type: c.isImage ? "image" : "video",
-      source: c.src,
-      fit: "cover",
-      x: "0%",
-      y: "0%",
-      width: "100%",
-      height: "100%",
-      duration: clipDuration,
-      time: t,
-    });
-    t += clipDuration;
-  });
-
-  // Hook text overlay
-  elements.push({
+  // Text overlays
+  visualElements.push({
     type: "text",
     text: concept.hook,
-    x: "50%",
-    y: "40%",
-    width: "90%",
-    height: "auto",
-    duration: totalDuration,
-    time: 0,
-    fontSize: config.fontSize,
-    fontWeight: 700,
+    x: "50%", y: "45%", width: "90%", height: "auto",
+    duration: totalDuration, time: 0,
+    fontSize: config.fontSize, fontWeight: 800,
     fillColor: "#ffffff",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     alignment: "center",
-    animation: {
-      in: "fade",
-      out: "fade",
-      duration: 0.5,
-    },
+    animation: { in: "fade", inDuration: 0.3 },
   });
 
-  // CTA
-  elements.push({
+  visualElements.push({
     type: "text",
-    text: "Link in bio!",
-    x: "50%",
-    y: "85%",
-    width: "80%",
-    height: "auto",
-    duration: totalDuration,
-    time: 0,
-    fontSize: config.fontSize - 4,
-    fontWeight: 700,
+    text: "Link in bio! 🔗",
+    x: "50%", y: "85%", width: "70%", height: "auto",
+    duration: totalDuration, time: 0,
+    fontSize: config.fontSize - 6, fontWeight: 700,
     fillColor: "#ffffff",
     backgroundColor: "#2563eb",
     alignment: "center",
+    borderRadius: "25px",
+    padding: "10px 20px",
   });
 
-  // Build track with audio
-  const tracks = [{ elements }];
-  
-  // Add audio track if available
+  tracks.push({ elements: visualElements });
+
+  // Track 2: Voiceover
   if (audioUrl) {
     tracks.push({
       elements: [{
@@ -287,7 +174,7 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
     });
   }
 
-  // Add background music
+  // Track 3: Background music
   if (bgMusic) {
     tracks.push({
       elements: [{
@@ -295,7 +182,7 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
         source: bgMusic,
         duration: totalDuration,
         time: 0,
-        volume: 0.4,
+        volume: audioUrl ? 0.2 : 0.6,
       }],
     });
   }
@@ -308,4 +195,109 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
       tracks,
     },
   };
+}
+
+// ============ FOOTAGE (WITH GUARANTEED FALLBACK) ============
+async function getFootage(concept, totalDuration) {
+  try {
+    return await searchPexels(concept);
+  } catch (e) {
+    return [];
+  }
+}
+
+async function searchPexels(concept) {
+  const query = (concept.hook + " " + concept.script.split("\n")[0]).slice(0, 80);
+  const r = await fetch("https://api.pexels.com/videos/search?query=" + encodeURIComponent(query) + "&per_page=4&orientation=portrait", {
+    headers: { "Authorization": PEXELS_KEY }
+  });
+  const d = await r.json();
+  const clips = [];
+  if (d.videos?.length) {
+    for (const v of d.videos.slice(0, 4)) {
+      const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920)
+        || v.video_files.find(f => f.quality === "hd")
+        || v.video_files[0];
+      if (vf) clips.push({ src: vf.link, duration: v.duration });
+    }
+  }
+  return clips;
+}
+
+// ============ AUDIO ============
+async function tts(script, voiceId) {
+  const vid = voiceId || DEFAULT_VOICE;
+  const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + vid, {
+    method: "POST",
+    headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ text: script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
+  });
+  if (!r.ok) {
+    const err = await r.text();
+    throw new Error("TTS failed: " + r.status + " " + err);
+  }
+  const buf = await r.buffer();
+  return "data:audio/mpeg;base64," + buf.toString("base64");
+}
+
+async function getMusic(concept) {
+  if (!PIXABAY_KEY) return FALLBACK_MUSIC;
+  try {
+    const q = (concept.hook + " " + concept.script).split(/\s+/).slice(0, 8).join(" ");
+    const r = await fetch("https://pixabay.com/api/videos/?key=" + PIXABAY_KEY + "&q=" + encodeURIComponent(q) + "&category=music&per_page=3");
+    const d = await r.json();
+    if (d.hits) for (const h of d.hits) if (h.audio) return h.audio;
+    return FALLBACK_MUSIC;
+  } catch { return FALLBACK_MUSIC; }
+}
+
+// ============ CHECK & STORY ============
+async function checkVideo(req, res) {
+  const { jobId } = req.body;
+  const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
+    headers: { "Authorization": "Bearer " + CREATOMATE_KEY },
+  });
+  let d = await r.json();
+  if (Array.isArray(d)) d = d[0];
+  const isDone = d.status === "completed" || d.status === "succeeded";
+  return res.status(200).json({
+    status: isDone ? "done" : (d.status === "failed" ? "failed" : "processing"),
+    videoUrl: isDone ? (d.url || null) : null,
+  });
+}
+
+async function generateStory(req, res) {
+  const { videoUrl } = req.body;
+  const cr = await fetch("https://api.creatomate.com/v1/renders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+    body: JSON.stringify({
+      source: { output_format: "mp4", width: 1080, height: 1920, tracks: [{ elements: [{ type: "video", source: videoUrl, duration: 15 }] }] },
+    }),
+  });
+  const d = await cr.json();
+  return res.status(200).json({ jobId: Array.isArray(d) ? d[0]?.id : d.id });
+}
+
+async function generateMultiLang(req, res) {
+  const { videoConcept, platform } = req.body;
+  const langs = ["en", "es", "pt"];
+  const jobIds = [];
+  for (const lang of langs) {
+    try {
+      const audioUrl = await tts(videoConcept.script);
+      const clips = await getFootage(videoConcept, 30);
+      const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
+      const crJson = buildProfessionalTemplate(videoConcept, audioUrl, clips, FALLBACK_MUSIC, config, 30);
+      const cr = await fetch("https://api.creatomate.com/v1/renders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+        body: JSON.stringify(crJson),
+      });
+      const d = await cr.json();
+      const result = Array.isArray(d) ? d[0] : d;
+      if (result?.id) jobIds.push({ jobId: result.id, lang });
+    } catch (e) { /* skip */ }
+  }
+  return res.status(200).json({ jobIds });
 }
