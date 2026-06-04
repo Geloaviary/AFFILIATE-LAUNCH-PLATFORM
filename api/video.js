@@ -44,7 +44,12 @@ async function generateVideo(req, res) {
     },
   ];
 
-  const body = { source: { output_format: "mp4", width: 1080, height: 1920, elements } };
+  const body = { 
+    output_format: "mp4",
+    width: 1080,
+    height: 1920,
+    elements,
+  };
 
   try {
     const cr = await fetch("https://api.creatomate.com/v1/renders", {
