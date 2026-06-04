@@ -126,10 +126,11 @@ async function checkVideo(req, res) {
   });
   let d = await r.json();
   if (Array.isArray(d)) d = d[0];
-  // Return URL immediately if available, regardless of status
+  // Only return URL when fully completed
+  const isDone = d.status === "completed" || d.status === "succeeded";
   return res.status(200).json({ 
-    status: d.url ? "done" : (d.status === "failed" ? "failed" : "processing"), 
-    videoUrl: d.url || null 
+    status: isDone ? "done" : (d.status === "failed" ? "failed" : "processing"), 
+    videoUrl: isDone ? (d.url || null) : null 
   });
 }
 
