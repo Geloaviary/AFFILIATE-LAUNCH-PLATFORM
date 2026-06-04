@@ -170,25 +170,45 @@ async function getMusic(concept) {
 }
 
 async function getClips(concept) {
+  const totalDuration = Math.min(Math.max(concept.script.split(/\s+/).length * 0.4, 8), 30);
   const query = (concept.hook + " " + concept.script.split("\n")[0]).slice(0, 100);
-  const r = await fetch("https://api.pexels.com/videos/search?query=" + encodeURIComponent(query) + "&per_page=5", {
-    headers: { "Authorization": PEXELS_KEY }
-  });
-  const d = await r.json();
-  if (d.videos?.length) {
-    const clips = [];
-    for (const v of d.videos) {
-      const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920) || v.video_files.find(f => f.quality === "hd") || v.video_files[0];
-      if (vf) clips.push({ src: vf.link, duration: v.duration });
+
+  // Try Pexels first
+  try {
+    const r = await fetch("https://api.pexels.com/videos/search?query=" + encodeURIComponent(query) + "&per_page=5&orientation=portrait", {
+      headers: { "Authorization": PEXELS_KEY }
+    });
+    const d = await r.json();
+    if (d.videos?.length) {
+      const clips = [];
+      for (const v of d.videos.slice(0, 4)) {
+        const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920) 
+          || v.video_files.find(f => f.quality === "hd") 
+          || v.video_files[0];
+        if (vf) clips.push({ src: vf.link, duration: v.duration, isImage: false });
+      }
+      if (clips.length > 0) return clips;
     }
-    return clips.slice(0, 4);
+  } catch (e) {
+    console.error("Pexels failed:", e.message);
   }
-  const imgR = await fetch("https://api.openai.com/v1/images/generations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + OPENAI_KEY },
-    body: JSON.stringify({ model: "dall-e-3", prompt: "Vertical phone wallpaper: " + concept.hook + ", modern, no text", n: 1, size: "1024x1792" }),
-  }).then(r => r.json());
-  return [{ src: imgR.data?.[0]?.url || "", duration: 8, isImage: true }];
+
+  // Fallback: colorful gradient SVG
+  const gradientSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
+    <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb"/>
+      <stop offset="50%" style="stop-color:#7c3aed"/>
+      <stop offset="100%" style="stop-color:#db2777"/>
+    </linearGradient></defs>
+    <rect width="1080" height="1920" fill="url(#g)"/>
+    <text x="540" y="960" text-anchor="middle" fill="white" font-size="48" font-family="Arial,sans-serif" font-weight="bold">${concept.hook}</text>
+  </svg>`;
+
+  return [{
+    src: "data:image/svg+xml," + encodeURIComponent(gradientSvg),
+    duration: totalDuration,
+    isImage: true,
+  }];
 }
 
 function buildEdit(concept, audioUrl, clips, bgMusic, config) {
