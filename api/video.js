@@ -126,8 +126,11 @@ async function checkVideo(req, res) {
   });
   let d = await r.json();
   if (Array.isArray(d)) d = d[0];
-  const isDone = d.status === "completed" || (d.status === "planned" && d.url);
-  return res.status(200).json({ status: isDone ? "done" : d.status === "failed" ? "failed" : "processing", videoUrl: d.url || null });
+  // Return URL immediately if available, regardless of status
+  return res.status(200).json({ 
+    status: d.url ? "done" : (d.status === "failed" ? "failed" : "processing"), 
+    videoUrl: d.url || null 
+  });
 }
 
 async function generateStory(req, res) {
