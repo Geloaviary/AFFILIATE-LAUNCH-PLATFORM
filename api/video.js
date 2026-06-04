@@ -73,20 +73,29 @@ async function generateVideo(req, res) {
       length: VIDEO_LENGTH,
     });
 
-    // Skip TTS for now - Shotstack doesn't accept base64 data URIs
-    // Music-only video
+        // AI Narration (Shotstack's built-in TTS)
+    clips.push({
+      asset: { 
+        type: "narration", 
+        text: videoConcept.script,
+        voice: "joanna",
+        language: "en-US"
+      },
+      start: 0,
+      length: VIDEO_LENGTH,
+    });
 
     console.log("Video src:", videoSrc);
-    console.log("Audio src:", audioSrc ? "present" : "none");
-    console.log("Music src:", "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3");
+    console.log("Narration:", "Shotstack built-in TTS");
 
-     const json = {
-         timeline: {
-         background: "#000000",
-         tracks: [{ clips }],
-        },
-      output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
-    };
+const json = {
+  timeline: {
+    soundtrack: { src: "https://shotstack-assets.s3.ap-southeast-2.amazonaws.com/music/disco.mp3", effect: "fadeInFadeOut", volume: 0.3 },
+    background: "#000000",
+    tracks: [{ clips }],
+  },
+  output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
+};
 
     const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
       method: "POST",
