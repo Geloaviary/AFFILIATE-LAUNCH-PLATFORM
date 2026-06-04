@@ -152,15 +152,20 @@ async function generateVideo(req, res) {
       output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
     };
 
-    const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": SHOTSTACK_KEY },
-      body: JSON.stringify(json),
-    });
-    const sd = await sr.json();
-    if (!sd.success) throw new Error(sd.message || "Shotstack failed");
+    console.log("Shotstack key:", SHOTSTACK_KEY ? "Present (length " + SHOTSTACK_KEY.length + ")" : "MISSING");
+console.log("Shotstack body:", JSON.stringify(json).substring(0, 200));
 
-    return res.status(200).json({ jobId: sd.response.id, quality: qc });
+const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "x-api-key": SHOTSTACK_KEY },
+  body: JSON.stringify(json),
+});
+const sd = await sr.json();
+console.log("Shotstack response:", JSON.stringify(sd).substring(0, 300));
+
+if (!sd.success) throw new Error(sd.message || "Shotstack failed");
+
+return res.status(200).json({ jobId: sd.response.id, quality: qc });
   } catch (e) {
     return res.status(500).json({ error: e.message, quality: qc });
   }
