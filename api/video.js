@@ -124,8 +124,10 @@ async function checkVideo(req, res) {
   const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
     headers: { "Authorization": "Bearer " + CREATOMATE_KEY },
   });
-  const d = await r.json();
-  return res.status(200).json({ status: d.status === "completed" ? "done" : d.status === "failed" ? "failed" : "processing", videoUrl: d.url || null });
+  let d = await r.json();
+  if (Array.isArray(d)) d = d[0];
+  const isDone = d.status === "completed" || (d.status === "planned" && d.url);
+  return res.status(200).json({ status: isDone ? "done" : d.status === "failed" ? "failed" : "processing", videoUrl: d.url || null });
 }
 
 async function generateStory(req, res) {

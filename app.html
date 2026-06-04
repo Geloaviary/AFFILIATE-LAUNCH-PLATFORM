@@ -242,15 +242,14 @@
         btn.textContent = '✅ Ready'; btn.disabled = false;
       } catch(e) { prev.innerHTML = '<p style="color:red;">' + e.message + '</p>'; btn.textContent = 'Retry'; btn.disabled = false; }
     }
-
-    async function poll(jobId, attempt=0) {
-      const data = await apiCall('video?action=check', 'POST', { jobId });
-      if (data.status === 'done') return data.videoUrl;
-      if (data.status === 'failed') throw new Error('Render failed');
-      if (attempt > 90) throw new Error('Timeout');
-      await new Promise(r => setTimeout(r, 8000));
-      return poll(jobId, attempt+1);
-    }
+  async function poll(jobId, attempt=0) {
+  const data = await apiCall('video?action=check', 'POST', { jobId });
+  if (data.status === 'done' || data.status === 'completed') return data.videoUrl;
+  if (data.status === 'failed') throw new Error('Render failed');
+  if (attempt > 90) throw new Error('Timeout');
+  await new Promise(r => setTimeout(r, 8000));
+  return poll(jobId, attempt+1);
+}
 
     async function autoGenerateAndPost() {
       if (!currentData?.dailyVideoPack) return alert('Generate package first.');
