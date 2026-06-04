@@ -1,8 +1,11 @@
 const fetch = require("node-fetch");
 
-const CREATOMATE_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+const SHOTSTACK_KEY = (process.env.SHOTSTACK_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const PEXELS_KEY = (process.env.PEXELS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const ELEVENLABS_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
+
+const VOICE_ID = "pNInz6obpgDQGcFmaJgB";
+const FALLBACK_MUSIC = "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3";
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
@@ -18,92 +21,103 @@ async function generateVideo(req, res) {
     // Generate TTS
     let audioUrl = null;
     try {
-      const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJgB", {
+      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
         method: "POST",
         headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ text: videoConcept.script, model_id: "eleven_turbo_v2" }),
+        body: JSON.stringify({ text: videoConcept.script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
       });
       if (r.ok) {
         const buf = await r.buffer();
         audioUrl = "data:audio/mpeg;base64," + buf.toString("base64");
       }
-    } catch (e) { console.log("TTS unavailable"); }
+    } catch (e) { console.log("No TTS"); }
 
-    // Get Pexels footage
-    let videoUrl = null;
+    // Get footage
+    let clips = [];
     try {
-      const q = encodeURIComponent(videoConcept.hook.split(" ").slice(0, 5).join(" "));
-      const r = await fetch("https://api.pexels.com/videos/search?query=" + q + "&per_page=3&orientation=portrait", {
+      const q = encodeURIComponent((videoConcept.hook || "").split(" ").slice(0, 5).join(" "));
+      const r = await fetch(`https://api.pexels.com/videos/search?query=${q}&per_page=3&orientation=portrait`, {
         headers: { "Authorization": PEXELS_KEY }
       });
       const d = await r.json();
-      if (d.videos?.length) {
+      if (d.videos) {
         for (const v of d.videos) {
-          const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920);
-          if (vf) { videoUrl = vf.link; break; }
+          const vf = v.video_files.find(f => f.width === 1080 && f.height === 1920) || v.video_files[0];
+          if (vf) clips.push(vf.link);
         }
       }
-    } catch (e) { console.log("Pexels unavailable"); }
+    } catch (e) { console.log("No Pexels"); }
 
-    // Build SIMPLE working template
-    const elements = [];
+    const totalDuration = Math.max(videoConcept.script.split(/\s+/).length * 0.4, 8);
 
-    if (videoUrl) {
-      elements.push({
-        type: "video",
-        source: videoUrl,
-        x: "0%", y: "0%", width: "100%", height: "100%",
-        duration: 10,
+    // Build Shotstack JSON
+    const videoClips = [];
+    const clipDuration = totalDuration / Math.max(clips.length, 1);
+
+    if (clips.length > 0) {
+      clips.forEach((src, i) => {
+        videoClips.push({
+          asset: { type: "video", src, volume: 0, fit: "crop" },
+          start: i * clipDuration,
+          length: clipDuration,
+          transition: i > 0 ? { in: "crossfade" } : undefined,
+        });
       });
     } else {
-      elements.push({
-        type: "shape",
-        shape: "rectangle",
-        x: "0%", y: "0%", width: "100%", height: "100%",
-        fillColor: "#1e3a5f",
-        duration: 10,
+      // Solid background
+      videoClips.push({
+        asset: { type: "html", html: `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1e3a5f,#7c3aed);display:flex;align-items:center;justify-content:center"><p style="color:white;font-size:48px;font-weight:bold;text-align:center;padding:20px">${videoConcept.hook}</p></div>` },
+        start: 0,
+        length: totalDuration,
       });
     }
 
-    elements.push({
-      type: "text",
-      text: videoConcept.hook,
-      x: "50%", y: "50%", width: "90%", height: "auto",
-      duration: 10,
-      fontSize: 32,
-      fontWeight: 800,
-      fillColor: "#ffffff",
-      backgroundColor: "rgba(0,0,0,0.6)",
-      alignment: "center",
+    // Hook text overlay
+    videoClips.push({
+      asset: {
+        type: "title",
+        text: videoConcept.hook,
+        style: "minimal",
+        size: "large",
+        background: "#00000099",
+        position: "center",
+      },
+      start: 0,
+      length: totalDuration,
+      transition: { in: "fade" },
     });
 
+    // Audio track
+    const audioClips = [];
     if (audioUrl) {
-      elements.push({
-        type: "audio",
-        source: audioUrl,
-        duration: 10,
-        volume: 1,
+      audioClips.push({
+        asset: { type: "audio", src: audioUrl, volume: 1 },
+        start: 0,
+        length: totalDuration,
       });
     }
 
-    const body = {
-      source: {
-        output_format: "mp4",
-        width: 1080,
-        height: 1920,
-        elements: elements,
+    const json = {
+      timeline: {
+        soundtrack: { src: FALLBACK_MUSIC, effect: "fadeInFadeOut", volume: audioUrl ? 0.2 : 0.6 },
+        background: "#000000",
+        tracks: [
+          { clips: videoClips },
+          { clips: audioClips },
+        ],
       },
+      output: { format: "mp4", resolution: "1080p", aspectRatio: "9:16" },
     };
 
-    const cr = await fetch("https://api.creatomate.com/v1/renders", {
+    const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json", "x-api-key": SHOTSTACK_KEY },
+      body: JSON.stringify(json),
     });
-    const d = await cr.json();
-    const result = Array.isArray(d) ? d[0] : d;
+    const sd = await sr.json();
+    if (!sd.success) throw new Error(sd.message || "Shotstack failed");
 
-    return res.status(200).json({ jobId: result.id });
+    return res.status(200).json({ jobId: sd.response.id });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -111,13 +125,12 @@ async function generateVideo(req, res) {
 
 async function checkVideo(req, res) {
   const { jobId } = req.body;
-  const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
-    headers: { "Authorization": "Bearer " + CREATOMATE_KEY },
+  const r = await fetch(`https://api.shotstack.io/edit/stage/render/${jobId}`, {
+    headers: { "x-api-key": SHOTSTACK_KEY },
   });
-  let d = await r.json();
-  if (Array.isArray(d)) d = d[0];
+  const d = await r.json();
   return res.status(200).json({
-    status: (d.status === "completed" || d.status === "succeeded") ? "done" : "processing",
-    videoUrl: d.url || null,
+    status: d.response?.status === "done" ? "done" : "processing",
+    videoUrl: d.response?.url || null,
   });
 }
