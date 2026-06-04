@@ -73,14 +73,8 @@ async function generateVideo(req, res) {
       length: VIDEO_LENGTH,
     });
 
-    // Audio if available
-    if (audioSrc) {
-      clips.push({
-        asset: { type: "audio", src: audioSrc, volume: 1 },
-        start: 0,
-        length: VIDEO_LENGTH,
-      });
-    }
+    // Skip TTS for now - Shotstack doesn't accept base64 data URIs
+    // Music-only video
 
     console.log("Video src:", videoSrc);
     console.log("Audio src:", audioSrc ? "present" : "none");
