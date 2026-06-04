@@ -149,7 +149,7 @@ async function generateVideo(req, res) {
           { clips: audioClips },
         ],
       },
-      output: { format: "mp4", resolution: "1080p", aspectRatio: "9:16" },
+      output: { format: "mp4", resolution: "hd", aspectRatio: "9:16" },
     };
 
     const sr = await fetch("https://api.shotstack.io/edit/stage/render", {
