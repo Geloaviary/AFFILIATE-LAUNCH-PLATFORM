@@ -233,9 +233,13 @@
         const jobId = data.jobId;
         let progress = 0;
         const interval = setInterval(() => {
-          progress = Math.min(progress + 15, 90);
-          prev.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"></div></div></div><p>Rendering... ' + progress + '%</p>';
-        }, 2000);
+            progress = Math.min(progress + 5, 90);
+         let msg = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"></div></div></div><p>Rendering... ' + progress + '%</p>';
+         if (progress >= 85) {
+            msg += '<p style="font-size:0.8rem;color:#64748b;">⏳ Shotstack can take 2-5 minutes. Please wait...</p>';
+          }
+          prev.innerHTML = msg;
+          }, 4000);
         const url = await poll(jobId);
         clearInterval(interval);
         prev.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div><p>✅ Complete!</p><video controls src="' + url + '"></video><a href="' + url + '" download>⬇️ Download</a>';
@@ -246,8 +250,9 @@
   const data = await apiCall('video?action=check', 'POST', { jobId });
   if (data.videoUrl) return data.videoUrl;
   if (data.status === 'failed') throw new Error('Render failed');
-  if (attempt > 90) throw new Error('Timeout');
-  await new Promise(r => setTimeout(r, 5000));
+  if (attempt > 120) throw new Error('Render taking too long. Check Shotstack dashboard.');
+  // Wait 10 seconds between checks
+  await new Promise(r => setTimeout(r, 10000));
   return poll(jobId, attempt+1);
 }
 
