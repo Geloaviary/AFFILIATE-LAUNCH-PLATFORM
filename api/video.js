@@ -78,8 +78,7 @@ clips.push({
   asset: { 
     type: "text-to-speech",
     text: videoConcept.script,
-    voice: "joanna",
-    language: "en-US"
+    voice: "joanna"
   },
   start: 0,
   length: VIDEO_LENGTH,
