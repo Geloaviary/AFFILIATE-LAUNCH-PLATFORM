@@ -82,8 +82,12 @@ async function generateVideo(req, res) {
       });
     }
 
-    const json = {
-      timeline: {
+    console.log("Video src:", videoSrc);
+    console.log("Audio src:", audioSrc ? "present" : "none");
+    console.log("Music src:", "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3");
+
+     const json = {
+       timeline: {
         soundtrack: { src: "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3", effect: "fadeInFadeOut", volume: audioSrc ? 0.2 : 0.6 },
         background: "#000000",
         tracks: [{ clips }],
