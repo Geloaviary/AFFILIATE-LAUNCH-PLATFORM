@@ -180,7 +180,8 @@
           if (data.error) return alert(data.error);
           await loadCampaigns();
           switchCampaign(data.campaignId);
-          div.innerHTML = '<p>✅ <strong>' + name + '</strong> campaign created!</p>';
+          document.getElementById('urlInput').value = productUrl;
+          div.innerHTML = '<p>✅ <strong>' + name + '</strong> campaign created! Click "Generate Full Package".</p>';
         }));
       } catch(e) { div.innerHTML = '<p style="color:red;">Error: ' + e.message + '</p>'; }
     });
