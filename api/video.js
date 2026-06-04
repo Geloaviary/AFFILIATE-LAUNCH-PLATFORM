@@ -200,33 +200,92 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
   clips.forEach(c => {
     elements.push({
       type: c.isImage ? "image" : "video",
-      source: c.src, fit: "cover",
-      x: "0%", y: "0%", width: "100%", height: "100%",
-      duration: clipDuration, time: t,
+      source: c.src,
+      fit: "cover",
+      x: "0%",
+      y: "0%",
+      width: "100%",
+      height: "100%",
+      duration: clipDuration,
+      time: t,
     });
     t += clipDuration;
   });
 
+  // Hook text overlay
   elements.push({
-    type: "text", text: concept.hook,
-    x: 50, y: 50, width: 90, height: 20,
-    duration: 3, time: 0,
-    fontSize: config.fontSize, fontWeight: 700,
-    fillColor: "#ffffff", backgroundColor: "rgba(0,0,0,0.6)",
+    type: "text",
+    text: concept.hook,
+    x: "50%",
+    y: "40%",
+    width: "90%",
+    height: "auto",
+    duration: totalDuration,
+    time: 0,
+    fontSize: config.fontSize,
+    fontWeight: 700,
+    fillColor: "#ffffff",
+    backgroundColor: "rgba(0,0,0,0.6)",
+    alignment: "center",
+    animation: {
+      in: "fade",
+      out: "fade",
+      duration: 0.5,
+    },
+  });
+
+  // CTA
+  elements.push({
+    type: "text",
+    text: "Link in bio!",
+    x: "50%",
+    y: "85%",
+    width: "80%",
+    height: "auto",
+    duration: totalDuration,
+    time: 0,
+    fontSize: config.fontSize - 4,
+    fontWeight: 700,
+    fillColor: "#ffffff",
+    backgroundColor: "#2563eb",
     alignment: "center",
   });
 
-  elements.push({
-    type: "text", text: "Link in bio!",
-    x: 50, y: 90, width: 80, height: 15,
-    duration: 3, time: totalDuration - 3,
-    fontSize: config.fontSize - 2, fontWeight: 700,
-    fillColor: "#ffffff", backgroundColor: "#2563eb",
-    alignment: "center",
-  });
+  // Build track with audio
+  const tracks = [{ elements }];
+  
+  // Add audio track if available
+  if (audioUrl) {
+    tracks.push({
+      elements: [{
+        type: "audio",
+        source: audioUrl,
+        duration: totalDuration,
+        time: 0,
+        volume: 1,
+      }],
+    });
+  }
+
+  // Add background music
+  if (bgMusic) {
+    tracks.push({
+      elements: [{
+        type: "audio",
+        source: bgMusic,
+        duration: totalDuration,
+        time: 0,
+        volume: 0.4,
+      }],
+    });
+  }
 
   return {
-    source: { output_format: "mp4", width: 1080, height: 1920, elements },
-    options: { audio_track: audioUrl ? { source: audioUrl, volume: 1 } : null, background_music: { source: bgMusic, volume: 0.4 } },
+    source: {
+      output_format: "mp4",
+      width: 1080,
+      height: 1920,
+      tracks,
+    },
   };
 }
