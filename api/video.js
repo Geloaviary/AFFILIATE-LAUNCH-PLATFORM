@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { kv } = require("@vercel/kv");
 
 const CREATOMATE_KEY = (process.env.CREATOMATE_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const PEXELS_KEY = (process.env.PEXELS_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
@@ -6,37 +7,48 @@ const ELEVENLABS_KEY = (process.env.ELEVENLABS_API_KEY || "").replace(/[^\x20-\x
 const PIXABAY_KEY = (process.env.PIXABAY_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
-const VOICE_ID = "pNInz6obpgDQGcFmaJgB";
-const ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/" + VOICE_ID;
+const DEFAULT_VOICE_ID = "pNInz6obpgDQGcFmaJgB";
+const CUSTOM_VOICE_ID = process.env.CUSTOM_VOICE_ID || DEFAULT_VOICE_ID;
 const FALLBACK_MUSIC = "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3c5c6.mp3";
 
-// Platform-specific settings
+// Language + Voice mapping
+const LANGUAGES = {
+  en: { name: "English", voice: CUSTOM_VOICE_ID },
+  es: { name: "Spanish", voice: "pNInz6obpgDQGcFmaJgB" },
+  pt: { name: "Portuguese", voice: "pNInz6obpgDQGcFmaJgB" },
+  fr: { name: "French", voice: "pNInz6obpgDQGcFmaJgB" },
+  de: { name: "German", voice: "pNInz6obpgDQGcFmaJgB" },
+};
+
 const PLATFORM_CONFIG = {
-  tiktok: { maxDuration: 60, style: "fast-cuts", fontSize: 26, hashtags: "#fyp #viral" },
-  instagram: { maxDuration: 90, style: "aesthetic", fontSize: 24, hashtags: "#reels #explore" },
-  youtube: { maxDuration: 60, style: "informative", fontSize: 28, hashtags: "#shorts" },
-  facebook: { maxDuration: 120, style: "storytelling", fontSize: 22, hashtags: "#viral" },
-  daily: { maxDuration: 30, style: "general", fontSize: 24, hashtags: "#viral" },
+  tiktok: { maxDuration: 60, fontSize: 26, hashtags: "#fyp #viral" },
+  instagram: { maxDuration: 90, fontSize: 24, hashtags: "#reels #explore" },
+  youtube: { maxDuration: 60, fontSize: 28, hashtags: "#shorts" },
+  facebook: { maxDuration: 120, fontSize: 22, hashtags: "#viral" },
+  daily: { maxDuration: 30, fontSize: 24, hashtags: "#viral" },
 };
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
   if (action === "check") return checkVideo(req, res);
   if (action === "story") return generateStory(req, res);
+  if (action === "multi-lang") return generateMultiLang(req, res);
+  if (action === "schedule") return scheduleVideo(req, res);
   return generateVideo(req, res);
 };
 
+// ============ GENERATE VIDEO ============
 async function generateVideo(req, res) {
-  const { videoConcept, platform, useTrending } = req.body;
+  const { videoConcept, platform, useTrending, lang } = req.body;
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
 
+  const language = LANGUAGES[lang] || LANGUAGES.en;
   const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
 
   try {
-    // Inject trending if requested
     if (useTrending) {
       try {
-        const tr = await fetch("https://affiliate-launch-platform.vercel.app/api/utils?action=trending", {
+        const tr = await fetch((process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "") + "/api/utils?action=trending", {
           method: "POST", body: JSON.stringify({ platform }), headers: { "Content-Type": "application/json" }
         });
         const td = await tr.json();
@@ -45,10 +57,9 @@ async function generateVideo(req, res) {
       } catch {}
     }
 
-    // Add platform-specific hashtags
     videoConcept.hashtags = (videoConcept.hashtags || "") + " " + config.hashtags;
 
-    const audioUrl = await tts(videoConcept.script);
+    const audioUrl = await tts(videoConcept.script, language.voice);
     const clips = await getClips(videoConcept);
     const bgMusic = await getMusic(videoConcept);
     const crJson = buildEdit(videoConcept, audioUrl, clips, bgMusic, config);
@@ -60,10 +71,48 @@ async function generateVideo(req, res) {
     });
     const d = await cr.json();
     if (!d.id) throw new Error(d.message || "Render failed");
-    return res.status(200).json({ jobId: d.id, platform: platform || "daily" });
+    return res.status(200).json({ jobId: d.id, lang: lang || "en" });
   } catch (e) { return res.status(500).json({ error: e.message }); }
 }
 
+// ============ MULTI-LANGUAGE GENERATOR ============
+async function generateMultiLang(req, res) {
+  const { videoConcept, platform } = req.body;
+  if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
+
+  const jobIds = [];
+  const langs = ["en", "es", "pt", "fr"];
+
+  for (const lang of langs) {
+    try {
+      const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.daily;
+      const language = LANGUAGES[lang];
+      const audioUrl = await tts(videoConcept.script, language.voice);
+      const clips = await getClips(videoConcept);
+      const bgMusic = await getMusic(videoConcept);
+      const crJson = buildEdit(videoConcept, audioUrl, clips, bgMusic, config);
+
+      const cr = await fetch("https://api.creatomate.com/v1/renders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+        body: JSON.stringify(crJson),
+      });
+      const d = await cr.json();
+      if (d.id) jobIds.push({ jobId: d.id, lang });
+    } catch (e) { /* skip failed language */ }
+  }
+
+  return res.status(200).json({ jobIds });
+}
+
+// ============ SCHEDULE VIDEO ============
+async function scheduleVideo(req, res) {
+  const { jobId, scheduleDate } = req.body;
+  await kv.set(`scheduled:${jobId}`, { scheduleDate, createdAt: new Date().toISOString() });
+  return res.status(200).json({ success: true, scheduled: scheduleDate });
+}
+
+// ============ CHECK + STORY ============
 async function checkVideo(req, res) {
   const { jobId } = req.body;
   const r = await fetch("https://api.creatomate.com/v1/renders/" + jobId, {
@@ -84,8 +133,10 @@ async function generateStory(req, res) {
   return res.status(200).json({ jobId: d.id });
 }
 
-async function tts(script) {
-  const r = await fetch(ELEVENLABS_URL, {
+// ============ HELPERS ============
+async function tts(script, voiceId) {
+  const vid = voiceId || CUSTOM_VOICE_ID;
+  const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + vid, {
     method: "POST",
     headers: { "xi-api-key": ELEVENLABS_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({ text: script, model_id: "eleven_turbo_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
@@ -120,13 +171,12 @@ async function getClips(concept) {
     }
     return clips.slice(0, 4);
   }
-  // DALL-E fallback
   const imgR = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + OPENAI_KEY },
     body: JSON.stringify({ model: "dall-e-3", prompt: "Vertical phone wallpaper: " + concept.hook + ", modern, no text", n: 1, size: "1024x1792" }),
   }).then(r => r.json());
-  return [{ src: imgR.data[0].url, duration: 8, isImage: true }];
+  return [{ src: imgR.data?.[0]?.url || "", duration: 8, isImage: true }];
 }
 
 function buildEdit(concept, audioUrl, clips, bgMusic, config) {

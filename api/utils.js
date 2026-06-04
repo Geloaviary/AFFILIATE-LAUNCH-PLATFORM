@@ -6,7 +6,7 @@ const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "
 exports.default = async function handler(req, res) {
   const { action } = req.query;
 
-  // Trending sounds
+  // ============ TRENDING SOUNDS ============
   if (action === "trending") {
     const { platform } = req.body;
     const trending = {
@@ -18,17 +18,19 @@ exports.default = async function handler(req, res) {
     return res.status(200).json(trending[platform] || trending.tiktok);
   }
 
-  // Optimal posting time
+  // ============ OPTIMAL TIME ============
   if (action === "optimal-time") {
+    const cached = await kv.get("optimal-times");
+    if (cached) return res.status(200).json(cached);
     return res.status(200).json({ time: "11:00 AM", hour: 11 });
   }
 
-  // Usage alert
+  // ============ USAGE ============
   if (action === "usage") {
     return res.status(200).json({ bandwidthGB: 0, bandwidthPercent: 0, functionCalls: 0, functionPercent: 0, warning: false });
   }
 
-  // Clone winner
+  // ============ CLONE WINNER ============
   if (action === "clone-winner") {
     const { campaignId, winningStyle } = req.body;
     try {
@@ -51,30 +53,39 @@ exports.default = async function handler(req, res) {
     }
   }
 
-  // Reply comments webhook
+  // ============ COMMENT AUTO-REPLY ============
   if (action === "reply-comments") {
     console.log("Comment webhook:", req.body);
-    return res.status(200).json({ success: true });
+    const { comment, username, platform } = req.body;
+    const reply = `Thanks @${username}! Check the link in our bio for the best deal! 🔥`;
+    return res.status(200).json({ success: true, reply, platform });
   }
 
-  // Invite user
+  // ============ INVITE USER ============
   if (action === "invite-user") {
     return res.status(200).json({ success: true, message: "Invite sent" });
   }
 
-  // Scheduled rotation
+  // ============ SCHEDULED ROTATION ============
   if (action === "rotation") {
-    console.log("Rotation check");
-    return res.status(200).json({ success: true });
+    console.log("Rotation check running...");
+    const products = await kv.get("product-rotation");
+    if (products) {
+      // Rotate: move first product to end
+      const rotated = [...products.slice(1), products[0]];
+      await kv.set("product-rotation", rotated);
+      return res.status(200).json({ success: true, nextProduct: rotated[0] });
+    }
+    return res.status(200).json({ success: true, message: "No products in rotation" });
   }
 
-  // Trending niches
+  // ============ TRENDING NICHES ============
   if (action === "trending-niches") {
     const data = await kv.get("trending-niches");
     return res.status(200).json(data || { niches: [] });
   }
 
-  // ============ NEW: COMPETITOR FINDER ============
+  // ============ COMPETITOR FINDER ============
   if (action === "competitors") {
     const { productName, niche } = req.body;
     try {
@@ -104,7 +115,7 @@ exports.default = async function handler(req, res) {
     }
   }
 
-  // ============ NEW: TREND DETECTOR ============
+  // ============ TREND DETECTOR ============
   if (action === "trend-detect") {
     try {
       const cacheKey = `trends:${new Date().toISOString().slice(0, 7)}`;
@@ -131,6 +142,34 @@ exports.default = async function handler(req, res) {
     } catch (error) {
       return res.status(200).json({ trends: [], error: error.message });
     }
+  }
+
+  // ============ AUTO-SCHEDULE ============
+  if (action === "auto-schedule") {
+    const { campaignId, videos } = req.body;
+    const schedule = [];
+    let date = new Date();
+    date.setHours(11, 0, 0, 0); // 11 AM start
+
+    for (let i = 0; i < (videos || 4); i++) {
+      schedule.push({
+        date: new Date(date.getTime() + i * 24 * 60 * 60 * 1000).toISOString(),
+        campaignId,
+        videoIndex: i,
+      });
+    }
+
+    await kv.set(`schedule:${campaignId}`, schedule);
+    return res.status(200).json({ success: true, schedule });
+  }
+
+  // ============ ADD TO ROTATION ============
+  if (action === "add-rotation") {
+    const { productName, productUrl } = req.body;
+    let products = await kv.get("product-rotation") || [];
+    products.push({ name: productName, url: productUrl, added: new Date().toISOString() });
+    await kv.set("product-rotation", products);
+    return res.status(200).json({ success: true, total: products.length });
   }
 
   return res.status(404).json({ error: "Unknown action" });

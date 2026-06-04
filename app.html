@@ -40,49 +40,14 @@
     .image-row div { flex: 1; min-width: 200px; }
     video { max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem; }
     @media (max-width: 600px) { body { padding: 0.5rem; } .container { padding: 1rem; } }
-         .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #e2e8f0;
-      border-top: 3px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .progress-container {
-      margin: 10px 0;
-    }
-    .progress-bar {
-      background: #e2e8f0;
-      border-radius: 10px;
-      height: 8px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      background: linear-gradient(90deg, #2563eb, #16a34a);
-      height: 100%;
-      border-radius: 10px;
-      transition: width 0.4s;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    .running-text {
-      display: inline-block;
-      animation: bounce 0.5s infinite alternate;
-    }
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-5px); }
-    }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e2e8f0; border-top: 3px solid #2563eb; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .progress-container { margin: 10px 0; }
+    .progress-bar { background: #e2e8f0; border-radius: 10px; height: 8px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, #2563eb, #16a34a); height: 100%; border-radius: 10px; transition: width 0.4s; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .running-text { display: inline-block; animation: bounce 0.5s infinite alternate; }
+    @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
   </style>
 </head>
 <body>
@@ -96,31 +61,27 @@
       <span id="activeCampaignName"></span>
     </div>
     <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-  <select id="nicheSelect" style="flex:1;">
-    <option value="">🔽 Choose a niche or type below...</option>
-    <option value="web hosting">🌐 Web Hosting — $65-$200/sale (One-time)</option>
-    <option value="saas software">💻 SaaS / Software — 20-30% (🔄 Recurring)</option>
-    <option value="vpn services">🔒 VPN Services — 30-50% (🔄 Recurring)</option>
-    <option value="email marketing">📧 Email Marketing Tools — 20-30% (🔄 Recurring)</option>
-    <option value="website builders">🏗️ Website Builders — $50-$150/sale (One-time)</option>
-    <option value="cybersecurity">🛡️ Cybersecurity — 25-40% (🔄 Recurring)</option>
-    <option value="ai tools">🤖 AI Tools — 20-30% (🔄 Recurring)</option>
-    <option value="online courses">🎓 Online Courses — 15-50% (One-time)</option>
-    <option value="fitness supplements">💪 Fitness/Supplements — 10-30% (One-time)</option>
-    <option value="finance crypto">💰 Finance/Crypto — $50-$300/sale (Varies)</option>
-  </select>
-  <input type="text" id="nicheInput" placeholder="Or type custom niche..." style="flex:1;" />
-  <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
-</div>
+      <select id="nicheSelect" style="flex:1;">
+        <option value="">🔽 Choose a niche...</option>
+        <option value="web hosting">🌐 Web Hosting — $65-$200/sale</option>
+        <option value="saas software">💻 SaaS / Software — 20-30% 🔄</option>
+        <option value="vpn services">🔒 VPN Services — 30-50% 🔄</option>
+        <option value="email marketing">📧 Email Marketing — 20-30% 🔄</option>
+        <option value="website builders">🏗️ Website Builders — $50-$150/sale</option>
+        <option value="cybersecurity">🛡️ Cybersecurity — 25-40% 🔄</option>
+        <option value="ai tools">🤖 AI Tools — 20-30% 🔄</option>
+      </select>
+      <input type="text" id="nicheInput" placeholder="Or type custom niche..." style="flex:1;" />
+      <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
+    </div>
     <div id="productResults"></div>
     <input type="text" id="urlInput" placeholder="Product page URL (for AI research)" />
     <input type="text" id="affiliateUrlInput" placeholder="Your affiliate link (for videos & bios)" style="margin-top:0.5rem;" />
     <input type="text" id="productNameOverride" placeholder="Product name override (optional)" style="margin-top:0.5rem;" />
     <div style="display:flex; flex-wrap:wrap; gap:1rem; margin:0.75rem 0; font-size:0.9rem;">
-      <label><input type="checkbox" id="hookTester" checked> A/B 3 Hooks</label>
-      <label><input type="checkbox" id="multiLang" checked> Multi-Lang</label>
+      <label><input type="checkbox" id="multiLang"> Multi-Lang</label>
       <label><input type="checkbox" id="useTrending" checked> Trending Sounds</label>
-      <label><input type="checkbox" id="postStories" checked> Post Stories</label>
+      <label><input type="checkbox" id="postStories"> Post Stories</label>
       <input type="text" id="commentKeyword" value="SENDIT" style="width:160px; padding:0.3rem;" />
     </div>
     <div class="button-group">
@@ -137,8 +98,8 @@
       <div class="modal-content">
         <h2>New Campaign</h2>
         <input type="text" id="modalCampaignName" placeholder="Campaign Name" />
-        <input type="text" id="modalProductUrl" placeholder="Product Affiliate URL" />
-        <input type="text" id="modalAffiliateUrl" placeholder="Your Affiliate Link (for commissions)" />
+        <input type="text" id="modalProductUrl" placeholder="Product Page URL" />
+        <input type="text" id="modalAffiliateUrl" placeholder="Your Affiliate Link" />
         <input type="text" id="modalNiche" placeholder="Niche (optional)" />
         <div class="button-group">
           <button id="saveCampaignBtn" class="btn-green">Create Campaign</button>
@@ -148,41 +109,20 @@
     </div>
   </div>
 
-    <script>
-    // Auth check
-    if (localStorage.getItem('auth') !== 'true') {
-      window.location.href = '/login.html';
-    }
-
+  <script>
+    if (localStorage.getItem('auth') !== 'true') { window.location.href = '/login.html'; }
     let activeCampaignId = null, campaigns = [], currentData = null, userId = 'admin';
 
-    document.getElementById('logoutBtnContainer').innerHTML = `<span>👤 Admin</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>`;
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('auth');
-      window.location.href = '/login.html';
-    });
-
+    document.getElementById('logoutBtnContainer').innerHTML = '<span>👤 Admin</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>';
+    document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('auth'); window.location.href = '/login.html'; });
     loadCampaigns();
 
     async function apiCall(endpoint, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch('/api/' + endpoint, opts);
-  return res.json();
-}
-
-    async function checkUsage() {
-      try {
-        const res = await fetch('/api/utils?action=usage');
-        const data = await res.json();
-        if (!data.error && data.warning) {
-          document.getElementById('usageAlert').className = 'alert alert-warning';
-          document.getElementById('usageAlert').classList.remove('hidden');
-          document.getElementById('usageText').innerHTML = '⚠️ Usage approaching limits.';
-        }
-      } catch {}
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch('/api/' + endpoint, opts);
+      return res.json();
     }
-    document.getElementById('dismissUsageBtn').addEventListener('click', () => document.getElementById('usageAlert').classList.add('hidden'));
 
     async function loadCampaigns() {
       const data = await apiCall('manage-campaigns', 'POST', { userId });
@@ -197,7 +137,7 @@
       activeCampaignId = id;
       const c = campaigns.find(x => x.id === id);
       if (!c) return;
-      document.getElementById('activeCampaignName').textContent = `Active: ${c.name}`;
+      document.getElementById('activeCampaignName').textContent = 'Active: ' + c.name;
       document.getElementById('urlInput').value = c.productUrl || '';
       document.getElementById('affiliateUrlInput').value = c.affiliateUrl || '';
       if (c.package) { currentData = c.package; document.getElementById('result').innerHTML = formatPackage(currentData); attachListeners(); }
@@ -210,13 +150,10 @@
     document.getElementById('saveCampaignBtn').addEventListener('click', async () => {
       const name = document.getElementById('modalCampaignName').value.trim();
       const productUrl = document.getElementById('modalProductUrl').value.trim();
-      const affiliateUrl = document.getElementById('modalAffiliateUrl')?.value?.trim() || '';
-
-    // In the API call body, add:
-    { name, productUrl, niche, affiliateUrl, userId }
+      const affiliateUrl = document.getElementById('modalAffiliateUrl').value.trim();
       const niche = document.getElementById('modalNiche').value.trim();
       if (!name || !productUrl) return alert('Name and URL required.');
-      const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche, userId });
+      const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche, affiliateUrl, userId });
       if (data.error) return alert(data.error);
       document.getElementById('campaignModal').style.display = 'none';
       await loadCampaigns();
@@ -229,66 +166,51 @@
       div.innerHTML = '<p><span class="spinner"></span>🔍 <span class="running-text">Scanning market...</span></p>';
       try {
         const data = await apiCall('research-products', 'POST', { niche });
-        if (data.error) { div.innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
+        if (data.error) { div.innerHTML = '<p style="color:red;">' + data.error + '</p>'; return; }
         const products = data.products || [];
         if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
         let html = '<h3>Recommended Products</h3>';
         products.forEach(p => {
-          html += `<div class="card">
-            <h3>${p.name}</h3>
-            <p>${p.description}</p>
-            <p><strong>💰 Commission:</strong> ${p.commission}</p>
-            <p style="font-size:0.8rem;">🔗 <strong>Affiliate:</strong> <a href="${p.affiliateUrl}" target="_blank">${p.affiliateUrl || 'N/A'}</a></p>
-            <p style="font-size:0.8rem;">🌐 <strong>Product:</strong> <a href="${p.productUrl || p.affiliateUrl}" target="_blank">${p.productUrl || 'N/A'}</a></p>
-            <button class="select-btn btn-blue btn-sm" data-url="${p.affiliateUrl}" data-product-url="${p.productUrl || p.affiliateUrl}" data-name="${p.name}">✅ Select & Generate</button>
-          </div>`;
+          html += '<div class="card"><h3>' + p.name + '</h3><p>' + p.description + '</p><p><strong>💰 Commission:</strong> ' + p.commission + '</p><button class="select-btn btn-blue btn-sm" data-url="' + p.affiliateUrl + '" data-product-url="' + (p.productUrl || p.affiliateUrl) + '" data-name="' + p.name + '">✅ Select & Generate</button></div>';
         });
         div.innerHTML = html;
         document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', async function() {
-  const name = this.dataset.name;
-  const affiliateUrl = this.dataset.url;
-  const productUrl = this.dataset.productUrl || affiliateUrl;
-
-  // Auto-create campaign
-  const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche: '', userId });
-  if (data.error) return alert(data.error);
-
-  await loadCampaigns();
-  switchCampaign(data.campaignId);
-  document.getElementById('urlInput').value = productUrl;
-  div.innerHTML = `<p>✅ <strong>${name}</strong> campaign created! Click "Generate Full Package".</p>`;
-}));
-      } catch(e) { div.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
+          const name = this.dataset.name, productUrl = this.dataset.productUrl;
+          const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche: '', userId });
+          if (data.error) return alert(data.error);
+          await loadCampaigns();
+          switchCampaign(data.campaignId);
+          div.innerHTML = '<p>✅ <strong>' + name + '</strong> campaign created!</p>';
+        }));
+      } catch(e) { div.innerHTML = '<p style="color:red;">Error: ' + e.message + '</p>'; }
     });
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
-      const productName = document.getElementById('productNameOverride')?.value?.trim() || '';
+      const productName = document.getElementById('productNameOverride').value.trim();
       if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
       document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p>🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
       try {
         const data = await apiCall('generate', 'POST', { url, productName });
-        if (data.error) { document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`; return; }
+        if (data.error) { document.getElementById('result').innerHTML = '<p style="color:red;">' + data.error + '</p>'; return; }
         currentData = data;
         await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
         document.getElementById('result').innerHTML = formatPackage(data);
         attachListeners();
-      } catch(e) { document.getElementById('result').innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
+      } catch(e) { document.getElementById('result').innerHTML = '<p style="color:red;">Error: ' + e.message + '</p>'; }
     });
 
     function formatPackage(pkg) {
       let audienceText = pkg.targetAudience?.demographics;
-    if (typeof audienceText === 'object') {
-     audienceText = audienceText.age || audienceText.description || JSON.stringify(audienceText);
-    }
-     let h = `<h2>Niche & Audience</h2><p>Niche: ${pkg.niche}</p><p>Audience: ${audienceText || 'General audience'}</p>`;
-      h += `<h2>Account Setup</h2>`;
-      for (const [plat, cfg] of Object.entries(pkg.platforms||{})) h += `<p><strong>${plat}:</strong> @${cfg.handle} - ${cfg.bio}</p>`;
-      h += `<h2>Daily Video Pack</h2>`;
+      if (typeof audienceText === 'object') audienceText = audienceText.age || audienceText.description || JSON.stringify(audienceText);
+      let h = '<h2>Niche & Audience</h2><p>Niche: ' + pkg.niche + '</p><p>Audience: ' + (audienceText || 'General') + '</p>';
+      h += '<h2>Account Setup</h2>';
+      for (const [plat, cfg] of Object.entries(pkg.platforms||{})) h += '<p><strong>' + plat + ':</strong> @' + cfg.handle + ' - ' + cfg.bio + '</p>';
+      h += '<h2>Daily Video Pack</h2>';
       if (pkg.dailyVideoPack) pkg.dailyVideoPack.forEach((v,i) => {
-        h += `<div class="card" id="daily-card-${i}"><h3><span class="tag">${v.style}</span></h3><p>${v.hook}</p><button class="gen-vid-btn btn-blue btn-sm" data-idx="${i}">🎥 Generate Video</button><div id="daily-preview-${i}"></div></div>`;
+        h += '<div class="card" id="daily-card-' + i + '"><h3><span class="tag">' + v.style + '</span></h3><p>' + v.hook + '</p><button class="gen-vid-btn btn-blue btn-sm" data-idx="' + i + '">🎥 Generate Video</button><div id="daily-preview-' + i + '"></div></div>';
       });
-      h += `<div id="autoProgress" class="progress-log"></div>`;
+      h += '<div id="autoProgress" class="progress-log"></div>';
       return h;
     }
 
@@ -300,8 +222,8 @@
     async function generateDailyVideo(idx) {
       if (!currentData?.dailyVideoPack?.[idx]) return;
       const concept = currentData.dailyVideoPack[idx];
-      const prev = document.getElementById(`daily-preview-${idx}`);
-      const btn = document.querySelector(`#daily-card-${idx} .gen-vid-btn`);
+      const prev = document.getElementById('daily-preview-' + idx);
+      const btn = document.querySelector('#daily-card-' + idx + ' .gen-vid-btn');
       btn.disabled = true; btn.textContent = 'Submitting...';
       prev.innerHTML = '<p><span class="spinner"></span>🎬 Creating viral video...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:10%;"></div></div></div>';
       try {
@@ -311,13 +233,13 @@
         let progress = 0;
         const interval = setInterval(() => {
           progress = Math.min(progress + 15, 90);
-          prev.innerHTML = `<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div></div><p>Rendering... ${progress}%</p>`;
+          prev.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"></div></div></div><p>Rendering... ' + progress + '%</p>';
         }, 2000);
         const url = await poll(jobId);
         clearInterval(interval);
-        prev.innerHTML = `<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div><p>✅ Complete!</p><video controls src="${url}"></video><a href="${url}" download>⬇️ Download</a>`;
+        prev.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div><p>✅ Complete!</p><video controls src="' + url + '"></video><a href="' + url + '" download>⬇️ Download</a>';
         btn.textContent = '✅ Ready'; btn.disabled = false;
-      } catch(e) { prev.innerHTML = `<p style="color:red;">${e.message}</p>`; btn.textContent = 'Retry'; btn.disabled = false; }
+      } catch(e) { prev.innerHTML = '<p style="color:red;">' + e.message + '</p>'; btn.textContent = 'Retry'; btn.disabled = false; }
     }
 
     async function poll(jobId, attempt=0) {
@@ -335,13 +257,13 @@
       logDiv.innerHTML = '';
       const log = msg => { const p = document.createElement('p'); p.textContent = msg; logDiv.appendChild(p); };
       for (let i = 0; i < currentData.dailyVideoPack.length; i++) {
-        log(`⏳ Video ${i+1}...`);
+        log('⏳ Video ' + (i+1) + '...');
         try {
           const concept = currentData.dailyVideoPack[i];
           const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily' });
           const url = await poll(data.jobId);
-          log(`✅ Video ${i+1}: ${url}`);
-        } catch(e) { log(`❌ Error: ${e.message}`); }
+          log('✅ Video ' + (i+1) + ': ' + url);
+        } catch(e) { log('❌ Error: ' + e.message); }
       }
       log('🎉 All done!');
     }
@@ -349,23 +271,35 @@
     document.getElementById('createLandingBtn').addEventListener('click', async () => {
       if (!activeCampaignId) return alert('Select a campaign.');
       const data = await apiCall('create-landing-page', 'POST', { campaignId: activeCampaignId, userId });
-      alert(data.error ? data.error : `✅ ${data.url}`);
+      alert(data.error ? data.error : '✅ ' + data.url);
     });
 
     document.getElementById('loadAnalyticsBtn').addEventListener('click', async () => {
       const div = document.getElementById('analyticsTableContainer');
-      div.innerHTML = '<p><span class="spinner"></span> Loading...</p>';
+      div.innerHTML = '<p><span class="spinner"></span> Loading analytics...</p>';
       const data = await apiCall('get-analytics', 'POST', { campaignId: activeCampaignId, userId });
       if (data.error || !data.records?.length) { div.innerHTML = '<p>No posts yet.</p>'; return; }
-      let h = '<table><tr><th>Style</th><th>Platform</th><th>Views</th><th>Likes</th></tr>';
-      data.records.forEach(r => { const a = r.analytics||{}; h += `<tr><td>${r.style||''}</td><td>${r.platform}</td><td>${a.views||0}</td><td>${a.likes||0}</td></tr>`; });
+      const s = data.summary;
+      let h = '<div style="background:#f8fafc;border-radius:0.5rem;padding:1rem;margin-bottom:1rem;"><h3>📊 Campaign Summary</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.5rem;">';
+      h += '<div><strong>👁️ Views:</strong> ' + s.totalViews.toLocaleString() + '</div>';
+      h += '<div><strong>❤️ Likes:</strong> ' + s.totalLikes.toLocaleString() + '</div>';
+      h += '<div><strong>💬 Comments:</strong> ' + s.totalComments.toLocaleString() + '</div>';
+      h += '<div><strong>🔄 Shares:</strong> ' + s.totalShares.toLocaleString() + '</div>';
+      h += '<div><strong>🔗 Clicks:</strong> ' + s.totalClicks.toLocaleString() + '</div>';
+      h += '<div><strong>💰 Revenue:</strong> $' + s.estimatedRevenue.toLocaleString() + '</div>';
+      h += '<div><strong>📈 Conv:</strong> ' + s.avgConversionRate + '</div>';
+      h += '<div><strong>🏆 Best:</strong> ' + s.bestStyle + '</div>';
+      h += '<div><strong>🕐 Time:</strong> ' + s.bestHour + '</div>';
+      h += '</div></div>';
+      h += '<table><tr><th>Style</th><th>Platform</th><th>Views</th><th>Likes</th><th>Revenue</th></tr>';
+      data.records.forEach(r => { const a = r.analytics||{}; h += '<tr><td>' + (r.style||'') + '</td><td>' + r.platform + '</td><td>' + (a.views||0) + '</td><td>' + (a.likes||0) + '</td><td>$' + (a.revenue||0) + '</td></tr>'; });
       h += '</table>';
       div.innerHTML = h;
     });
 
     document.getElementById('rotationBtn').addEventListener('click', async () => {
       const data = await apiCall('utils?action=optimal-time');
-      alert(`🕐 Best posting time: ${data.time || '11:00 AM'}`);
+      alert('🕐 Best posting time: ' + (data.time || '11:00 AM'));
     });
   </script>
 </body>
