@@ -244,7 +244,7 @@
     }
   async function poll(jobId, attempt=0) {
   const data = await apiCall('video?action=check', 'POST', { jobId });
-  if (data.status === 'done' && data.videoUrl) return data.videoUrl;
+  if (data.videoUrl) return data.videoUrl;
   if (data.status === 'failed') throw new Error('Render failed');
   if (attempt > 90) throw new Error('Timeout');
   await new Promise(r => setTimeout(r, 5000));

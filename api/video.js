@@ -173,8 +173,12 @@ async function checkVideo(req, res) {
     headers: { "x-api-key": SHOTSTACK_KEY },
   });
   const d = await r.json();
+  const status = d.response?.status;
+  const url = d.response?.url || null;
+  
+  // Return done if URL is available OR status is done
   return res.status(200).json({
-    status: d.response?.status === "done" ? "done" : "processing",
-    videoUrl: d.response?.url || null,
+    status: (url || status === "done") ? "done" : (status === "failed" ? "failed" : "processing"),
+    videoUrl: url,
   });
 }
