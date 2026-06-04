@@ -69,8 +69,10 @@ async function generateVideo(req, res) {
   headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
   body: JSON.stringify(crJson),
 });
-const d = await cr.json();
+   let d = await cr.json();
 console.error("CREATOMATE RESPONSE:", JSON.stringify(d));
+// Handle array response
+if (Array.isArray(d)) d = d[0];
 if (!d.id) throw new Error(d.message || JSON.stringify(d) || "Render failed");
     return res.status(200).json({ jobId: d.id, lang: lang || "en" });
   } catch (e) {
