@@ -200,7 +200,7 @@ function buildEdit(concept, audioUrl, clips, bgMusic, config) {
   clips.forEach(c => {
     elements.push({
       type: c.isImage ? "image" : "video",
-      source: c.src, fit: "crop",
+      source: c.src, fit: "cover",
       x: 0, y: 0, width: 100, height: 100,
       duration: clipDuration, time: t,
     });
