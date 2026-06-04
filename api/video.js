@@ -65,12 +65,13 @@ async function generateVideo(req, res) {
     const crJson = buildEdit(videoConcept, audioUrl, clips, bgMusic, config);
 
     const cr = await fetch("https://api.creatomate.com/v1/renders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-      body: JSON.stringify(crJson),
-    });
-    const d = await cr.json();
-    if (!d.id) throw new Error(d.message || "Render failed");
+  method: "POST",
+  headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
+  body: JSON.stringify(crJson),
+});
+const d = await cr.json();
+console.error("CREATOMATE RESPONSE:", JSON.stringify(d));
+if (!d.id) throw new Error(d.message || JSON.stringify(d) || "Render failed");
     return res.status(200).json({ jobId: d.id, lang: lang || "en" });
   } catch (e) {
   console.error("VIDEO ERROR:", e.message, e.stack);
