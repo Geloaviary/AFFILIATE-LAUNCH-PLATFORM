@@ -45,8 +45,8 @@ elements.push({
     index % 2 === 0
       ? "#0f172a"
       : "#1e293b",
-  time: start,
-  duration: sceneDuration
+  time: start + " s",
+  duration: sceneDuration + " s"
 });
 
 elements.push({
@@ -60,8 +60,8 @@ elements.push({
   fillColor: "#ffffff",
   backgroundColor: "rgba(0,0,0,0.45)",
   alignment: "center",
-  time: start,
-  duration: sceneDuration
+  time: start + " s",
+  duration: sceneDuration + " s"
 });
 
 elements.push({
@@ -75,8 +75,8 @@ elements.push({
   fontSize: 18,
   fillColor: "#cbd5e1",
   alignment: "center",
-  time: start,
-  duration: sceneDuration
+  time: start + " s",
+  duration: sceneDuration + " s"
 });
 
 });
@@ -94,8 +94,8 @@ fontWeight: 800,
 fillColor: "#ffffff",
 backgroundColor: "#2563eb",
 alignment: "center",
-time: scenes.length * sceneDuration,
-duration: 3
+time: (scenes.length * sceneDuration) + " s",
+duration: "3 s"
 });
 
 const body = {
@@ -108,7 +108,10 @@ elements
 };
 
 try {
-
+console.log(
+  "CREATOMATE BODY:",
+  JSON.stringify(body, null, 2)
+);
 const cr = await fetch(
   "https://api.creatomate.com/v1/renders",
   {
