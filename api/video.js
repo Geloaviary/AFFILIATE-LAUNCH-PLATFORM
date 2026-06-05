@@ -10,7 +10,10 @@ exports.default = async function handler(req, res) {
                        
 async function generateVideo(req, res) {
 const { videoConcept } = req.body;
-
+console.log(
+  "VIDEO CONCEPT:",
+  JSON.stringify(videoConcept, null, 2)
+);
 if (!videoConcept) {
 return res.status(400).json({
 error: "Missing videoConcept"
@@ -20,6 +23,8 @@ error: "Missing videoConcept"
 const scenes = Array.isArray(videoConcept.script)
 ? videoConcept.script
 : [];
+
+console.log("SCENE COUNT:", scenes.length);
 
 const elements = [];
 
