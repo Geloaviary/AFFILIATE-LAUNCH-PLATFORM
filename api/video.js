@@ -26,7 +26,7 @@ const scenes = Array.isArray(videoConcept.script)
 
 console.log("SCENE COUNT:", scenes.length);
 
-const elements = [];
+ const elements= [];
 
 elements.push({
   type: "shape",
@@ -85,14 +85,7 @@ const body = {
   source: {
     width: 1080,
     height: 1920,
-    elements: [
-      {
-        type: "text",
-        text: "HELLO WORLD",
-        fill_color: "#ffffff",
-        font_size: 80
-      }
-    ]
+    elements
   }
 };
 
