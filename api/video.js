@@ -7,7 +7,7 @@ exports.default = async function handler(req, res) {
   if (action === "check") return checkVideo(req, res);
   return generateVideo(req, res);
 };
-
+                       
 async function generateVideo(req, res) {
   const { videoConcept } = req.body;
   if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });

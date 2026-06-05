@@ -49,6 +49,7 @@
     .running-text { display: inline-block; animation: bounce 0.5s infinite alternate; }
     @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
   </style>
+
 </head>
 <body>
   <div class="container">
@@ -108,43 +109,58 @@
       </div>
     </div>
   </div>
+    <script>
 
-  <script>
-    if (localStorage.getItem('auth') !== 'true') { window.location.href = '/login.html'; }
-    let activeCampaignId = null, campaigns = [], currentData = null, userId = 'admin';
+let activeCampaignId = null;
+let campaigns = [];
+let currentData = null;
+let userId = 'admin';
 
-    document.getElementById('logoutBtnContainer').innerHTML = '<span>👤 Admin</span><button id="logoutBtn" class="btn-sm" style="background:#64748b;">Logout</button>';
-    document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('auth'); window.location.href = '/login.html'; });
-    loadCampaigns();
-
-    async function apiCall(endpoint, method = 'GET', body = null) {
-      const opts = { method, headers: { 'Content-Type': 'application/json' } };
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch('/api/' + endpoint, opts);
-      return res.json();
+async function apiCall(endpoint, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
     }
+  };
 
-    async function loadCampaigns() {
-      const data = await apiCall('manage-campaigns', 'POST', { userId });
-      campaigns = data.campaigns || [];
-      const select = document.getElementById('campaignSelect');
-      select.innerHTML = '<option value="">-- Select Campaign --</option>';
-      campaigns.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; select.appendChild(o); });
-      if (campaigns.length > 0) switchCampaign(campaigns[0].id);
-    }
+  if (body) {
+    opts.body = JSON.stringify(body);
+  }
 
-    function switchCampaign(id) {
-      activeCampaignId = id;
-      const c = campaigns.find(x => x.id === id);
-      if (!c) return;
-      document.getElementById('activeCampaignName').textContent = 'Active: ' + c.name;
-      document.getElementById('urlInput').value = c.productUrl || '';
-      document.getElementById('affiliateUrlInput').value = c.affiliateUrl || '';
-      if (c.package) { currentData = c.package; document.getElementById('result').innerHTML = formatPackage(currentData); attachListeners(); }
-      else { currentData = null; document.getElementById('result').innerHTML = '<p>No package yet.</p>'; }
-    }
+  const res = await fetch('/api/' + endpoint, opts);
 
-    document.getElementById('campaignSelect').addEventListener('change', function() { if (this.value) switchCampaign(this.value); });
+  return res.json();
+}
+
+async function loadCampaigns() {
+  const data = await apiCall(
+  'manage-campaigns?userId=' + userId,
+  'GET'
+);
+
+  campaigns = data.campaigns || [];
+
+  const select = document.getElementById('campaignSelect');
+
+  select.innerHTML =
+    '<option value="">-- Select Campaign --</option>';
+
+  campaigns.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id;
+    o.textContent = c.name;
+    select.appendChild(o);
+  });
+
+  if (campaigns.length > 0) {
+    switchCampaign(campaigns[0].id);
+  }
+}
+
+    document.getElementById('campaignSelect').addEventListener('change', function() {
+             if (this.value) switchCampaign(this.value);
+     });
     document.getElementById('newCampaignBtn').addEventListener('click', () => document.getElementById('campaignModal').style.display = 'flex');
     document.getElementById('cancelCampaignBtn').addEventListener('click', () => document.getElementById('campaignModal').style.display = 'none');
     document.getElementById('saveCampaignBtn').addEventListener('click', async () => {
