@@ -158,6 +158,35 @@ async function loadCampaigns() {
   }
 }
 
+function switchCampaign(id) {
+activeCampaignId = id;
+
+const c = campaigns.find(x => x.id === id);
+
+if (!c) return;
+
+document.getElementById('activeCampaignName').textContent =
+'Active: ' + c.name;
+
+document.getElementById('urlInput').value =
+c.productUrl || '';
+
+document.getElementById('affiliateUrlInput').value =
+c.affiliateUrl || '';
+
+if (c.package) {
+currentData = c.package;
+document.getElementById('result').innerHTML =
+formatPackage(currentData);
+attachListeners();
+} else {
+currentData = null;
+document.getElementById('result').innerHTML =
+'<p>No package yet.</p>';
+}
+}
+
+
     document.getElementById('campaignSelect').addEventListener('change', function() {
              if (this.value) switchCampaign(this.value);
      });
