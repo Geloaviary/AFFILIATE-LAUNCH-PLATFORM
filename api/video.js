@@ -26,19 +26,16 @@ const scenes = Array.isArray(videoConcept.script)
 
 console.log("SCENE COUNT:", scenes.length);
 
-const elements = [
-  {
-    type: "text",
-    text: "HELLO WORLD",
-    x: "50%",
-    y: "50%",
-    width: "90%",
-    fontSize: 80,
-    fillColor: "#ffffff",
-    alignment: "center",
-    duration: 10
-  }
-];
+const elements = [];
+
+elements.push({
+  type: "shape",
+  shape: "rectangle",
+  width: "100%",
+  height: "100%",
+  fill_color: "#111111",
+  duration: "30 s"
+});
 
 const sceneDuration = 4;
 
@@ -47,67 +44,41 @@ scenes.forEach((scene, index) => {
 const start = index * sceneDuration;
 
 elements.push({
-  type: "shape",
-  shape: "rectangle",
-  x: "0%",
-  y: "0%",
-  width: "100%",
-  height: "100%",
-  fillColor:
-    index % 2 === 0
-      ? "#0f172a"
-      : "#1e293b",
-  time: start + " s",
-  duration: sceneDuration + " s"
+    type: "text",
+    text: scene.voice,
+    x: "50%",
+    y: "45%",
+    width: "90%",
+    font_size: 42,
+    fill_color: "#ffffff",
+    time: start + " s",
+    duration: sceneDuration + " s"
+  });
+
+elements.push({
+    type: "text",
+    text: (scene.keywords || []).join(" • "),
+    x: "50%",
+    y: "75%",
+    width: "80%",
+    font_size: 22,
+    fill_color: "#cccccc",
+    time: start + " s",
+    duration: sceneDuration + " s"
+  });
+
 });
 
 elements.push({
   type: "text",
-  text: scene.voice,
+  text: videoConcept.cta || "Link in bio",
   x: "50%",
-  y: "45%",
-  width: "90%",
-  fontSize: 34,
-  fontWeight: 800,
-  fillColor: "#ffffff",
-  backgroundColor: "rgba(0,0,0,0.45)",
-  alignment: "center",
-  time: start + " s",
-  duration: sceneDuration + " s"
-});
-
-elements.push({
-  type: "text",
-  text:
-    (scene.keywords || [])
-      .join(" • "),
-  x: "50%",
-  y: "75%",
-  width: "80%",
-  fontSize: 18,
-  fillColor: "#cbd5e1",
-  alignment: "center",
-  time: start + " s",
-  duration: sceneDuration + " s"
-});
-
-});
-
-elements.push({
-type: "text",
-text:
-videoConcept.cta ||
-"Link in bio",
-x: "50%",
-y: "88%",
-width: "70%",
-fontSize: 28,
-fontWeight: 800,
-fillColor: "#ffffff",
-backgroundColor: "#2563eb",
-alignment: "center",
-time: (scenes.length * sceneDuration) + " s",
-duration: "3 s"
+  y: "88%",
+  width: "70%",
+  font_size: 36,
+  fill_color: "#ffffff",
+  time: (scenes.length * sceneDuration) + " s",
+  duration: "3 s"
 });
 
 const body = {
