@@ -141,6 +141,11 @@ const cr = await fetch(
 
 const d = await cr.json();
 
+console.log(
+  "CREATOMATE RESPONSE:",
+  JSON.stringify(d, null, 2)
+);
+
 const result =
   Array.isArray(d)
     ? d[0]
