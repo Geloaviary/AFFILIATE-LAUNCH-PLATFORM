@@ -111,12 +111,18 @@ duration: "3 s"
 });
 
 const body = {
-source: {
-output_format: "mp4",
-width: 1080,
-height: 1920,
-elements
-}
+  source: {
+    width: 1080,
+    height: 1920,
+    elements: [
+      {
+        type: "text",
+        text: "HELLO WORLD",
+        fill_color: "#ffffff",
+        font_size: 80
+      }
+    ]
+  }
 };
 
 try {
