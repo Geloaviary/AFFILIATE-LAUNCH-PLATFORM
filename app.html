@@ -251,7 +251,8 @@ document.getElementById('result').innerHTML =
       if (typeof audienceText === 'object') audienceText = audienceText.age || audienceText.description || JSON.stringify(audienceText);
       let h = '<h2>Niche & Audience</h2><p>Niche: ' + pkg.niche + '</p><p>Audience: ' + (audienceText || 'General') + '</p>';
       h += '<h2>Account Setup</h2>';
-      for (const [plat, cfg] of Object.entries(pkg.platforms||{})) h += '<p><strong>' + plat + ':</strong> @' + cfg.handle + ' - ' + cfg.bio + '</p>';
+      for (const [plat, cfg] of Object.entries(pkg.platforms||{}))
+              h += '<p><strong>' + plat + ':</strong> ' + cfg.handle.replace(/^@+/, '@') + ' - ' + cfg.bio + '</p>';
       h += '<h2>Daily Video Pack</h2>';
       if (pkg.dailyVideoPack) pkg.dailyVideoPack.forEach((v,i) => {
         h += '<div class="card" id="daily-card-' + i + '"><h3><span class="tag">' + v.style + '</span></h3><p>' + v.hook + '</p><button class="gen-vid-btn btn-blue btn-sm" data-idx="' + i + '">🎥 Generate Video</button><div id="daily-preview-' + i + '"></div></div>';

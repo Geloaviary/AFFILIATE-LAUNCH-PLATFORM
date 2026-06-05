@@ -146,7 +146,33 @@ Return ONLY a JSON object:
   },
   "imagePrompts": { "profilePicture": "Modern logo for ${productInfo.title}", "banner": "Clean banner for ${productInfo.title} advertising" },
   "dailyVideoPack": [
-    { "style": "Tutorial", "hook": "How to use ${productInfo.title} in 60 seconds", "script": "Step by step ${productInfo.title} tutorial showing key features...", "visuals": "Screen recording of ${productInfo.title}", "captions": "${productInfo.title} tutorial", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #tutorial #howto", "musicSuggestion": "upbeat", "duration": "30s" },
+  {
+    "style": "Tutorial",
+    "hook": "How to use ${productInfo.title} in 60 seconds",
+    "script": [
+      {
+        "voice": "Need a website fast?",
+        "keywords": ["website","business","laptop"]
+      },
+      {
+        "voice": "${productInfo.title} makes setup simple.",
+        "keywords": ["dashboard","software"]
+      },
+      {
+        "voice": "You get powerful features and support included.",
+        "keywords": ["support","technology"]
+      },
+      {
+        "voice": "Start today using the link below.",
+        "keywords": ["success","business"]
+      }
+    ],
+    "cta": "Start today",
+    "captions": "${productInfo.title} tutorial",
+    "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #tutorial #howto",
+    "musicSuggestion": "upbeat",
+    "duration": "30s"
+  },
     { "style": "Review", "hook": "Is ${productInfo.title} worth it? Honest review", "script": "My experience testing ${productInfo.title} - pros and cons...", "visuals": "${productInfo.title} interface and features", "captions": "${productInfo.title} review", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #review #honestreview", "musicSuggestion": "chill", "duration": "30s" },
     { "style": "Comparison", "hook": "${productInfo.title} vs competitors - which is best?", "script": "Comparing ${productInfo.title} to top alternatives...", "visuals": "Split screen comparison", "captions": "${productInfo.title} comparison", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #vs #comparison", "musicSuggestion": "dramatic", "duration": "30s" },
     { "style": "Promo", "hook": "Best ${productInfo.title} deal right now!", "script": "Limited time ${productInfo.title} special offer...", "visuals": "Text overlays, product logo, CTA", "captions": "${productInfo.title} deal", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #deal #discount", "musicSuggestion": "happy", "duration": "15s" }
@@ -168,16 +194,40 @@ Return ONLY a JSON object:
 
   // Safety net: ensure dailyVideoPack
   if (!result.dailyVideoPack || result.dailyVideoPack.length === 0) {
-    result.dailyVideoPack = [
-      { style: "Tutorial", hook: `How to use ${productInfo.title}`, script: "Step by step guide...", visuals: "Screen recording", captions: "Tutorial", hashtags: "#tutorial", musicSuggestion: "upbeat", duration: "30s" },
-      { style: "Review", hook: `${productInfo.title} review`, script: "Honest review...", visuals: "Product shots", captions: "Review", hashtags: "#review", musicSuggestion: "chill", duration: "30s" },
-      { style: "Comparison", hook: `${productInfo.title} vs others`, script: "Comparison...", visuals: "Split screen", captions: "Compare", hashtags: "#compare", musicSuggestion: "dramatic", duration: "30s" },
-      { style: "Promo", hook: `${productInfo.title} deal!`, script: "Special offer...", visuals: "Text overlays", captions: "Deal", hashtags: "#deal", musicSuggestion: "happy", duration: "15s" },
-    ];
-  }
-
-  return result;
+result.dailyVideoPack = [
+{
+style: "Tutorial",
+hook: `How to use ${productInfo.title}`,
+script: [
+{
+voice: "Need a website fast?",
+keywords: ["website", "business"]
+},
+{
+voice: `${productInfo.title} makes setup easy.`,
+keywords: ["technology", "dashboard"]
+},
+{
+voice: "Get started in minutes.",
+keywords: ["success"]
+},
+{
+voice: "Click the link below.",
+keywords: ["call to action"]
 }
+],
+cta: "Start today",
+captions: "Tutorial",
+hashtags: "#tutorial",
+musicSuggestion: "upbeat",
+duration: "30s"
+}
+];
+}
+
+return result;
+}
+
 
 // ============ IMAGE GENERATOR ============
 async function generateImages(imagePrompts) {
