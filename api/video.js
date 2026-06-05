@@ -26,7 +26,19 @@ const scenes = Array.isArray(videoConcept.script)
 
 console.log("SCENE COUNT:", scenes.length);
 
-const elements = [];
+const elements = [
+  {
+    type: "text",
+    text: "HELLO WORLD",
+    x: "50%",
+    y: "50%",
+    width: "90%",
+    fontSize: 80,
+    fillColor: "#ffffff",
+    alignment: "center",
+    duration: 10
+  }
+];
 
 const sceneDuration = 4;
 
