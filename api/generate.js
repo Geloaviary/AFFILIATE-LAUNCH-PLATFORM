@@ -173,9 +173,87 @@ Return ONLY a JSON object:
     "musicSuggestion": "upbeat",
     "duration": "30s"
   },
-    { "style": "Review", "hook": "Is ${productInfo.title} worth it? Honest review", "script": "My experience testing ${productInfo.title} - pros and cons...", "visuals": "${productInfo.title} interface and features", "captions": "${productInfo.title} review", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #review #honestreview", "musicSuggestion": "chill", "duration": "30s" },
-    { "style": "Comparison", "hook": "${productInfo.title} vs competitors - which is best?", "script": "Comparing ${productInfo.title} to top alternatives...", "visuals": "Split screen comparison", "captions": "${productInfo.title} comparison", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #vs #comparison", "musicSuggestion": "dramatic", "duration": "30s" },
-    { "style": "Promo", "hook": "Best ${productInfo.title} deal right now!", "script": "Limited time ${productInfo.title} special offer...", "visuals": "Text overlays, product logo, CTA", "captions": "${productInfo.title} deal", "hashtags": "#${productInfo.title.replace(/[^a-zA-Z0-9]/g,'')} #deal #discount", "musicSuggestion": "happy", "duration": "15s" }
+    {
+  "style": "Review",
+  "hook": "Is ${productInfo.title} worth it? Honest review",
+  "script": [
+    {
+      "voice": "I tested ${productInfo.title} so you don't have to.",
+      "keywords": ["review","software"]
+    },
+    {
+      "voice": "Here's what impressed me most.",
+      "keywords": ["features","technology"]
+    },
+    {
+      "voice": "There are a few downsides too.",
+      "keywords": ["comparison","review"]
+    },
+    {
+      "voice": "Overall, it's worth considering.",
+      "keywords": ["business","success"]
+    }
+  ],
+  "cta": "Check it out today",
+  "captions": "${productInfo.title} review",
+  "hashtags": "#review #software #tech",
+  "musicSuggestion": "chill",
+  "duration": "30s"
+}
+    {
+  "style": "Comparison",
+  "hook": "${productInfo.title} vs competitors",
+  "script": [
+    {
+      "voice": "Which option is actually better?",
+      "keywords": ["comparison","business"]
+    },
+    {
+      "voice": "${productInfo.title} stands out for ease of use.",
+      "keywords": ["dashboard","software"]
+    },
+    {
+      "voice": "Competitors may offer different features.",
+      "keywords": ["technology","comparison"]
+    },
+    {
+      "voice": "Choose what fits your needs best.",
+      "keywords": ["business","success"]
+    }
+  ],
+  "cta": "Compare before you buy",
+  "captions": "${productInfo.title} comparison",
+  "hashtags": "#comparison #vs #software",
+  "musicSuggestion": "dramatic",
+  "duration": "30s"
+}
+    {
+  "style": "Promo",
+  "hook": "Best ${productInfo.title} deal right now",
+  "script": [
+    {
+      "voice": "Looking for the best deal?",
+      "keywords": ["deal","discount"]
+    },
+    {
+      "voice": "${productInfo.title} is currently offering great value.",
+      "keywords": ["offer","technology"]
+    },
+    {
+      "voice": "Don't miss out on this opportunity.",
+      "keywords": ["success","business"]
+    },
+    {
+      "voice": "Grab it before the offer ends.",
+      "keywords": ["deal","call to action"]
+    }
+  ],
+  "cta": "Claim your deal today",
+  "captions": "${productInfo.title} deal",
+  "hashtags": "#deal #discount #offer",
+  "musicSuggestion": "happy",
+  "duration": "15s"
+}
   ]
 }`;
 
