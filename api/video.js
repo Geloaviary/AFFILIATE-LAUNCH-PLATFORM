@@ -9,59 +9,142 @@ exports.default = async function handler(req, res) {
 };
                        
 async function generateVideo(req, res) {
-  const { videoConcept } = req.body;
-  if (!videoConcept) return res.status(400).json({ error: "Missing videoConcept" });
+const { videoConcept } = req.body;
 
-  const elements = [
-    {
-      type: "shape",
-      shape: "rectangle",
-      x: "0%", y: "0%", width: "100%", height: "100%",
-      fillColor: "#1e3a5f",
-      duration: 25,
-    },
-    {
-      type: "text",
-      text: videoConcept.hook,
-      x: "50%", y: "40%", width: "90%",
-      duration: 25,
-      fontSize: 36,
-      fontWeight: 800,
-      fillColor: "#ffffff",
-      backgroundColor: "rgba(0,0,0,0.5)",
-      alignment: "center",
-    },
-    {
-      type: "text",
-      text: "Link in bio!",
-      x: "50%", y: "85%", width: "60%",
-      duration: 25,
-      fontSize: 22,
-      fontWeight: 700,
-      fillColor: "#ffffff",
-      backgroundColor: "#2563eb",
-      alignment: "center",
-    },
-  ];
+if (!videoConcept) {
+return res.status(400).json({
+error: "Missing videoConcept"
+});
+}
 
-  const body = { 
-    source: { output_format: "mp4", width: 1080, height: 1920, elements },
-  };
+const scenes = Array.isArray(videoConcept.script)
+? videoConcept.script
+: [];
 
-  try {
-    const cr = await fetch("https://api.creatomate.com/v1/renders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CREATOMATE_KEY },
-      body: JSON.stringify(body),
-    });
-    const d = await cr.json();
-    const result = Array.isArray(d) ? d[0] : d;
-    if (!result?.id) return res.status(500).json({ error: "Creatomate failed", raw: d });
-    return res.status(200).json({ jobId: result.id });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
+const elements = [];
+
+const sceneDuration = 4;
+
+scenes.forEach((scene, index) => {
+
+const start = index * sceneDuration;
+
+elements.push({
+  type: "shape",
+  shape: "rectangle",
+  x: "0%",
+  y: "0%",
+  width: "100%",
+  height: "100%",
+  fillColor:
+    index % 2 === 0
+      ? "#0f172a"
+      : "#1e293b",
+  time: start,
+  duration: sceneDuration
+});
+
+elements.push({
+  type: "text",
+  text: scene.voice,
+  x: "50%",
+  y: "45%",
+  width: "90%",
+  fontSize: 34,
+  fontWeight: 800,
+  fillColor: "#ffffff",
+  backgroundColor: "rgba(0,0,0,0.45)",
+  alignment: "center",
+  time: start,
+  duration: sceneDuration
+});
+
+elements.push({
+  type: "text",
+  text:
+    (scene.keywords || [])
+      .join(" • "),
+  x: "50%",
+  y: "75%",
+  width: "80%",
+  fontSize: 18,
+  fillColor: "#cbd5e1",
+  alignment: "center",
+  time: start,
+  duration: sceneDuration
+});
+
+});
+
+elements.push({
+type: "text",
+text:
+videoConcept.cta ||
+"Link in bio",
+x: "50%",
+y: "88%",
+width: "70%",
+fontSize: 28,
+fontWeight: 800,
+fillColor: "#ffffff",
+backgroundColor: "#2563eb",
+alignment: "center",
+time: scenes.length * sceneDuration,
+duration: 3
+});
+
+const body = {
+source: {
+output_format: "mp4",
+width: 1080,
+height: 1920,
+elements
+}
 };
+
+try {
+
+const cr = await fetch(
+  "https://api.creatomate.com/v1/renders",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type":
+        "application/json",
+      "Authorization":
+        "Bearer " +
+        CREATOMATE_KEY
+    },
+    body: JSON.stringify(body)
+  }
+);
+
+const d = await cr.json();
+
+const result =
+  Array.isArray(d)
+    ? d[0]
+    : d;
+
+if (!result?.id) {
+  return res.status(500).json({
+    error: "Creatomate failed",
+    raw: d
+  });
+}
+
+return res.status(200).json({
+  jobId: result.id
+});
+
+} catch (e) {
+
+return res.status(500).json({
+  error: e.message
+});
+
+}
+}
 
 async function checkVideo(req, res) {
   const { jobId } = req.body;
