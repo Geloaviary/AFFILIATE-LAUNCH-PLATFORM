@@ -66,7 +66,13 @@ async function smartScrape(url, productName) {
   for (const [key, product] of Object.entries(KNOWN_PRODUCTS)) {
     if (domainClean.includes(key) || key.includes(domainClean)) {
       await kv.set(`product:${domainClean}`, { ...product, url, lastUsed: new Date().toISOString() });
-      return { title: productName || product.name, description: product.desc, url, niche: product.niche };
+      return {
+        title: productName || product.name,
+        description: product.desc,
+        url,
+        niche: product.niche,
+        keywords: []
+      };
     }
   }
 
