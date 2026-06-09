@@ -24,7 +24,17 @@ const KNOWN_PRODUCTS = {
   "clickfunnels.com": { name: "ClickFunnels", niche: "Sales Funnels / SaaS", desc: "Build marketing funnels that convert" },
   "shopify.com": { name: "Shopify", niche: "E-commerce", desc: "All-in-one e-commerce platform" },
   "getresponse.com": { name: "GetResponse", niche: "Email Marketing", desc: "Email marketing and automation platform" },
-  "convertkit.com": { name: "ConvertKit", niche: "Email Marketing", desc: "Email marketing for creators" },
+  "convertkit.com": {
+  name: "ConvertKit",
+  niche: "Email Marketing",
+  desc: "Email marketing for creators",
+  keywords: [
+    "email marketing",
+    "newsletter",
+    "creator business",
+    "email automation"
+  ]
+},
 };
 
 const BLOCKED_PATTERNS = [
@@ -71,7 +81,7 @@ async function smartScrape(url, productName) {
         description: product.desc,
         url,
         niche: product.niche,
-        keywords: []
+        keywords: product.keywords || []
       };
     }
   }
