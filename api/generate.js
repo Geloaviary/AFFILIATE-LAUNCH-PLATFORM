@@ -238,7 +238,7 @@ Return ONLY a JSON object:
       },
       {
         "voice": "${productInfo.title} makes setup simple.",
-        "keywords": ["dashboard","software"]
+        "keywords": ${JSON.stringify(nicheKeywords)}
       },
       {
         "voice": "You get powerful features and support included.",
