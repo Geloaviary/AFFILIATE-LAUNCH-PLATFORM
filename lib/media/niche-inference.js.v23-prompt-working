@@ -1,0 +1,46 @@
+const OPENAI_KEY =
+  (process.env.OPENAI_API_KEY || "")
+    .replace(/[^\x20-\x7E]/g, "")
+    .trim();
+
+async function inferNiche({
+  brand,
+  url,
+  title,
+  description
+}) {
+
+  const prompt = `
+Analyze this affiliate product.
+
+Brand:
+${brand}
+
+URL:
+${url}
+
+Title:
+${title || ""}
+
+Description:
+${description || ""}
+
+Return JSON only:
+
+{
+  "niche": "",
+  "audience": "",
+  "keywords": []
+}
+`;
+
+  return {
+    brand,
+    prompt
+  };
+
+}
+
+module.exports = {
+  inferNiche
+};

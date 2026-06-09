@@ -1,6 +1,13 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 const { kv } = require("@vercel/kv");
+const { enrichScenes } =
+require("../lib/media/enrich-scenes");
+const {
+  inferNiche
+} = require(
+  "../lib/media/niche-inference"
+);
 
 const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
@@ -79,7 +86,7 @@ async function smartScrape(url, productName) {
   try {
     const response = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36" },
-      timeout: 8000,
+    
     });
     const html = await response.text();
     const $ = cheerio.load(html);
@@ -117,7 +124,43 @@ async function smartScrape(url, productName) {
   }
 
   // Save to KV memory
-  const result = { title, description, url, niche };
+  let keywords = [];
+
+try {
+
+  const inferred =
+    await inferNiche({
+      brand: title,
+      url,
+      title,
+      description
+    });
+
+  keywords =
+    inferred.keywords || [];
+
+  if (
+    inferred.niche &&
+    niche === "Software & Tools"
+  ) {
+    niche =
+      inferred.niche;
+  }
+
+} catch (e) {
+  console.error(
+    "Niche inference failed:",
+    e.message
+  );
+}
+
+const result = {
+  title,
+  description,
+  url,
+  niche,
+  keywords
+};
   try { await kv.set(`product:${domainClean}`, { ...result, lastUsed: new Date().toISOString() }); } catch (e) {}
   return result;
 }
@@ -132,6 +175,10 @@ function detectNiche(productName) {
 
 // ============ AI PACKAGE GENERATOR ============
 async function generatePackage(productInfo) {
+  console.log(
+  "PRODUCT KEYWORDS:",
+  productInfo.keywords
+);
   const prompt = `You are an affiliate marketing strategist. Create a launch package for "${productInfo.title}". It is a ${productInfo.niche || 'software'} product. Description: ${productInfo.description}.
 
 Return ONLY a JSON object:
@@ -269,6 +316,26 @@ Return ONLY a JSON object:
   const content = data.choices[0].message.content;
   const jsonStr = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
   const result = JSON.parse(jsonStr);
+
+  if (result.dailyVideoPack) {
+
+  for (const video of result.dailyVideoPack) {
+
+    try {
+      video.script =
+        await enrichScenes(
+          video.script || []
+        );
+    } catch (e) {
+      console.error(
+        "Scene enrichment failed:",
+        e.message
+      );
+    }
+
+  }
+
+}
 
   // Safety net: ensure dailyVideoPack
   if (!result.dailyVideoPack || result.dailyVideoPack.length === 0) {
