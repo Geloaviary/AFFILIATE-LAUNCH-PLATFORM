@@ -176,6 +176,10 @@ function detectNiche(productName) {
 // ============ AI PACKAGE GENERATOR ============
 async function generatePackage(productInfo) {
   console.log(
+  "PRODUCT INFO:",
+  JSON.stringify(productInfo, null, 2)
+);
+  console.log(
   "PRODUCT KEYWORDS:",
   productInfo.keywords
 );
