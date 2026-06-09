@@ -234,7 +234,7 @@ Return ONLY a JSON object:
     "script": [
       {
         "voice": "Need a website fast?",
-        "keywords": ["website","business","laptop"]
+        "keywords": ${JSON.stringify(nicheKeywords)}
       },
       {
         "voice": "${productInfo.title} makes setup simple.",
