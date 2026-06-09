@@ -199,6 +199,21 @@ async function generatePackage(productInfo) {
   "PRODUCT KEYWORDS:",
   productInfo.keywords
 );
+
+console.log(
+  "SCENE INTELLIGENCE:",
+  productInfo.keywords
+);
+
+const nicheKeywords =
+  productInfo.keywords?.length
+    ? productInfo.keywords
+    : ["business", "technology"];
+
+console.log(
+  "NICHE KEYWORDS:",
+  nicheKeywords
+);
   const prompt = `You are an affiliate marketing strategist. Create a launch package for "${productInfo.title}". It is a ${productInfo.niche || 'software'} product. Description: ${productInfo.description}.
 
 Return ONLY a JSON object:
