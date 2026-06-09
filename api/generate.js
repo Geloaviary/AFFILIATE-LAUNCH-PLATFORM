@@ -246,7 +246,7 @@ Return ONLY a JSON object:
       },
       {
         "voice": "Start today using the link below.",
-        "keywords": ["success","business"]
+        "keywords": ${JSON.stringify(nicheKeywords)}
       }
     ],
     "cta": "Start today",
