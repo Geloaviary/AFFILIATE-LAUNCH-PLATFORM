@@ -242,7 +242,7 @@ Return ONLY a JSON object:
       },
       {
         "voice": "You get powerful features and support included.",
-        "keywords": ["support","technology"]
+        "keywords": ${JSON.stringify(nicheKeywords)}
       },
       {
         "voice": "Start today using the link below.",
