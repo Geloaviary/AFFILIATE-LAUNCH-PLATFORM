@@ -13,6 +13,12 @@ const {
 );
 
 const {
+  validateAffiliateProduct
+} = require(
+  "../lib/affiliate-researcher/affiliate-validator"
+);
+
+const {
   analyzeProduct
 } = require(
   "../lib/affiliate-researcher/product-intelligence"
@@ -106,23 +112,54 @@ const products =
 const rankedProducts =
   await scoreProducts(products);
 
-  let productIntelligence = null;
+let validatedProduct = null;
+
+if (rankedProducts.length) {
+
+  try {
+
+    validatedProduct =
+      await validateAffiliateProduct(
+        rankedProducts[0]
+      );
+
+    console.log(
+      "VALIDATED PRODUCT:",
+      JSON.stringify(
+        validatedProduct,
+        null,
+        2
+      )
+    );
+
+  } catch (e) {
+
+    console.error(
+      "Affiliate Validator failed:",
+      e.message
+    );
+
+  }
+
+}
+
+let productIntelligence = null;
 
 if (rankedProducts.length) {
 
   try {
 
     productIntelligence =
-  await analyzeProduct({
-    name:
-      rankedProducts[0].name,
+      await analyzeProduct({
+        name:
+          rankedProducts[0].name,
 
-    description:
-      rankedProducts[0].description,
+        description:
+          rankedProducts[0].description,
 
-    productUrl:
-      rankedProducts[0].productUrl
-  });
+        productUrl:
+          rankedProducts[0].productUrl
+      });
 
   } catch (e) {
 
@@ -147,8 +184,10 @@ console.log(
 return res.status(200).json({
   products,
   rankedProducts,
+  validatedProduct,
   productIntelligence
 });
+
   } catch (error) {
     // Fallback to GPT-3.5
     try {
