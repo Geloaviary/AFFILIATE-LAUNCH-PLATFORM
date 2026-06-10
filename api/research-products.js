@@ -12,6 +12,12 @@ const {
   "../lib/affiliate-researcher/opportunity-scorer"
 );
 
+const {
+  analyzeProduct
+} = require(
+  "../lib/affiliate-researcher/product-intelligence"
+);
+
 const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
 exports.default = async function handler(req, res) {
@@ -100,6 +106,35 @@ const products =
 const rankedProducts =
   await scoreProducts(products);
 
+  let productIntelligence = null;
+
+if (rankedProducts.length) {
+
+  try {
+
+    productIntelligence =
+  await analyzeProduct({
+    name:
+      rankedProducts[0].name,
+
+    description:
+      rankedProducts[0].description,
+
+    productUrl:
+      rankedProducts[0].productUrl
+  });
+
+  } catch (e) {
+
+    console.error(
+      "Product Intelligence failed:",
+      e.message
+    );
+
+  }
+
+}
+
 console.log(
   "RANKED PRODUCTS:",
   JSON.stringify(
@@ -111,8 +146,9 @@ console.log(
 
 return res.status(200).json({
   products,
-  rankedProducts
- });
+  rankedProducts,
+  productIntelligence
+});
   } catch (error) {
     // Fallback to GPT-3.5
     try {
@@ -139,14 +175,44 @@ const products =
     ? productsData
     : productsData.products || [];
 
-const rankedProducts =
+   const rankedProducts =
   await scoreProducts(products);
+
+let productIntelligence = null;
+
+if (rankedProducts.length) {
+
+  try {
+
+    productIntelligence =
+  await analyzeProduct({
+    name:
+      rankedProducts[0].name,
+
+    description:
+      rankedProducts[0].description,
+
+    productUrl:
+      rankedProducts[0].productUrl
+  });
+
+  } catch (e) {
+
+    console.error(
+      "Product Intelligence failed:",
+      e.message
+    );
+
+  }
+
+}
 
 return res.status(200).json({
   products,
-  rankedProducts
+  rankedProducts,
+  productIntelligence
 });
-    } catch (fbError) {
+   } catch (fbError) {
 
   console.error(
     "Fallback failed:",
@@ -156,10 +222,13 @@ return res.status(200).json({
   return res.status(500).json({
     products: [],
     rankedProducts: [],
+    productIntelligence: null,
     error:
-      fbError.message || error.message
+      fbError.message ||
+      error.message
   });
 
-    }
-  }
+}
+
+ }
 };
