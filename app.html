@@ -245,18 +245,32 @@ document.getElementById('result').innerHTML =
     '</p>' +
 
     '<p><strong>🔗 Affiliate Program:</strong> ' +
-    (
-      p.validation?.sourceUrl ||
-      'N/A'
-    ) +
-    '</p>' +
+
+(
+  p.validation?.sourceUrl
+    ? '<a href="' +
+      p.validation.sourceUrl +
+      '" target="_blank">' +
+      p.validation.sourceUrl +
+      '</a>'
+    : 'N/A'
+) +
+
+'</p>' +
 
     '<p><strong>🌐 Product URL:</strong> ' +
-    (
-      p.productUrl ||
-      'N/A'
-    ) +
-    '</p>' +
+
+(
+  p.productUrl
+    ? '<a href="' +
+      p.productUrl +
+      '" target="_blank">' +
+      p.productUrl +
+      '</a>'
+    : 'N/A'
+) +
+
+'</p>' +
 
     '<button class="select-btn btn-blue btn-sm" ' +
     'data-name="' + p.name + '" ' +
@@ -324,18 +338,6 @@ document.getElementById('result').innerHTML =
     );
 
   });
-
-        document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', async function() {
-          const name = this.dataset.name, productUrl = this.dataset.productUrl;
-          const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche: '', userId });
-          if (data.error) return alert(data.error);
-          await loadCampaigns();
-          switchCampaign(data.campaignId);
-          document.getElementById('urlInput').value = productUrl;
-          div.innerHTML = '<p>✅ <strong>' + name + '</strong> campaign created! Click "Generate Full Package".</p>';
-        }));
-      } catch(e) { div.innerHTML = '<p style="color:red;">Error: ' + e.message + '</p>'; }
-    });
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();

@@ -1,6 +1,12 @@
 const fetch = require("node-fetch");
 const { kv } = require("@vercel/kv");
 
+const {
+  getFeaturedNiches
+} = require(
+  "../lib/niche-catalog"
+);
+
 const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "").trim();
 
 exports.default = async function handler(req, res) {
@@ -171,6 +177,18 @@ exports.default = async function handler(req, res) {
     await kv.set("product-rotation", products);
     return res.status(200).json({ success: true, total: products.length });
   }
+
+  // ============ NICHE CATALOG ============
+if (action === "get-niches") {
+
+  return res.status(200).json({
+
+    niches:
+      getFeaturedNiches()
+
+  });
+
+}
 
   return res.status(404).json({ error: "Unknown action" });
 };
