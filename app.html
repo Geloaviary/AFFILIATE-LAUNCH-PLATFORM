@@ -219,55 +219,112 @@ document.getElementById('result').innerHTML =
         if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
         let html = '<h3>Recommended Products</h3>';
         products.forEach(p => {
-        html +=
-  '<div class="card">' +
 
-  '<h3>' + p.name + '</h3>' +
+  html +=
 
-  '<p><strong>⭐ Score:</strong> ' +
-(
-  p.longtermScore?.score ||
-  0
-) +
-'</p>' +
+    '<div class="card">' +
 
-  '<p>' +
-  (
-    p.validation?.commissionType ||
-    'Affiliate Program Found'
-  ) +
-  '</p>' +
+    '<h3>' + p.name + '</h3>' +
 
-  '<p><strong>💰 Commission:</strong> ' +
-  (
-    p.validation?.commissionValue ||
-    'Unknown'
-  ) +
-  '</p>' +
-  '<p><strong>🔗 Affiliate Program:</strong> ' +
-'<a href="' +
-(
-  p.validation?.sourceUrl ||
-  p.productUrl
-) +
-'" target="_blank">' +
-(
-  p.validation?.sourceUrl ||
-  'Visit Program'
-) +
-'</a></p>' +
+    '<p><strong>⭐ Score:</strong> ' +
+    (p.longtermScore?.score || 0) +
+    '</p>' +
 
-'<p><strong>🌐 Product URL:</strong> ' +
-'<a href="' +
-p.productUrl +
-'" target="_blank">' +
-p.productUrl +
-'</a></p>' +
+    '<p>' +
+    (
+      p.validation?.commissionType ||
+      'Affiliate Program Found'
+    ) +
+    '</p>' +
 
-  '</div>';
+    '<p><strong>💰 Commission:</strong> ' +
+    (
+      p.validation?.commissionValue ||
+      'Unknown'
+    ) +
+    '</p>' +
 
-   });  
+    '<p><strong>🔗 Affiliate Program:</strong> ' +
+    (
+      p.validation?.sourceUrl ||
+      'N/A'
+    ) +
+    '</p>' +
+
+    '<p><strong>🌐 Product URL:</strong> ' +
+    (
+      p.productUrl ||
+      'N/A'
+    ) +
+    '</p>' +
+
+    '<button class="select-btn btn-blue btn-sm" ' +
+    'data-name="' + p.name + '" ' +
+    'data-product-url="' + p.productUrl + '" ' +
+    'data-niche="' + niche + '">' +
+    '✅ Select & Generate' +
+    '</button>' +
+
+    '</div>';
+
+});
         div.innerHTML = html;
+
+        document
+  .querySelectorAll('.select-btn')
+  .forEach(b => {
+
+    b.addEventListener(
+      'click',
+      async function() {
+
+        const name =
+          this.dataset.name;
+
+        const productUrl =
+          this.dataset.productUrl;
+
+        const niche =
+          this.dataset.niche;
+
+        const data =
+          await apiCall(
+            'manage-campaigns',
+            'POST',
+            {
+              name,
+              productUrl,
+              niche,
+              userId
+            }
+          );
+
+        if (data.error) {
+
+          return alert(
+            data.error
+          );
+
+        }
+
+        await loadCampaigns();
+
+        switchCampaign(
+          data.campaignId
+        );
+
+        document
+          .getElementById(
+            'urlInput'
+          )
+          .value =
+          productUrl;
+
+      }
+    );
+
+  });
+
         document.querySelectorAll('.select-btn').forEach(b => b.addEventListener('click', async function() {
           const name = this.dataset.name, productUrl = this.dataset.productUrl;
           const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche: '', userId });

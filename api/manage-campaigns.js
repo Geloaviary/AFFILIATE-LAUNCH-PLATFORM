@@ -1,5 +1,11 @@
 const { kv } = require("@vercel/kv");
 
+const {
+  markCampaignCreated
+} = require(
+  "../lib/portfolio-manager"
+);
+
 exports.default = async function handler(req, res) {
 try {
 const userId =
@@ -82,6 +88,29 @@ if (req.method === "POST") {
     `${userId}-campaign-${campaignId}`,
     campaign
   );
+
+  try {
+
+  await markCampaignCreated({
+
+    niche:
+      niche || "",
+
+    productName:
+      name,
+
+    campaignId
+
+  });
+
+} catch (e) {
+
+  console.error(
+    "Portfolio update failed:",
+    e.message
+  );
+
+}
 
   return res.status(200).json({
     campaignId,
