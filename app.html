@@ -5,6 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Affiliate Launch Platform | Dashboard</title>
   <style>
+
+    #appShell {
+
+  display: flex;
+
+  min-height: 100vh;
+
+}
+
+#sidebar {
+
+  width: 260px;
+
+  background: #0f172a;
+
+  color: white;
+
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+#workspace {
+
+  flex: 1;
+
+  padding: 20px;
+
+  overflow-y: auto;
+
+}
+
+.nav-btn {
+
+  border: none;
+
+  padding: 12px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  border-radius: 8px;
+
+}
+
+.nav-btn:hover {
+
+  opacity: 0.9;
+
+}
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.6; font-size: 16px; padding: 1rem; }
     .container { max-width: 960px; margin: 0 auto; background: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
@@ -52,6 +108,115 @@
 
 </head>
 <body>
+  <div id="appShell">
+
+  <aside id="sidebar">
+
+    <h2>Affiliate Launch</h2>
+
+    <button class="nav-btn" data-page="campaigns">
+      Campaigns
+    </button>
+
+    <button class="nav-btn" data-page="portfolio">
+      Portfolio
+    </button>
+
+    <button class="nav-btn" data-page="research">
+      Research
+    </button>
+
+    <button class="nav-btn" data-page="strategy">
+      Strategy
+    </button>
+
+    <button class="nav-btn" data-page="production">
+      Production
+    </button>
+
+    <button class="nav-btn" data-page="compliance">
+      Compliance
+    </button>
+
+    <button class="nav-btn" data-page="publishing">
+      Publishing
+    </button>
+
+    <button class="nav-btn" data-page="analytics">
+      Analytics
+    </button>
+
+    <button class="nav-btn" data-page="settings">
+      Settings
+    </button>
+
+  </aside>
+
+  <main id="workspace">
+
+  <section id="campaignsPage">
+
+    <h1>Campaigns</h1>
+
+  </section>
+
+  <section
+    id="researchPage"
+    style="display:none"
+  >
+
+    <h1>Research</h1>
+
+  </section>
+
+  <section
+    id="strategyPage"
+    style="display:none"
+  >
+
+    <h1>Strategy</h1>
+
+  </section>
+
+  <section
+    id="productionPage"
+    style="display:none"
+  >
+
+    <h1>Production</h1>
+
+  </section>
+
+  <section
+    id="compliancePage"
+    style="display:none"
+  >
+
+    <h1>Compliance</h1>
+
+  </section>
+
+  <section
+    id="publishingPage"
+    style="display:none"
+  >
+
+    <h1>Publishing</h1>
+
+  </section>
+
+  <section
+    id="analyticsPage"
+    style="display:none"
+  >
+
+    <h1>Analytics</h1>
+
+  </section>
+
+</main>
+
+</div>
   <div class="container">
     <div id="logoutBtnContainer" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"></div>
     <div id="usageAlert" class="alert hidden"><span id="usageText"></span><button id="dismissUsageBtn" class="btn-sm" style="background:none;">Dismiss</button></div>
@@ -549,6 +714,43 @@ document.getElementById('result').innerHTML =
       const data = await apiCall('utils?action=optimal-time');
       alert('🕐 Best posting time: ' + (data.time || '11:00 AM'));
     });
+
+    document
+  .querySelectorAll('.nav-btn')
+  .forEach(btn => {
+
+    btn.addEventListener(
+      'click',
+      function () {
+
+        document
+          .querySelectorAll(
+            '#workspace section'
+          )
+          .forEach(
+            s => s.style.display = 'none'
+          );
+
+        const page =
+          this.dataset.page;
+
+        const target =
+          document.getElementById(
+            page + 'Page'
+          );
+
+        if (target) {
+
+          target.style.display =
+            'block';
+
+        }
+
+      }
+    );
+
+  }); 
+
   </script>
 </body>
 </html>
