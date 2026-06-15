@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Affiliate Launch Platform | Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #0f172a; line-height: 1.6; font-size: 16px; padding: 1rem; }
+    .container { max-width: 960px; margin: 0 auto; background: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.25rem; margin: 1rem 0 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem; }
+    h3 { font-size: 1.1rem; margin: 0.5rem 0; }
+    input, select, textarea { width: 100%; padding: 0.7rem 0.9rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; margin-top: 0.3rem; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    button { display: inline-block; padding: 0.7rem 1.2rem; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; min-height: 44px; background: #0f172a; color: #fff; }
+    button:hover { background: #1e293b; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .btn-blue { background: #2563eb; } .btn-blue:hover { background: #1d4ed8; }
+    .btn-green { background: #16a34a; } .btn-green:hover { background: #15803d; }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; min-height: 36px; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    .button-group button { flex: 1; min-width: 120px; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; border-radius: 0.5rem; padding: 1rem; margin: 0.75rem 0; }
+    .tag { display: inline-block; background: #2563eb; color: #fff; padding: 0.2rem 0.7rem; border-radius: 1rem; font-size: 0.8rem; margin-right: 0.4rem; }
+    .progress-log { background: #1e293b; color: #e2e8f0; border-radius: 0.5rem; padding: 0.75rem; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: #fff; padding: 2rem; border-radius: 1rem; max-width: 450px; width: 90%; }
+    .campaign-bar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .campaign-bar select { flex: 1; min-width: 150px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+    th, td { text-align: left; padding: 0.6rem 0.4rem; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    .alert { padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+    .alert-warning { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+    .hidden { display: none !important; }
+    img { max-width: 100%; height: auto; border-radius: 0.5rem; }
+    .image-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+    .image-row div { flex: 1; min-width: 200px; }
+    video { max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem; }
+    @media (max-width: 600px) { body { padding: 0.5rem; } .container { padding: 1rem; } }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e2e8f0; border-top: 3px solid #2563eb; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .progress-container { margin: 10px 0; }
+    .progress-bar { background: #e2e8f0; border-radius: 10px; height: 8px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, #2563eb, #16a34a); height: 100%; border-radius: 10px; transition: width 0.4s; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .running-text { display: inline-block; animation: bounce 0.5s infinite alternate; }
+    @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div id="logoutBtnContainer" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"></div>
+    <div id="usageAlert" class="alert hidden"><span id="usageText"></span><button id="dismissUsageBtn" class="btn-sm" style="background:none;">Dismiss</button></div>
+    <div class="campaign-bar">
+      <label>📁 Campaign:</label>
+      <select id="campaignSelect"><option value="">-- Select Campaign --</option></select>
+      <button id="newCampaignBtn" class="btn-blue btn-sm">+ New</button>
+      <span id="activeCampaignName"></span>
+    </div>
+    <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+      <select id="nicheSelect" style="flex:1;">
+        <option value="">🔽 Choose a niche...</option>
+        <option value="web hosting">🌐 Web Hosting — $65-$200/sale</option>
+        <option value="saas software">💻 SaaS / Software — 20-30% 🔄</option>
+        <option value="vpn services">🔒 VPN Services — 30-50% 🔄</option>
+        <option value="email marketing">📧 Email Marketing — 20-30% 🔄</option>
+        <option value="website builders">🏗️ Website Builders — $50-$150/sale</option>
+        <option value="cybersecurity">🛡️ Cybersecurity — 25-40% 🔄</option>
+        <option value="ai tools">🤖 AI Tools — 20-30% 🔄</option>
+      </select>
+      <input type="text" id="nicheInput" placeholder="Or type custom niche..." style="flex:1;" />
+      <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
+    </div>
+    <div id="productResults"></div>
+    <input type="text" id="urlInput" placeholder="Product page URL (for AI research)" />
+    <input type="text" id="affiliateUrlInput" placeholder="Your affiliate link (for videos & bios)" style="margin-top:0.5rem;" />
+    <input type="text" id="productNameOverride" placeholder="Product name override (optional)" style="margin-top:0.5rem;" />
+    <div style="display:flex; flex-wrap:wrap; gap:1rem; margin:0.75rem 0; font-size:0.9rem;">
+      <label><input type="checkbox" id="multiLang"> Multi-Lang</label>
+      <label><input type="checkbox" id="useTrending" checked> Trending Sounds</label>
+      <label><input type="checkbox" id="postStories"> Post Stories</label>
+      <input type="text" id="commentKeyword" value="SENDIT" style="width:160px; padding:0.3rem;" />
+    </div>
+    <div class="button-group">
+      <button id="generateBtn">⚡ Generate Full Package</button>
+      <button id="createLandingBtn" class="btn-blue">📄 Create Landing Page</button>
+    </div>
+    <div class="button-group">
+      <button id="autoGenerateBtn" class="btn-green">🚀 Generate & Post All Daily Videos</button>
+      <button id="rotationBtn" class="btn-blue">🔄 Check Rotation</button>
+    </div>
+    <div id="result"></div>
+    <div style="margin-top:1rem;"><button id="loadAnalyticsBtn">📊 Refresh Analytics</button><div id="analyticsTableContainer" class="table-wrap"></div></div>
+    <div id="campaignModal" class="modal">
+      <div class="modal-content">
+        <h2>New Campaign</h2>
+        <input type="text" id="modalCampaignName" placeholder="Campaign Name" />
+        <input type="text" id="modalProductUrl" placeholder="Product Page URL" />
+        <input type="text" id="modalAffiliateUrl" placeholder="Your Affiliate Link" />
+        <input type="text" id="modalNiche" placeholder="Niche (optional)" />
+        <div class="button-group">
+          <button id="saveCampaignBtn" class="btn-green">Create Campaign</button>
+          <button id="cancelCampaignBtn" style="background:#94a3b8;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script>
+
+let activeCampaignId = null;
+let campaigns = [];
+let currentData = null;
+let userId = 'admin';
+
+async function apiCall(endpoint, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  if (body) {
+    opts.body = JSON.stringify(body);
+  }
+
+  const res = await fetch('/api/' + endpoint, opts);
+
+  return res.json();
+}
+
+async function loadCampaigns() {
+  const data = await apiCall(
+  'manage-campaigns?userId=' + userId,
+  'GET'
+);
+
+  campaigns = data.campaigns || [];
+
+  const select = document.getElementById('campaignSelect');
+
+  select.innerHTML =
+    '<option value="">-- Select Campaign --</option>';
+
+  campaigns.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id;
+    o.textContent = c.name;
+    select.appendChild(o);
+  });
+
+  if (campaigns.length > 0) {
+    switchCampaign(campaigns[0].id);
+  }
+}
+
+function switchCampaign(id) {
+activeCampaignId = id;
+
+const c = campaigns.find(x => x.id === id);
+
+if (!c) return;
+
+document.getElementById('activeCampaignName').textContent =
+'Active: ' + c.name;
+
+document.getElementById('urlInput').value =
+c.productUrl || '';
+
+document.getElementById('affiliateUrlInput').value =
+c.affiliateUrl || '';
+
+if (c.package) {
+currentData = c.package;
+document.getElementById('result').innerHTML =
+formatPackage(currentData);
+attachListeners();
+} else {
+currentData = null;
+document.getElementById('result').innerHTML =
+'<p>No package yet.</p>';
+}
+}
+
+
+    document.getElementById('campaignSelect').addEventListener('change', function() {
+             if (this.value) switchCampaign(this.value);
+     });
+    document.getElementById('newCampaignBtn').addEventListener('click', () => document.getElementById('campaignModal').style.display = 'flex');
+    document.getElementById('cancelCampaignBtn').addEventListener('click', () => document.getElementById('campaignModal').style.display = 'none');
+    document.getElementById('saveCampaignBtn').addEventListener('click', async () => {
+      const name = document.getElementById('modalCampaignName').value.trim();
+      const productUrl = document.getElementById('modalProductUrl').value.trim();
+      const affiliateUrl = document.getElementById('modalAffiliateUrl').value.trim();
+      const niche = document.getElementById('modalNiche').value.trim();
+      if (!name || !productUrl) return alert('Name and URL required.');
+      const data = await apiCall('manage-campaigns', 'POST', { name, productUrl, niche, affiliateUrl, userId });
+      if (data.error) return alert(data.error);
+      document.getElementById('campaignModal').style.display = 'none';
+      await loadCampaigns();
+      switchCampaign(data.campaignId);
+    });
+
+    document.getElementById('findProductsBtn').addEventListener('click', async () => {
+      const niche = document.getElementById('nicheSelect').value || document.getElementById('nicheInput').value.trim();
+      const div = document.getElementById('productResults');
+      div.innerHTML = '<p><span class="spinner"></span>🔍 <span class="running-text">Scanning market...</span></p>';
+      try {
+        const data = await apiCall('research-products', 'POST', { niche });
+        if (data.error) { div.innerHTML = '<p style="color:red;">' + data.error + '</p>'; return; }
+        const products =
+           (
+            data.validatedProducts || []
+           ).slice(0, 5);
+        if (!products.length) { div.innerHTML = '<p>No products found.</p>'; return; }
+        let html = '<h3>Recommended Products</h3>';
+        products.forEach(p => {
+
+  html +=
+
+    '<div class="card">' +
+
+    '<h3>' + p.name + '</h3>' +
+
+    '<p><strong>⭐ Score:</strong> ' +
+    (p.longtermScore?.score || 0) +
+    '</p>' +
+
+    '<p>' +
+    (
+      p.validation?.commissionType ||
+      'Affiliate Program Found'
+    ) +
+    '</p>' +
+
+    '<p><strong>💰 Commission:</strong> ' +
+    (
+      p.validation?.commissionValue ||
+      'Unknown'
+    ) +
+    '</p>' +
+
+    '<p><strong>🔗 Affiliate Program:</strong> ' +
+
+(
+  p.validation?.sourceUrl
+    ? '<a href="' +
+      p.validation.sourceUrl +
+      '" target="_blank">' +
+      p.validation.sourceUrl +
+      '</a>'
+    : 'N/A'
+) +
+
+'</p>' +
+
+    '<p><strong>🌐 Product URL:</strong> ' +
+
+(
+  p.productUrl
+    ? '<a href="' +
+      p.productUrl +
+      '" target="_blank">' +
+      p.productUrl +
+      '</a>'
+    : 'N/A'
+) +
+
+'</p>' +
+
+    '<button class="select-btn btn-blue btn-sm" ' +
+    'data-name="' + p.name + '" ' +
+    'data-product-url="' + p.productUrl + '" ' +
+    'data-niche="' + niche + '">' +
+    '✅ Select & Generate' +
+    '</button>' +
+
+    '</div>';
+
+});
+        div.innerHTML = html;
+
+        document
+  .querySelectorAll('.select-btn')
+  .forEach(b => {
+
+    b.addEventListener(
+      'click',
+      async function() {
+
+        const name =
+          this.dataset.name;
+
+        const productUrl =
+          this.dataset.productUrl;
+
+        const niche =
+          this.dataset.niche;
+
+        const data =
+          await apiCall(
+            'manage-campaigns',
+            'POST',
+            {
+              name,
+              productUrl,
+              niche,
+              userId
+            }
+          );
+
+        if (data.error) {
+
+          return alert(
+            data.error
+          );
+
+        }
+
+        await loadCampaigns();
+
+        switchCampaign(
+          data.campaignId
+        );
+
+        document
+          .getElementById(
+            'urlInput'
+          )
+          .value =
+          productUrl;
+
+      }
+    );
+
+  });
+
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+      const url = document.getElementById('urlInput').value.trim();
+      const productName = document.getElementById('productNameOverride').value.trim();
+      if (!url || !activeCampaignId) return alert('Enter URL and select campaign.');
+      document.getElementById('result').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="width:30px;height:30px;"></span><p>🧠 AI analyzing product...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div></div>';
+      try {
+        const data = await apiCall('generate', 'POST', { url, productName });
+        if (data.error) { document.getElementById('result').innerHTML = '<p style="color:red;">' + data.error + '</p>'; return; }
+        currentData = data;
+        await apiCall('save-package', 'POST', { campaignId: activeCampaignId, package: data, userId });
+        document.getElementById('result').innerHTML = formatPackage(data);
+        attachListeners();
+      } catch(e) { document.getElementById('result').innerHTML = '<p style="color:red;">Error: ' + e.message + '</p>'; }
+    });
+
+    function formatPackage(pkg) {
+      let audienceText = pkg.targetAudience?.demographics;
+      if (typeof audienceText === 'object') audienceText = audienceText.age || audienceText.description || JSON.stringify(audienceText);
+      let h = '<h2>Niche & Audience</h2><p>Niche: ' + pkg.niche + '</p><p>Audience: ' + (audienceText || 'General') + '</p>';
+      h += '<h2>Account Setup</h2>';
+      for (const [plat, cfg] of Object.entries(pkg.platforms||{}))
+              h += '<p><strong>' + plat + ':</strong> ' + cfg.handle.replace(/^@+/, '@') + ' - ' + cfg.bio + '</p>';
+      h += '<h2>Daily Video Pack</h2>';
+      if (pkg.dailyVideoPack) pkg.dailyVideoPack.forEach((v,i) => {
+        h += '<div class="card" id="daily-card-' + i + '"><h3><span class="tag">' + v.style + '</span></h3><p>' + v.hook + '</p><button class="gen-vid-btn btn-blue btn-sm" data-idx="' + i + '">🎥 Generate Video</button><div id="daily-preview-' + i + '"></div></div>';
+      });
+      h += '<div id="autoProgress" class="progress-log"></div>';
+      return h;
+    }
+
+    function attachListeners() {
+      document.querySelectorAll('.gen-vid-btn').forEach(b => b.addEventListener('click', function() { generateDailyVideo(parseInt(this.dataset.idx)); }));
+      document.getElementById('autoGenerateBtn').addEventListener('click', autoGenerateAndPost);
+    }
+
+    async function generateDailyVideo(idx) {
+      if (!currentData?.dailyVideoPack?.[idx]) return;
+      const concept = currentData.dailyVideoPack[idx];
+      const prev = document.getElementById('daily-preview-' + idx);
+      const btn = document.querySelector('#daily-card-' + idx + ' .gen-vid-btn');
+      btn.disabled = true; btn.textContent = 'Submitting...';
+      prev.innerHTML = '<p><span class="spinner"></span>🎬 Creating viral video...</p><div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:10%;"></div></div></div>';
+      try {
+        const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily', useTrending: document.getElementById('useTrending').checked });
+        if (data.error) throw new Error(data.error);
+        const jobId = data.jobId;
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress = Math.min(progress + 5, 90);
+         let msg = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"></div></div></div><p>Rendering... ' + progress + '%</p>';
+         if (progress >= 85) {
+            msg += '<p style="font-size:0.8rem;color:#64748b;">⏳ Shotstack can take 2-5 minutes. Please wait...</p>';
+          }
+          prev.innerHTML = msg;
+          }, 4000);
+        const url = await poll(jobId);
+        clearInterval(interval);
+        prev.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div><p>✅ Complete!</p><video controls src="' + url + '"></video><a href="' + url + '" download>⬇️ Download</a>';
+        btn.textContent = '✅ Ready'; btn.disabled = false;
+      } catch(e) { prev.innerHTML = '<p style="color:red;">' + e.message + '</p>'; btn.textContent = 'Retry'; btn.disabled = false; }
+    }
+  async function poll(jobId, attempt=0) {
+  const data = await apiCall('video?action=check', 'POST', { jobId });
+  if (data.videoUrl) return data.videoUrl;
+  if (data.status === 'failed') throw new Error('Render failed');
+  if (attempt > 120) throw new Error('Render taking too long. Check Shotstack dashboard.');
+  // Wait 10 seconds between checks
+  await new Promise(r => setTimeout(r, 10000));
+  return poll(jobId, attempt+1);
+}
+
+    async function autoGenerateAndPost() {
+      if (!currentData?.dailyVideoPack) return alert('Generate package first.');
+      const logDiv = document.getElementById('autoProgress');
+      logDiv.innerHTML = '';
+      const log = msg => { const p = document.createElement('p'); p.textContent = msg; logDiv.appendChild(p); };
+      for (let i = 0; i < currentData.dailyVideoPack.length; i++) {
+        log('⏳ Video ' + (i+1) + '...');
+        try {
+          const concept = currentData.dailyVideoPack[i];
+          const data = await apiCall('video', 'POST', { videoConcept: concept, platform: 'daily' });
+          const url = await poll(data.jobId);
+          log('✅ Video ' + (i+1) + ': ' + url);
+        } catch(e) { log('❌ Error: ' + e.message); }
+      }
+      log('🎉 All done!');
+    }
+
+    document.getElementById('createLandingBtn').addEventListener('click', async () => {
+      if (!activeCampaignId) return alert('Select a campaign.');
+      const data = await apiCall('create-landing-page', 'POST', { campaignId: activeCampaignId, userId });
+      alert(data.error ? data.error : '✅ ' + data.url);
+    });
+
+    document.getElementById('loadAnalyticsBtn').addEventListener('click', async () => {
+      const div = document.getElementById('analyticsTableContainer');
+      div.innerHTML = '<p><span class="spinner"></span> Loading analytics...</p>';
+      const data = await apiCall('get-analytics', 'POST', { campaignId: activeCampaignId, userId });
+      if (data.error || !data.records?.length) { div.innerHTML = '<p>No posts yet.</p>'; return; }
+      const s = data.summary;
+      let h = '<div style="background:#f8fafc;border-radius:0.5rem;padding:1rem;margin-bottom:1rem;"><h3>📊 Campaign Summary</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.5rem;">';
+      h += '<div><strong>👁️ Views:</strong> ' + s.totalViews.toLocaleString() + '</div>';
+      h += '<div><strong>❤️ Likes:</strong> ' + s.totalLikes.toLocaleString() + '</div>';
+      h += '<div><strong>💬 Comments:</strong> ' + s.totalComments.toLocaleString() + '</div>';
+      h += '<div><strong>🔄 Shares:</strong> ' + s.totalShares.toLocaleString() + '</div>';
+      h += '<div><strong>🔗 Clicks:</strong> ' + s.totalClicks.toLocaleString() + '</div>';
+      h += '<div><strong>💰 Revenue:</strong> $' + s.estimatedRevenue.toLocaleString() + '</div>';
+      h += '<div><strong>📈 Conv:</strong> ' + s.avgConversionRate + '</div>';
+      h += '<div><strong>🏆 Best:</strong> ' + s.bestStyle + '</div>';
+      h += '<div><strong>🕐 Time:</strong> ' + s.bestHour + '</div>';
+      h += '</div></div>';
+      h += '<table><tr><th>Style</th><th>Platform</th><th>Views</th><th>Likes</th><th>Revenue</th></tr>';
+      data.records.forEach(r => { const a = r.analytics||{}; h += '<tr><td>' + (r.style||'') + '</td><td>' + r.platform + '</td><td>' + (a.views||0) + '</td><td>' + (a.likes||0) + '</td><td>$' + (a.revenue||0) + '</td></tr>'; });
+      h += '</table>';
+      div.innerHTML = h;
+    });
+
+    document.getElementById('rotationBtn').addEventListener('click', async () => {
+      const data = await apiCall('utils?action=optimal-time');
+      alert('🕐 Best posting time: ' + (data.time || '11:00 AM'));
+    });
+  </script>
+</body>
+</html>
