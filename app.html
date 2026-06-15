@@ -63,14 +63,7 @@
     </div>
     <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
       <select id="nicheSelect" style="flex:1;">
-        <option value="">🔽 Choose a niche...</option>
-        <option value="web hosting">🌐 Web Hosting — $65-$200/sale</option>
-        <option value="saas software">💻 SaaS / Software — 20-30% 🔄</option>
-        <option value="vpn services">🔒 VPN Services — 30-50% 🔄</option>
-        <option value="email marketing">📧 Email Marketing — 20-30% 🔄</option>
-        <option value="website builders">🏗️ Website Builders — $50-$150/sale</option>
-        <option value="cybersecurity">🛡️ Cybersecurity — 25-40% 🔄</option>
-        <option value="ai tools">🤖 AI Tools — 20-30% 🔄</option>
+       <option value="">Loading niches...</option>
       </select>
       <input type="text" id="nicheInput" placeholder="Or type custom niche..." style="flex:1;" />
       <button id="findProductsBtn" class="btn-blue btn-sm">🔍 Find Products</button>
@@ -133,6 +126,45 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   return res.json();
 }
 
+async function loadNiches() {
+
+  const data =
+    await apiCall(
+      'utils?action=get-niches',
+      'GET'
+    );
+
+  const select =
+    document.getElementById(
+      'nicheSelect'
+    );
+
+  select.innerHTML =
+    '<option value="">🔽 Choose a niche...</option>';
+
+  (data.niches || []).forEach(
+    niche => {
+
+      const option =
+        document.createElement(
+          'option'
+        );
+
+      option.value =
+        niche.name;
+
+      option.textContent =
+        niche.name;
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
 async function loadCampaigns() {
   const data = await apiCall(
   'manage-campaigns?userId=' + userId,
@@ -186,6 +218,13 @@ document.getElementById('result').innerHTML =
 }
 }
 
+(async function init() {
+
+  await loadNiches();
+
+  await loadCampaigns();
+
+})();
 
     document.getElementById('campaignSelect').addEventListener('change', function() {
              if (this.value) switchCampaign(this.value);
