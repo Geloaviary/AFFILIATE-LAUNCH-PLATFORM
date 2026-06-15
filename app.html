@@ -156,9 +156,45 @@
 
   <section id="campaignsPage">
 
-    <h1>Campaigns</h1>
+  <h1>Campaigns</h1>
 
-  </section>
+  <div class="card">
+
+    <label>
+      Active Campaign
+    </label>
+
+    <select id="campaignSelect">
+
+      <option value="">
+        -- Select Campaign --
+      </option>
+
+    </select>
+
+    <button
+      id="newCampaignBtn"
+      class="btn-blue"
+    >
+      + New Campaign
+    </button>
+
+  </div>
+
+  <div
+    id="activeCampaignInfo"
+    class="card"
+  >
+
+    <h3 id="activeCampaignName">
+
+      No Campaign Selected
+
+    </h3>
+
+  </div>
+
+</section>
 
   <section
     id="researchPage"
@@ -221,9 +257,7 @@
     <div id="logoutBtnContainer" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"></div>
     <div id="usageAlert" class="alert hidden"><span id="usageText"></span><button id="dismissUsageBtn" class="btn-sm" style="background:none;">Dismiss</button></div>
     <div class="campaign-bar">
-      <label>📁 Campaign:</label>
-      <select id="campaignSelect"><option value="">-- Select Campaign --</option></select>
-      <button id="newCampaignBtn" class="btn-blue btn-sm">+ New</button>
+
       <span id="activeCampaignName"></span>
     </div>
     <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
