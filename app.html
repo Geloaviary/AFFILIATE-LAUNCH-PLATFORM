@@ -128,40 +128,79 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 async function loadNiches() {
 
-  const data =
-    await apiCall(
-      'utils?action=get-niches',
-      'GET'
-    );
-
   const select =
     document.getElementById(
       'nicheSelect'
     );
 
-  select.innerHTML =
-    '<option value="">🔽 Choose a niche...</option>';
+  let dots = 0;
 
-  (data.niches || []).forEach(
-    niche => {
+  const loadingTimer =
+    setInterval(() => {
 
-      const option =
-        document.createElement(
-          'option'
-        );
+      dots =
+        (dots + 1) % 4;
 
-      option.value =
-        niche.name;
+      select.innerHTML =
+        '<option value="">Loading niches' +
+        '.'.repeat(dots) +
+        '</option>';
 
-      option.textContent =
-        niche.name;
+    }, 400);
 
-      select.appendChild(
-        option
+  try {
+
+    const data =
+      await apiCall(
+        'utils?action=get-niches',
+        'GET'
       );
 
-    }
-  );
+    clearInterval(
+      loadingTimer
+    );
+
+    select.innerHTML =
+      '<option value="">🔽 Choose a niche...</option>';
+
+    (data.niches || []).forEach(
+      niche => {
+
+        if (!niche) return;
+
+        const option =
+          document.createElement(
+            'option'
+          );
+
+        option.value =
+          niche.id || niche.name;
+
+        option.textContent =
+          niche.name || niche.id;
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+  } catch (e) {
+
+    clearInterval(
+      loadingTimer
+    );
+
+    console.error(
+      'loadNiches failed',
+      e
+    );
+
+    select.innerHTML =
+      '<option value="">Failed to load niches</option>';
+
+  }
 
 }
 
