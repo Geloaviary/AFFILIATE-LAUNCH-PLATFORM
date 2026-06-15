@@ -1,4 +1,0 @@
- lib/affiliate-researcher/asset-researcher.js       | 133 [32m+++++++++++++++[m[31m------[m
- lib/affiliate-researcher/campaign-intelligence.js  | 107 [32m++++++++++++++[m[31m---[m
- .../run-affiliate-researcher.js                    | 114 [32m++++++++++++++++[m[31m--[m
- 3 files changed, 290 insertions(+), 64 deletions(-)
