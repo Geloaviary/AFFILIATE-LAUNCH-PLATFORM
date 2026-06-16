@@ -791,8 +791,10 @@ winnerCards.innerHTML = '';
 
 winnerSelect.innerHTML = '';
 
-products.forEach(
-  (product, index) => {
+products
+  .slice(0, 5)
+  .forEach(
+    (product, index) => {
 
     const score =
       product.longtermScore?.score ||
