@@ -623,60 +623,6 @@ document
 
   document
   .getElementById(
-    'launchCampaignBtn'
-  )
-  .addEventListener(
-    'click',
-    async () => {
-
-      const productUrl =
-        document
-          .getElementById(
-            'campaignProductUrl'
-          )
-          .value
-          .trim();
-
-      const affiliateUrl =
-        document
-          .getElementById(
-            'campaignAffiliateUrl'
-          )
-          .value
-          .trim();
-
-      if(!productUrl){
-
-        alert(
-          'Product URL required'
-        );
-
-        return;
-
-      }
-
-      const status =
-        document
-          .getElementById(
-            'campaignLaunchStatus'
-          );
-
-      status.innerHTML =
-        '🧠 Researching product...';
-
-      console.log(
-        'Launch Campaign',
-        {
-          productUrl,
-          affiliateUrl
-        }
-      );
-
-    }
-  );
-
-  document
-  .getElementById(
     'analyzeMarketBtn'
   )
   .addEventListener(
