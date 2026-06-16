@@ -6,6 +6,12 @@ const {
   "../lib/portfolio-manager"
 );
 
+const {
+  generateCampaignPackage
+} = require(
+  "../lib/business-strategist/generate-campaign-package"
+);
+
 exports.default = async function handler(req, res) {
 try {
 const userId =
@@ -55,11 +61,26 @@ if (req.method === "GET") {
 // CREATE CAMPAIGN
 if (req.method === "POST") {
   const {
-    name,
-    productUrl,
-    niche,
-    affiliateUrl
-  } = req.body;
+
+  name,
+
+  productUrl,
+
+  niche,
+
+  affiliateUrl,
+
+  winner,
+
+  revenueGoal,
+
+  revenueProjection,
+
+  productIntelligence,
+
+  campaignIntelligence
+
+} = req.body;
 
   if (!name || !productUrl) {
     return res.status(400).json({
@@ -74,15 +95,49 @@ if (req.method === "POST") {
       .toString(36)
       .substring(2, 8);
 
+  const campaignPackage =
+  generateCampaignPackage({
+
+    winner,
+
+    affiliateLink:
+      affiliateUrl,
+
+    revenueGoal,
+
+    revenueProjection,
+
+    productIntelligence,
+
+    campaignIntelligence
+
+  });
+
   const campaign = {
-    name,
-    productUrl,
-    affiliateUrl: affiliateUrl || "",
-    niche: niche || "",
-    package: null,
-    createdAt:
-      new Date().toISOString()
-  };
+
+  name,
+
+  productUrl,
+
+  affiliateUrl,
+
+  niche,
+
+  status:
+    "active",
+
+  winner,
+
+  revenueGoal,
+
+  revenueProjection,
+
+  campaignPackage,
+
+  createdAt:
+    new Date().toISOString()
+
+};
 
   await kv.set(
     `${userId}-campaign-${campaignId}`,
