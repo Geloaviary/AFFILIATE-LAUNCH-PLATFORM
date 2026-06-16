@@ -810,14 +810,38 @@ products.forEach(
       >
 
         <strong>
-          #${index + 1}
-          ${product.name}
-        </strong>
+  #${index + 1}
+  ${product.name}
+</strong>
 
-        <br>
+<br><br>
 
-        Score:
-        ${score}
+Score:
+${score}
+
+<br><br>
+
+<a
+  href="${
+    product.productUrl || '#'
+  }"
+  target="_blank"
+>
+  🌐 Product Website
+</a>
+
+<br>
+
+<a
+  href="${
+    product.affiliateProgramUrl ||
+    product.productUrl ||
+    '#'
+  }"
+  target="_blank"
+>
+  💰 Affiliate Program
+</a>
 
       </div>
       `;
