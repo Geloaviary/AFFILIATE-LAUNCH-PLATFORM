@@ -369,34 +369,26 @@ body{
   ❌ Affiliate Link Required Before Launch
 </div>
 
-  <select
-    id="revenueGoal"
-    style="
-      width:100%;
-      padding:12px;
-      margin-top:12px;
-    "
-  >
-    <option value="5000">
-      $5,000 Monthly Goal
-    </option>
+  <div
+  id="revenueProjectionBox"
+  style="
+    margin-top:12px;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#f8fafc;
+    display:none;
+  "
+></div>
 
-    <option value="10000">
-      $10,000 Monthly Goal
-    </option>
-
-    <option value="25000" selected>
-      $25,000 Monthly Goal
-    </option>
-
-    <option value="50000">
-      $50,000 Monthly Goal
-    </option>
-
-    <option value="100000">
-      $100,000 Monthly Goal
-    </option>
-  </select>
+<select
+  id="revenueGoal"
+  style="
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+  "
+></select>
 
   <button
     id="launchWinnerBtn"
@@ -776,6 +768,50 @@ const stepTimer =
   'FIRST PRODUCT',
   products[0]
 );
+
+const projection =
+  data.revenueProjection;
+
+if (projection) {
+
+  document.getElementById(
+    'revenueProjectionBox'
+  ).style.display =
+    'block';
+
+  document.getElementById(
+    'revenueProjectionBox'
+  ).innerHTML = `
+
+    <strong>
+      Projected Monthly Revenue
+    </strong>
+
+    <br><br>
+
+    $${projection.projectedMonthlyRevenue.toLocaleString()}/month
+
+  `;
+
+  document.getElementById(
+    'revenueGoal'
+  ).innerHTML = `
+
+    <option value="${projection.conservativeGoal}">
+      $${projection.conservativeGoal.toLocaleString()} Conservative
+    </option>
+
+    <option value="${projection.targetGoal}" selected>
+      $${projection.targetGoal.toLocaleString()} Target
+    </option>
+
+    <option value="${projection.aggressiveGoal}">
+      $${projection.aggressiveGoal.toLocaleString()} Aggressive
+    </option>
+
+  `;
+
+}
 
 const winnerCards =
   document.getElementById(
