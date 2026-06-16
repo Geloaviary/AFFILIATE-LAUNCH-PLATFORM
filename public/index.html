@@ -221,58 +221,62 @@ body{
   <div class="card">
 
     <h3>
-      Create Campaign
-    </h3>
+  Launch New Affiliate Campaign
+</h3>
 
-    <input
-      id="campaignName"
-      placeholder="Campaign Name"
-      style="
-        width:100%;
-        padding:12px;
-        margin-top:12px;
-      "
-    >
+<p style="
+  color:#64748b;
+  margin-top:8px;
+">
+  Enter the affiliate product URL and your affiliate link.
+  The AI Researcher will analyze the opportunity,
+  build campaign intelligence, create a revenue strategy,
+  and launch a complete campaign.
+</p>
 
-    <input
-      id="campaignProductUrl"
-      placeholder="Product URL"
-      style="
-        width:100%;
-        padding:12px;
-        margin-top:12px;
-      "
-    >
+<input
+  id="campaignProductUrl"
+  placeholder="Affiliate Product URL"
+  style="
+    width:100%;
+    padding:12px;
+    margin-top:16px;
+  "
+>
 
-    <input
-      id="campaignAffiliateUrl"
-      placeholder="Affiliate URL"
-      style="
-        width:100%;
-        padding:12px;
-        margin-top:12px;
-      "
-    >
+<input
+  id="campaignAffiliateUrl"
+  placeholder="Your Affiliate Link"
+  style="
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+  "
+>
 
-    <input
-      id="campaignNiche"
-      placeholder="Niche"
-      style="
-        width:100%;
-        padding:12px;
-        margin-top:12px;
-      "
-    >
+<button
+  id="launchCampaignBtn"
+  style="
+    width:100%;
+    margin-top:16px;
+    padding:14px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  "
+>
+  🚀 Analyze & Launch Campaign
+</button>
 
-    <button
-      id="createCampaignBtn"
-      style="
-        width:100%;
-        margin-top:12px;
-      "
-    >
-      Create Campaign
-    </button>
+<div
+  id="campaignLaunchStatus"
+  style="
+    margin-top:16px;
+  "
+></div>
 
   </div>
 
@@ -502,6 +506,60 @@ document
     );
 
   });
+
+  document
+  .getElementById(
+    'launchCampaignBtn'
+  )
+  .addEventListener(
+    'click',
+    async () => {
+
+      const productUrl =
+        document
+          .getElementById(
+            'campaignProductUrl'
+          )
+          .value
+          .trim();
+
+      const affiliateUrl =
+        document
+          .getElementById(
+            'campaignAffiliateUrl'
+          )
+          .value
+          .trim();
+
+      if(!productUrl){
+
+        alert(
+          'Product URL required'
+        );
+
+        return;
+
+      }
+
+      const status =
+        document
+          .getElementById(
+            'campaignLaunchStatus'
+          );
+
+      status.innerHTML =
+        '🧠 Researching product...';
+
+      console.log(
+        'Launch Campaign',
+        {
+          productUrl,
+          affiliateUrl
+        }
+      );
+
+    }
+  );
 
   (async function(){
 
