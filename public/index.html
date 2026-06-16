@@ -221,44 +221,67 @@ body{
   <div class="card">
 
     <h3>
-  Launch New Affiliate Campaign
+  Campaign Launcher
 </h3>
 
 <p style="
   color:#64748b;
   margin-top:8px;
+  margin-bottom:16px;
 ">
-  Enter the affiliate product URL and your affiliate link.
-  The AI Researcher will analyze the opportunity,
-  build campaign intelligence, create a revenue strategy,
-  and launch a complete campaign.
+  Select a niche and let the AI Researcher discover the highest probability affiliate opportunities.
 </p>
 
-<input
-  id="campaignProductUrl"
-  placeholder="Affiliate Product URL"
+<select
+  id="nicheSelect"
   style="
     width:100%;
     padding:12px;
-    margin-top:16px;
+    margin-bottom:12px;
   "
 >
+  <option value="">
+    Select Niche
+  </option>
 
-<input
-  id="campaignAffiliateUrl"
-  placeholder="Your Affiliate Link"
-  style="
-    width:100%;
-    padding:12px;
-    margin-top:12px;
-  "
->
+  <option value="ai-tools">
+    AI Tools
+  </option>
+
+  <option value="web-hosting">
+    Web Hosting
+  </option>
+
+  <option value="email-marketing">
+    Email Marketing
+  </option>
+
+  <option value="vpn">
+    VPN
+  </option>
+
+  <option value="saas">
+    SaaS
+  </option>
+
+  <option value="finance">
+    Finance
+  </option>
+
+  <option value="health">
+    Health
+  </option>
+
+  <option value="ecommerce">
+    Ecommerce
+  </option>
+
+</select>
 
 <button
-  id="launchCampaignBtn"
+  id="analyzeMarketBtn"
   style="
     width:100%;
-    margin-top:16px;
     padding:14px;
     background:#2563eb;
     color:white;
@@ -270,6 +293,97 @@ body{
 >
   🚀 Analyze & Launch Campaign
 </button>
+
+<div
+  id="researchStatus"
+  style="
+    margin-top:20px;
+  "
+></div>
+
+<div
+  id="winnerContainer"
+  style="
+    display:none;
+    margin-top:20px;
+  "
+>
+
+  <h4>
+    Top 5 Opportunities
+  </h4>
+
+  <div
+    id="winnerCards"
+  ></div>
+
+  <label
+    style="
+      display:block;
+      margin-top:20px;
+      margin-bottom:8px;
+    "
+  >
+    Launch Campaign
+  </label>
+
+  <select
+    id="winnerSelect"
+    style="
+      width:100%;
+      padding:12px;
+    "
+  ></select>
+
+  <select
+    id="revenueGoal"
+    style="
+      width:100%;
+      padding:12px;
+      margin-top:12px;
+    "
+  >
+    <option value="5000">
+      $5,000 Monthly Goal
+    </option>
+
+    <option value="10000">
+      $10,000 Monthly Goal
+    </option>
+
+    <option value="25000" selected>
+      $25,000 Monthly Goal
+    </option>
+
+    <option value="50000">
+      $50,000 Monthly Goal
+    </option>
+
+    <option value="100000">
+      $100,000 Monthly Goal
+    </option>
+  </select>
+
+  <button
+    id="launchWinnerBtn"
+    style="
+      width:100%;
+      margin-top:12px;
+      padding:14px;
+      background:#16a34a;
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    "
+  >
+    🚀 Launch Selected Campaign
+  </button>
+
+</div>
+
+</div>
 
 <div
   id="campaignLaunchStatus"
@@ -557,6 +671,69 @@ document
           affiliateUrl
         }
       );
+
+    }
+  );
+
+  document
+  .getElementById(
+    'analyzeMarketBtn'
+  )
+  .addEventListener(
+    'click',
+    async () => {
+
+      const niche =
+        document
+          .getElementById(
+            'nicheSelect'
+          )
+          .value;
+
+      if(!niche){
+
+        alert(
+          'Select a niche first'
+        );
+
+        return;
+
+      }
+
+      const status =
+        document
+          .getElementById(
+            'researchStatus'
+          );
+
+      status.innerHTML =
+        '🧠 Affiliate Researcher analyzing market...';
+
+      try {
+
+        const data =
+          await apiCall(
+            'research-products',
+            'POST',
+            {
+              niche
+            }
+          );
+
+        console.log(
+          'Research Results:',
+          data
+        );
+
+        status.innerHTML =
+          '✅ Research completed.';
+
+      } catch(e){
+
+        status.innerHTML =
+          '❌ ' + e.message;
+
+      }
 
     }
   );
