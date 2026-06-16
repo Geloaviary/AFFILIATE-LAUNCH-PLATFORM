@@ -335,6 +335,40 @@ body{
     "
   ></select>
 
+  <label
+  style="
+    display:block;
+    margin-top:12px;
+    margin-bottom:8px;
+    font-weight:600;
+  "
+>
+  Your Affiliate Link
+</label>
+
+<input
+  id="affiliateLink"
+  type="text"
+  placeholder="Paste your affiliate link here"
+  style="
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+  "
+>
+
+<div
+  id="affiliateStatus"
+  style="
+    margin-top:8px;
+    font-size:14px;
+    color:#dc2626;
+  "
+>
+  ❌ Affiliate Link Required Before Launch
+</div>
+
   <select
     id="revenueGoal"
     style="
@@ -366,6 +400,7 @@ body{
 
   <button
     id="launchWinnerBtn"
+    disabled
     style="
       width:100%;
       margin-top:12px;
@@ -653,7 +688,70 @@ document
           );
 
       status.innerHTML =
-        '🧠 Affiliate Researcher analyzing market...';
+`
+<div
+  style="
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:20px;
+    background:#f8fafc;
+  "
+>
+
+<div class="spinner"></div>
+
+<h3>
+  AI Campaign Launch Sequence
+</h3>
+
+<p id="researchStep">
+  🔍 Affiliate Researcher scanning market...
+</p>
+
+</div>
+`;
+
+const steps = [
+
+  '🔍 Affiliate Researcher scanning market...',
+
+  '📊 Gathering campaign intelligence...',
+
+  '🏆 Ranking affiliate opportunities...',
+
+  '💰 Calculating revenue projections...',
+
+  '🧠 AI Business Strategist preparing launch plan...',
+
+  '🚀 Building campaign package...'
+
+];
+
+let stepIndex = 0;
+
+const stepTimer =
+  setInterval(() => {
+
+    stepIndex++;
+
+    const el =
+      document.getElementById(
+        'researchStep'
+      );
+
+    if(
+      el &&
+      stepIndex < steps.length
+    ){
+
+      el.textContent =
+        steps[
+          stepIndex
+        ];
+
+    }
+
+  }, 2000);
 
       try {
 
@@ -754,6 +852,10 @@ document
   .style.display =
   'block';
 
+  clearInterval(
+  stepTimer
+);
+
 status.innerHTML =
   `
   ✅ Research Complete
@@ -769,8 +871,60 @@ status.innerHTML =
 
       } catch(e){
 
+        clearInterval(
+              stepTimer
+            );
+
         status.innerHTML =
           '❌ ' + e.message;
+
+      }
+
+    }
+  );
+
+  document
+  .getElementById(
+    'affiliateLink'
+  )
+  .addEventListener(
+    'input',
+    function(){
+
+      const value =
+        this.value.trim();
+
+      const status =
+        document.getElementById(
+          'affiliateStatus'
+        );
+
+      const launchBtn =
+        document.getElementById(
+          'launchWinnerBtn'
+        );
+
+      if(value){
+
+        status.innerHTML =
+          '✅ Affiliate Link Ready';
+
+        status.style.color =
+          '#16a34a';
+
+        launchBtn.disabled =
+          false;
+
+      } else {
+
+        status.innerHTML =
+          '❌ Affiliate Link Required Before Launch';
+
+        status.style.color =
+          '#dc2626';
+
+        launchBtn.disabled =
+          true;
 
       }
 
