@@ -671,8 +671,101 @@ document
           data
         );
 
-        status.innerHTML =
-          '✅ Research completed.';
+        const products =
+  data.validatedProducts || [];
+
+const winnerCards =
+  document.getElementById(
+    'winnerCards'
+  );
+
+const winnerSelect =
+  document.getElementById(
+    'winnerSelect'
+  );
+
+winnerCards.innerHTML = '';
+
+winnerSelect.innerHTML = '';
+
+products.forEach(
+  (product, index) => {
+
+    const score =
+      product.longtermScore?.score ||
+      0;
+
+    winnerCards.innerHTML +=
+      `
+      <div
+        style="
+          border:1px solid #e2e8f0;
+          border-radius:8px;
+          padding:12px;
+          margin-bottom:10px;
+          background:${
+            index === 0
+            ? '#ecfdf5'
+            : '#ffffff'
+          };
+        "
+      >
+
+        <strong>
+          #${index + 1}
+          ${product.name}
+        </strong>
+
+        <br>
+
+        Score:
+        ${score}
+
+      </div>
+      `;
+
+    winnerSelect.innerHTML +=
+      `
+      <option
+        value="${index}"
+        ${
+          index === 0
+          ? 'selected'
+          : ''
+        }
+      >
+        ${product.name}
+        (${score})
+        ${
+          index === 0
+          ? '⭐'
+          : ''
+        }
+      </option>
+      `;
+
+  }
+);
+
+document
+  .getElementById(
+    'winnerContainer'
+  )
+  .style.display =
+  'block';
+
+status.innerHTML =
+  `
+  ✅ Research Complete
+
+  <br><br>
+
+  Recommended Winner:
+
+  <strong>
+    ${products[0]?.name || 'Unknown'}
+  </strong>
+  `;
 
       } catch(e){
 
