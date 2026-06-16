@@ -514,6 +514,10 @@ body{
 <script>
 
 let campaigns = [];
+
+let currentResearch =
+  null;
+
 let activeCampaign = null;
 
 async function apiCall(
@@ -761,6 +765,9 @@ const stepTimer =
           data
         );
 
+        currentResearch =
+           data;
+
         const products =
   data.validatedProducts || [];
 
@@ -994,6 +1001,141 @@ status.innerHTML =
           true;
 
       }
+
+    }
+  );
+
+  document
+  .getElementById(
+    'launchWinnerBtn'
+  )
+  .addEventListener(
+    'click',
+    async () => {
+
+      if (!currentResearch) {
+
+        alert(
+          'Run research first'
+        );
+
+        return;
+
+      }
+
+      const affiliateLink =
+        document
+          .getElementById(
+            'affiliateLink'
+          )
+          .value
+          .trim();
+
+      if (!affiliateLink) {
+
+        alert(
+          'Affiliate link required'
+        );
+
+        return;
+
+      }
+
+      const revenueGoal =
+        document
+          .getElementById(
+            'revenueGoal'
+          )
+          .value;
+
+      const selectedIndex =
+        document
+          .getElementById(
+            'winnerSelect'
+          )
+          .selectedIndex;
+
+      const winner =
+        currentResearch
+          .validatedProducts[
+            selectedIndex
+          ];
+
+      const result =
+        await apiCall(
+
+          'manage-campaigns',
+
+          'POST',
+
+          {
+
+            userId:
+              'admin',
+
+            name:
+              winner.name,
+
+            productUrl:
+              winner.productUrl,
+
+            affiliateUrl:
+              affiliateLink,
+
+            niche:
+              currentResearch.niche,
+
+            winner,
+
+            revenueGoal,
+
+            revenueProjection:
+              currentResearch
+                .revenueProjection,
+
+            productIntelligence:
+              currentResearch
+                .productIntelligence,
+
+            campaignIntelligence:
+              currentResearch
+                .campaignIntelligence
+
+          }
+
+        );
+
+      console.log(
+        'CAMPAIGN CREATED',
+        result
+      );
+
+      document.getElementById(
+        'campaignLaunchStatus'
+      ).innerHTML = `
+
+<div
+  style="
+    padding:16px;
+    background:#ecfdf5;
+    border:1px solid #16a34a;
+    border-radius:8px;
+  "
+>
+
+  ✅ Campaign Created
+
+  <br><br>
+
+  Campaign ID:
+
+  ${result.campaignId}
+
+</div>
+
+`;
+
+      await loadCampaigns();
 
     }
   );
