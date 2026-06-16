@@ -415,6 +415,59 @@ async function loadCampaigns(){
     campaigns
   );
 
+  renderCampaigns();
+
+}
+
+function renderCampaigns(){
+
+  const container =
+    document.getElementById(
+      'campaignList'
+    );
+
+  if(!container){
+    return;
+  }
+
+  if(!campaigns.length){
+
+    container.innerHTML =
+      '<p>No campaigns found</p>';
+
+    return;
+
+  }
+
+  container.innerHTML =
+    campaigns
+      .slice(0,20)
+      .map(c => `
+
+<div
+  style="
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:12px;
+    margin-bottom:10px;
+  "
+>
+
+<strong>
+${c.name || 'Unnamed Campaign'}
+</strong>
+
+<br>
+
+<small>
+${c.niche || 'No Niche'}
+</small>
+
+</div>
+
+`)
+      .join('');
+
 }
 
 document
