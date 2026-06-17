@@ -19,6 +19,10 @@ function renderCampaignCommandCenter(
   campaign.revenueProjection
     ?.projectedMonthlyRevenue || 0;
 
+    const revenueGap =
+         projectedRevenue -
+         revenueGoal;
+
 const revenueGoal =
   campaign.revenueGoal || 0;
 
@@ -896,6 +900,136 @@ console.log(
   "Campaign Loaded:",
   campaign
 );
+
+document.getElementById(
+  "rightPanel"
+).innerHTML = `
+
+<div class="side-card">
+
+  <div class="section-title">
+
+    Revenue Command Center
+
+  </div>
+
+  <div class="side-metric">
+
+    <span>Target</span>
+
+    <strong>
+      $${Number(
+        revenueGoal
+      ).toLocaleString()}
+    </strong>
+
+  </div>
+
+  <div class="side-metric">
+
+    <span>Projected</span>
+
+    <strong>
+      $${Number(
+        projectedRevenue
+      ).toLocaleString()}
+    </strong>
+
+  </div>
+
+  <div class="side-metric">
+
+    <span>Gap</span>
+
+    <strong>
+      +$${Number(
+        revenueGap
+      ).toLocaleString()}
+    </strong>
+
+  </div>
+
+  <div class="side-metric">
+
+    <span>Confidence</span>
+
+    <strong>
+      97%
+    </strong>
+
+  </div>
+
+</div>
+
+<div class="side-card">
+
+  <div class="section-title">
+
+    AI Activity Feed
+
+  </div>
+
+  <div class="activity-item">
+
+    🤖 Researcher completed market analysis
+
+  </div>
+
+  <div class="activity-item">
+
+    🧠 Strategist generated revenue roadmap
+
+  </div>
+
+  <div class="activity-item">
+
+    🎬 Content Director prepared hooks
+
+  </div>
+
+  <div class="activity-item">
+
+    🚀 Production Director awaiting approval
+
+  </div>
+
+</div>
+
+<div class="side-card">
+
+  <div class="section-title">
+
+    AI Workforce Monitor
+
+  </div>
+
+  <div class="activity-item">
+
+    🟢 Researcher Online
+
+  </div>
+
+  <div class="activity-item">
+
+    🟢 Strategist Online
+
+  </div>
+
+  <div class="activity-item">
+
+    🟢 Content Director Online
+
+  </div>
+
+  <div class="activity-item">
+
+    🟡 Production Director Idle
+
+  </div>
+
+</div>
+
+`;
 
 renderCampaignCommandCenter(
   campaign
