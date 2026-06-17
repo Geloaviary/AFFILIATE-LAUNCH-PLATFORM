@@ -241,41 +241,8 @@ body{
   "
 >
   <option value="">
-    Select Niche
+    Loading Niches...
   </option>
-
-  <option value="ai-tools">
-    AI Tools
-  </option>
-
-  <option value="web-hosting">
-    Web Hosting
-  </option>
-
-  <option value="email-marketing">
-    Email Marketing
-  </option>
-
-  <option value="vpn">
-    VPN
-  </option>
-
-  <option value="saas">
-    SaaS
-  </option>
-
-  <option value="finance">
-    Finance
-  </option>
-
-  <option value="health">
-    Health
-  </option>
-
-  <option value="ecommerce">
-    Ecommerce
-  </option>
-
 </select>
 
 <button
@@ -546,6 +513,56 @@ async function apiCall(
     );
 
   return response.json();
+
+}
+
+async function loadNiches(){
+
+  try {
+
+    const response =
+      await fetch(
+        '/data/niches.json'
+      );
+
+    const niches =
+      await response.json();
+
+    const select =
+      document.getElementById(
+        'nicheSelect'
+      );
+
+    select.innerHTML =
+      '<option value="">Select Niche</option>';
+
+    niches.forEach(
+      niche => {
+
+        select.innerHTML += `
+
+<option value="${niche.id}">
+${niche.category} • ${niche.name}
+</option>
+
+`;
+
+      }
+    );
+
+    console.log(
+      'Niches Loaded:',
+      niches.length
+    );
+
+  } catch (e) {
+
+    console.error(
+      'Failed to load niches',
+      e
+    );
+
+  }
 
 }
 
@@ -1141,6 +1158,8 @@ status.innerHTML =
   );
 
   (async function(){
+
+  await loadNiches();
 
   await loadCampaigns();
 
