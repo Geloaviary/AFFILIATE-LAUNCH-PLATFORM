@@ -480,6 +480,186 @@ document.getElementById(
 
 </div>
 
+<div class="health-panel">
+
+  <div class="section-title">
+
+    Campaign Health
+
+  </div>
+
+  <div class="health-grid">
+
+    <div class="health-card">
+
+      <div class="health-status success">
+        🟢
+      </div>
+
+      <div class="health-title">
+        Research
+      </div>
+
+      <div class="health-description">
+        Market research completed
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-status success">
+        🟢
+      </div>
+
+      <div class="health-title">
+        Intelligence
+      </div>
+
+      <div class="health-description">
+        Audience model ready
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-status success">
+        🟢
+      </div>
+
+      <div class="health-title">
+        Strategy
+      </div>
+
+      <div class="health-description">
+        Campaign package generated
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-status warning">
+        🟡
+      </div>
+
+      <div class="health-title">
+        Production
+      </div>
+
+      <div class="health-description">
+        Awaiting content generation
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-status pending">
+        ⚪
+      </div>
+
+      <div class="health-title">
+        Publishing
+      </div>
+
+      <div class="health-description">
+        Not connected yet
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-status pending">
+        ⚪
+      </div>
+
+      <div class="health-title">
+        Revenue Tracking
+      </div>
+
+      <div class="health-description">
+        Awaiting first conversion
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="system-health">
+
+    <div class="section-title">
+
+      System Health
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        AI Workforce
+      </strong>
+
+      <span>
+        Operational
+      </span>
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        Production Queue
+      </strong>
+
+      <span>
+        Waiting
+      </span>
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        Publishing Engine
+      </strong>
+
+      <span>
+        Waiting
+      </span>
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        Automation Engine
+      </strong>
+
+      <span>
+        Waiting
+      </span>
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        Analytics Engine
+      </strong>
+
+      <span>
+        Waiting
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
 `;
 
 }
