@@ -520,13 +520,13 @@ async function loadNiches(){
 
   try {
 
-    const response =
-      await fetch(
-        '/data/niches.json'
-      );
+    const data =
+      await apiCall(
+         'utils?action=get-niches'
+  );
 
     const niches =
-      await response.json();
+      data.niches || [];
 
     const select =
       document.getElementById(
