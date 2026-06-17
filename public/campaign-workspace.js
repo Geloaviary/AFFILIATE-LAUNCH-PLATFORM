@@ -660,6 +660,90 @@ document.getElementById(
 
 </div>
 
+<div class="tasks-panel">
+
+  <div class="section-title">
+
+    Active Tasks
+
+  </div>
+
+  <div class="task-list">
+
+    <div class="task-card priority">
+
+      <div class="task-badge">
+
+        HIGH PRIORITY
+
+      </div>
+
+      <div class="task-title">
+
+        Generate Brand Assets
+
+      </div>
+
+      <div class="task-description">
+
+        Create logo, banners and profile assets.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Create Social Accounts
+
+      </div>
+
+      <div class="task-description">
+
+        TikTok, YouTube, Facebook and Instagram.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Approve Content Strategy
+
+      </div>
+
+      <div class="task-description">
+
+        Review content pillars, hooks and CTAs.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Launch Production
+
+      </div>
+
+      <div class="task-description">
+
+        Generate first video assets.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 `;
 
 }
