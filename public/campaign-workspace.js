@@ -11,9 +11,9 @@ console.log(
   campaignId
 );
 
-async function loadCampaign(){
-
-  if (!campaignId) {
+function renderCampaignCommandCenter(
+  campaign
+) {
 
     const projectedRevenue =
   campaign.revenueProjection
@@ -402,6 +402,24 @@ document.getElementById(
 
 `;
 
+}
+
+async function loadCampaign(){
+
+  if (!campaignId) {
+
+    document.getElementById(
+      "workspaceLoading"
+    ).innerHTML = `
+
+<div class="card">
+
+  No campaign selected.
+
+</div>
+
+`;
+
     return;
 
   }
@@ -422,18 +440,18 @@ document.getElementById(
     );
 
     const campaign =
-      (data.campaigns || [])
-        .find(
-          item =>
-            item.id ===
-            campaignId
-        );
+  (data.campaigns || [])
+    .find(
+      item =>
+        item.id ===
+        campaignId
+    );
 
-    if (!campaign) {
+if (!campaign) {
 
-      document.getElementById(
-        "workspaceLoading"
-      ).innerHTML = `
+  document.getElementById(
+    "workspaceLoading"
+  ).innerHTML = `
 
 <div class="card">
 
@@ -443,40 +461,28 @@ document.getElementById(
 
 `;
 
-      return;
+  return;
 
-    }
+}
 
-    console.log(
-      "Campaign Loaded:",
-      campaign
-    );
+console.log(
+  "Campaign Loaded:",
+  campaign
+);
 
-    document.getElementById(
-      "workspaceLoading"
-    ).innerHTML = `
+renderCampaignCommandCenter(
+  campaign
+);
 
-<div class="card">
-
-  Campaign Loaded:
-
-  <br><br>
-
-  ${campaign.name}
-
-</div>
-
-`;
-
-  } catch (e) {
+} catch (e) {
 
     console.error(
       e
     );
 
     document.getElementById(
-      "workspaceLoading"
-    ).innerHTML = `
+  "workspaceLoading"
+).innerHTML = `
 
 <div class="card">
 
