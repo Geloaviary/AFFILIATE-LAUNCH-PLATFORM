@@ -718,6 +718,173 @@ document.getElementById(
 
       <div class="task-description">
 
+        Review hooks, CTAs and content pillars.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Launch Production Queue
+
+      </div>
+
+      <div class="task-description">
+
+        Generate first campaign videos.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="recommendations-panel">
+
+  <div class="section-title">
+
+    AI Recommendations
+
+  </div>
+
+  <div class="recommendation-grid">
+
+    <div class="recommendation-card">
+
+      <div class="recommendation-score">
+
+        97%
+
+      </div>
+
+      <div class="recommendation-title">
+
+        Focus On Comparison Videos
+
+      </div>
+
+      <div class="recommendation-description">
+
+        Comparison content is likely to convert faster
+        than generic educational content.
+
+      </div>
+
+    </div>
+
+    <div class="recommendation-card">
+
+      <div class="recommendation-score">
+
+        HIGH ROI
+
+      </div>
+
+      <div class="recommendation-title">
+
+        Prioritize YouTube
+
+      </div>
+
+      <div class="recommendation-description">
+
+        Long-form review traffic aligns strongly
+        with affiliate purchase intent.
+
+      </div>
+
+    </div>
+
+    <div class="recommendation-card">
+
+      <div class="recommendation-score">
+
+        OPPORTUNITY
+
+      </div>
+
+      <div class="recommendation-title">
+
+        Build Email Capture Early
+
+      </div>
+
+      <div class="recommendation-description">
+
+        Capture visitors before scaling content
+        production.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="tasks-panel">
+
+  <div class="section-title">
+
+    Active Tasks
+
+  </div>
+
+  <div class="task-list">
+
+    <div class="task-card priority">
+
+      <div class="task-badge">
+
+        HIGH PRIORITY
+
+      </div>
+
+      <div class="task-title">
+
+        Generate Brand Assets
+
+      </div>
+
+      <div class="task-description">
+
+        Create logo, banners and profile assets.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Create Social Accounts
+
+      </div>
+
+      <div class="task-description">
+
+        TikTok, YouTube, Facebook and Instagram.
+
+      </div>
+
+    </div>
+
+    <div class="task-card">
+
+      <div class="task-title">
+
+        Approve Content Strategy
+
+      </div>
+
+      <div class="task-description">
+
         Review content pillars, hooks and CTAs.
 
       </div>
