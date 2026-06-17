@@ -901,6 +901,17 @@ console.log(
   campaign
 );
 
+const revenueGoal =
+  campaign.revenueGoal || 0;
+
+const projectedRevenue =
+  campaign.revenueProjection
+    ?.projectedMonthlyRevenue || 0;
+
+const revenueGap =
+  projectedRevenue -
+  revenueGoal;
+
 document.getElementById(
   "rightPanel"
 ).innerHTML = `

@@ -1,6 +1,12 @@
 const { kv } = require("@vercel/kv");
 
 const {
+  createCampaignIndex
+} = require(
+  "../lib/campaign-engine"
+);
+
+const {
   markCampaignCreated
 } = require(
   "../lib/portfolio-manager"
@@ -143,6 +149,17 @@ if (req.method === "POST") {
     `${userId}-campaign-${campaignId}`,
     campaign
   );
+
+  await createCampaignIndex({
+
+  campaignId,
+
+  userId,
+
+  campaignKey:
+    `${userId}-campaign-${campaignId}`
+
+});
 
   try {
 
