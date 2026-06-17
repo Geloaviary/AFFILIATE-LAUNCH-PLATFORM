@@ -400,6 +400,86 @@ document.getElementById(
 
 </div>
 
+<div class="overview-panel">
+
+  <div class="section-title">
+
+    Campaign Overview
+
+  </div>
+
+  <div class="overview-grid">
+
+    <div class="overview-card">
+
+      <div class="overview-label">
+
+        Campaign ID
+
+      </div>
+
+      <div class="overview-value">
+
+        ${campaign.id}
+
+      </div>
+
+    </div>
+
+    <div class="overview-card">
+
+      <div class="overview-label">
+
+        Product
+
+      </div>
+
+      <div class="overview-value">
+
+        ${campaign.name}
+
+      </div>
+
+    </div>
+
+    <div class="overview-card">
+
+      <div class="overview-label">
+
+        Status
+
+      </div>
+
+      <div class="overview-value">
+
+        ${campaign.status}
+
+      </div>
+
+    </div>
+
+    <div class="overview-card">
+
+      <div class="overview-label">
+
+        Revenue Goal
+
+      </div>
+
+      <div class="overview-value">
+
+        $${Number(
+          campaign.revenueGoal || 0
+        ).toLocaleString()}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 `;
 
 }
