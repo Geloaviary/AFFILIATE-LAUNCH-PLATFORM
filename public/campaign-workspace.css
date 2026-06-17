@@ -817,3 +817,122 @@ body::before {
   font-weight: 700;
 
 }
+
+/* =======================================
+   RESPONSIVE SYSTEM
+======================================= */
+
+* {
+
+  box-sizing: border-box;
+
+}
+
+img {
+
+  max-width: 100%;
+
+  height: auto;
+
+}
+
+.metric-grid,
+.mission-grid,
+.overview-grid {
+
+  display: grid;
+
+  gap: 20px;
+
+}
+
+/* Tablet */
+
+@media (max-width: 1024px) {
+
+  .hero-title {
+
+    font-size: 42px;
+
+  }
+
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  .command-hero,
+  .mission-panel,
+  .timeline-panel,
+  .overview-panel {
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+  }
+
+  .hero-title {
+
+    font-size: 32px;
+
+    line-height: 1.1;
+
+  }
+
+  .hero-subtitle {
+
+    font-size: 16px;
+
+  }
+
+  .metric-grid,
+  .mission-grid,
+  .overview-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .metric-value,
+  .mission-stat-value,
+  .overview-value {
+
+    font-size: 24px;
+
+  }
+
+}
+
+/* Small Phones */
+
+@media (max-width: 480px) {
+
+  .hero-title {
+
+    font-size: 26px;
+
+  }
+
+  .section-title {
+
+    font-size: 22px;
+
+  }
+
+  .timeline-title {
+
+    font-size: 22px;
+
+  }
+
+  .metric-value,
+  .mission-stat-value,
+  .overview-value {
+
+    font-size: 20px;
+
+  }
+
+}
