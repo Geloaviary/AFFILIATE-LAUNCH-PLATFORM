@@ -15,16 +15,16 @@ function renderCampaignCommandCenter(
   campaign
 ) {
 
+    const revenueGoal =
+        campaign.revenueGoal || 0;
+
     const projectedRevenue =
-  campaign.revenueProjection
-    ?.projectedMonthlyRevenue || 0;
+        campaign.revenueProjection
+         ?.projectedMonthlyRevenue || 0;
 
     const revenueGap =
          projectedRevenue -
          revenueGoal;
-
-const revenueGoal =
-  campaign.revenueGoal || 0;
 
 document.getElementById(
   "workspaceLoading"

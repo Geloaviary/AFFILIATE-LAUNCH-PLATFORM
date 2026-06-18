@@ -140,6 +140,32 @@ if (req.method === "POST") {
 
   campaignPackage,
 
+  workspace: {
+
+    health: "healthy",
+
+    activeTasks: 0,
+
+    pendingApprovals: 0,
+
+    aiRecommendations: [],
+
+    production: {
+
+      queued: 0,
+
+      processing: 0,
+
+      completed: 0,
+
+      failed: 0,
+
+      lastRenderAt: null
+
+    }
+
+  },
+
   createdAt:
     new Date().toISOString()
 
