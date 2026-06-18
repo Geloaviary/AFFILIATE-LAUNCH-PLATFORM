@@ -1122,6 +1122,42 @@ status.innerHTML =
 
         );
 
+        if (
+  result.error ===
+  "Campaign already exists"
+) {
+
+  document.getElementById(
+    'campaignLaunchStatus'
+  ).innerHTML = `
+
+<div
+  style="
+    padding:16px;
+    background:#fef3c7;
+    border:1px solid #f59e0b;
+    border-radius:8px;
+  "
+>
+
+  ⚠️ Campaign already exists
+
+  <br><br>
+
+  <a
+    href="/campaign-workspace.html?id=${result.campaignId}"
+  >
+    Open Existing Campaign
+  </a>
+
+</div>
+
+`;
+
+  return;
+
+}
+
       console.log(
         'CAMPAIGN CREATED',
         result

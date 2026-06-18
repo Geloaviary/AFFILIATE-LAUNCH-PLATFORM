@@ -138,6 +138,42 @@ if (req.method === "POST") {
     });
   }
 
+  const existingKeys =
+  await kv.keys(
+    `${userId}-campaign-*`
+  );
+
+for (
+  const key of existingKeys
+) {
+
+  const existingCampaign =
+    await kv.get(key);
+
+  if (
+
+    existingCampaign?.productUrl ===
+    productUrl
+
+  ) {
+
+    return res.status(409).json({
+
+      error:
+        "Campaign already exists",
+
+      campaignId:
+        key.replace(
+          `${userId}-campaign-`,
+          ""
+        )
+
+    });
+
+  }
+
+}
+
   const campaignId =
     Date.now().toString(36) +
     Math.random()
