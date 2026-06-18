@@ -476,6 +476,9 @@ console.log(
   campaign
 );
 
+currentCampaign =
+  campaign;
+
 const revenueGoal =
   campaign.revenueGoal || 0;
 
