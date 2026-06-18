@@ -352,6 +352,18 @@ function renderCurrentView(){
     currentCampaign?.workspace
       ?.production || {};
 
+  const queuedCount =
+
+  currentCampaign
+    ?.campaignPackage
+    ?.productionQueue
+    ?.filter(
+      item =>
+        item.status ===
+        "queued"
+    )
+    .length || 0;
+
   const productionAssets =
     currentCampaign?.campaignPackage
       ?.productionAssets || [];
@@ -392,7 +404,7 @@ function renderCurrentView(){
 
       <div class="health-description">
 
-        ${production.processing || 0}
+        ${queuedCount}
 
       </div>
 
