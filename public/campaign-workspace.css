@@ -456,6 +456,38 @@ body::before {
   padding:
     20px;
 
+  backdrop-filter:
+    blur(24px);
+
+  -webkit-backdrop-filter:
+    blur(24px);
+
+  box-shadow:
+    0 0 40px rgba(
+      59,
+      130,
+      246,
+      .08
+    );
+
+  transition:
+    all .25s ease;
+
+}
+
+.card:hover {
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 0 60px rgba(
+      59,
+      130,
+      246,
+      .18
+    );
+
 }
 
 .label {
@@ -1467,5 +1499,72 @@ img {
 .activity-item:last-child {
 
   border-bottom: none;
+
+}
+
+body {
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59,130,246,.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(16,185,129,.10),
+      transparent 40%
+    ),
+    #050816;
+
+  color: white;
+
+}
+
+.command-hero,
+.mission-panel,
+.timeline-panel,
+.health-panel,
+.task-panel,
+.recommendation-panel,
+.side-card {
+
+  backdrop-filter:
+    blur(24px);
+
+  -webkit-backdrop-filter:
+    blur(24px);
+
+  box-shadow:
+    0 0 40px rgba(
+      59,
+      130,
+      246,
+      .08
+    );
+
+  transition:
+    all .25s ease;
+
+}
+
+.command-hero:hover,
+.mission-panel:hover,
+.timeline-panel:hover,
+.health-panel:hover,
+.task-panel:hover,
+.recommendation-panel:hover,
+.side-card:hover {
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 0 60px rgba(
+      59,
+      130,
+      246,
+      .18
+    );
 
 }
