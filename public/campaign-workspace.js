@@ -6,6 +6,12 @@ const params =
 const campaignId =
   params.get("id");
 
+let currentCampaign =
+  null;
+
+let currentView =
+  "overview";
+
 console.log(
   "Campaign ID:",
   campaignId
@@ -27,7 +33,7 @@ function renderCampaignCommandCenter(
          revenueGoal;
 
 document.getElementById(
-  "workspaceLoading"
+  "workspaceHeader"
 ).innerHTML = `
 
 <div class="command-hero">
@@ -831,7 +837,45 @@ document.getElementById(
 
 </div>
 
+renderCurrentView();
+
 `;
+
+}
+
+function renderCurrentView(){
+
+  const container =
+    document.getElementById(
+      "workspaceView"
+    );
+
+  if (!container) {
+    return;
+  }
+
+  if (
+    currentView ===
+    "overview"
+  ) {
+
+    container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Campaign Overview
+  </h2>
+
+  <p>
+    Overview workspace active.
+  </p>
+
+</div>
+
+`;
+
+  }
 
 }
 
@@ -839,9 +883,9 @@ async function loadCampaign(){
 
   if (!campaignId) {
 
-    document.getElementById(
-      "workspaceLoading"
-    ).innerHTML = `
+document.getElementById(
+  "workspaceView"
+).innerHTML = `
 
 <div class="card">
 
@@ -881,7 +925,7 @@ async function loadCampaign(){
 if (!campaign) {
 
   document.getElementById(
-    "workspaceLoading"
+      "workspaceView"
   ).innerHTML = `
 
 <div class="card">
@@ -1053,8 +1097,8 @@ renderCampaignCommandCenter(
     );
 
     document.getElementById(
-  "workspaceLoading"
-).innerHTML = `
+        "workspaceView"
+    ).innerHTML = `
 
 <div class="card">
 
