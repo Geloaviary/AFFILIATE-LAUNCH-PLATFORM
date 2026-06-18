@@ -837,9 +837,9 @@ document.getElementById(
 
 </div>
 
-renderCurrentView();
-
 `;
+
+renderCurrentView();
 
 }
 
