@@ -66,6 +66,49 @@ if (req.method === "GET") {
 
 // CREATE CAMPAIGN
 if (req.method === "POST") {
+
+  if (
+  req.body?.action ===
+  "update-production-asset"
+) {
+
+  const {
+
+    campaignId,
+
+    assetId,
+
+    status
+
+  } = req.body;
+
+  const {
+    updateProductionAsset
+  } = require(
+    "../lib/campaign-engine"
+  );
+
+  const asset =
+    await updateProductionAsset({
+
+      campaignId,
+
+      assetId,
+
+      status
+
+    });
+
+  return res.status(200).json({
+
+    success: true,
+
+    asset
+
+  });
+
+}
+
   const {
 
   name,

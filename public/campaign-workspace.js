@@ -348,43 +348,313 @@ function renderCurrentView(){
 
     case "production":
 
-      container.innerHTML = `
+  const production =
+    currentCampaign?.workspace
+      ?.production || {};
+
+  const productionAssets =
+    currentCampaign?.campaignPackage
+      ?.productionAssets || [];
+
+  const pendingApprovals =
+    currentCampaign?.workspace
+      ?.pendingApprovals || 0;
+
+  container.innerHTML = `
 
 <div class="card">
 
   <h2>
-    Production Workspace
+    Production Command Center
   </h2>
 
-  <p>
-    Production queue ready.
-  </p>
+  <div class="health-grid">
+
+    <div class="health-card">
+
+      <div class="health-title">
+        Queued
+      </div>
+
+      <div class="health-description">
+
+        ${production.queued || 0}
+
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-title">
+        Processing
+      </div>
+
+      <div class="health-description">
+
+        ${production.processing || 0}
+
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-title">
+        Completed
+      </div>
+
+      <div class="health-description">
+
+        ${production.completed || 0}
+
+      </div>
+
+    </div>
+
+    <div class="health-card">
+
+      <div class="health-title">
+        Failed
+      </div>
+
+      <div class="health-description">
+
+        ${production.failed || 0}
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="system-health">
+
+    <div class="system-item">
+
+      <strong>
+        Pending Approvals
+      </strong>
+
+      <span>
+        ${pendingApprovals}
+      </span>
+
+    </div>
+
+    <div class="system-item">
+
+      <strong>
+        Production Assets
+      </strong>
+
+      <span>
+        ${productionAssets.length}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+
+  <h2>
+    Latest Production Assets
+  </h2>
+
+  ${
+
+    productionAssets.length
+
+      ? productionAssets
+  .slice(-10)
+  .reverse()
+  .map(asset => `
+
+<div class="task-card">
+
+  <div class="task-title">
+
+    ${asset.title || asset.type}
+
+ <div class="task-description">
+
+  ${
+    asset.approvalStatus === "approved"
+
+      ? "✅ Approved"
+
+      : asset.approvalStatus === "rejected"
+
+      ? "❌ Rejected"
+
+      : "⏳ Pending Approval"
+  }
+
+</div>
+
+  ${
+  asset.approvalStatus !== "pending"
+
+    ? ""
+
+    : `
+
+<div style="
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+">
+
+  <button
+    class="primary-btn"
+    onclick="
+      approveAsset(
+        '${asset.id}'
+      )
+    "
+  >
+    Approve
+  </button>
+
+  <button
+    class="secondary-btn"
+    onclick="
+      rejectAsset(
+        '${asset.id}'
+      )
+    "
+  >
+    Reject
+  </button>
+
+</div>
+
+`
+}
+
+    <button
+  class="primary-btn"
+  onclick="
+    approveAsset(
+      '${asset.id}'
+    )
+  "
+>
+  Approve
+</button>
+
+    <button
+  class="secondary-btn"
+  onclick="
+    rejectAsset(
+      '${asset.id}'
+    )
+  "
+>
+  Reject
+</button>
+
+  </div>
+
+</div>
+
+`)
+  .join("")
+          
+
+      : `
+
+        <p>
+
+          No production assets yet.
+
+        </p>
+
+      `
+
+  }
 
 </div>
 
 `;
 
-      break;
+  break;
 
     case "publishing":
 
-      container.innerHTML = `
+  const publishingQueue =
+    currentCampaign?.campaignPackage
+      ?.publishingQueue || [];
+
+  container.innerHTML = `
 
 <div class="card">
 
   <h2>
-    Publishing Workspace
+    Publishing Queue
   </h2>
 
   <p>
-    Distribution center ready.
+
+    Assets Ready For Distribution
+
   </p>
+
+</div>
+
+<div class="card">
+
+  ${
+
+    publishingQueue.length
+
+      ? publishingQueue
+          .slice()
+          .reverse()
+          .map(asset => `
+
+<div class="task-card">
+
+  <div class="task-title">
+
+    ${asset.title || asset.type}
+
+  </div>
+
+  <div class="task-description">
+
+    ${
+      asset.publishingStatus ||
+      "queued"
+    }
+
+  </div>
+
+</div>
+
+`)
+          .join("")
+
+      : `
+
+<p>
+
+No approved assets ready for publishing.
+
+</p>
+
+`
+
+  }
 
 </div>
 
 `;
 
-      break;
+  break;
 
     case "analytics":
 
@@ -643,6 +913,70 @@ renderCampaignCommandCenter(
 `;
 
   }
+
+}
+
+async function approveAsset(
+  assetId
+) {
+
+  await fetch(
+    "/api/manage-campaigns",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
+      body: JSON.stringify({
+
+        action:
+          "update-production-asset",
+
+        campaignId,
+
+        assetId,
+
+        status:
+          "approved"
+
+      })
+    }
+  );
+
+  loadCampaign();
+
+}
+
+async function rejectAsset(
+  assetId
+) {
+
+  await fetch(
+    "/api/manage-campaigns",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
+      body: JSON.stringify({
+
+        action:
+          "update-production-asset",
+
+        campaignId,
+
+        assetId,
+
+        status:
+          "rejected"
+
+      })
+    }
+  );
+
+  loadCampaign();
 
 }
 
