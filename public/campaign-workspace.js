@@ -843,6 +843,17 @@ renderCurrentView();
 
 }
 
+function switchView(
+  view
+){
+
+  currentView =
+    view;
+
+  renderCurrentView();
+
+}
+
 function renderCurrentView(){
 
   const container =
@@ -854,12 +865,11 @@ function renderCurrentView(){
     return;
   }
 
-  if (
-    currentView ===
-    "overview"
-  ) {
+  switch(currentView){
 
-    container.innerHTML = `
+    case "overview":
+
+      container.innerHTML = `
 
 <div class="card">
 
@@ -868,12 +878,199 @@ function renderCurrentView(){
   </h2>
 
   <p>
-    Overview workspace active.
+    Campaign ID:
+    ${currentCampaign?.id}
+  </p>
+
+  <p>
+    Product:
+    ${currentCampaign?.name}
   </p>
 
 </div>
 
 `;
+
+      break;
+
+    case "tasks":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Active Tasks
+  </h2>
+
+  <ul>
+
+    <li>
+      Generate Brand Assets
+    </li>
+
+    <li>
+      Create Social Accounts
+    </li>
+
+    <li>
+      Approve Content Strategy
+    </li>
+
+    <li>
+      Launch Production Queue
+    </li>
+
+  </ul>
+
+</div>
+
+`;
+
+      break;
+
+    case "research":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Research Workspace
+  </h2>
+
+  <p>
+    Affiliate market intelligence available.
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "intelligence":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Campaign Intelligence
+  </h2>
+
+  <p>
+    Audience model loaded.
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "revenue":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Revenue Command Center
+  </h2>
+
+  <p>
+    Goal:
+    $${Number(
+      currentCampaign?.revenueGoal || 0
+    ).toLocaleString()}
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "strategy":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Strategy Workspace
+  </h2>
+
+  <p>
+    Campaign strategy loaded.
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "production":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Production Workspace
+  </h2>
+
+  <p>
+    Production queue ready.
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "publishing":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Publishing Workspace
+  </h2>
+
+  <p>
+    Distribution center ready.
+  </p>
+
+</div>
+
+`;
+
+      break;
+
+    case "analytics":
+
+      container.innerHTML = `
+
+<div class="card">
+
+  <h2>
+    Analytics Workspace
+  </h2>
+
+  <p>
+    Performance metrics available.
+  </p>
+
+</div>
+
+`;
+
+      break;
 
   }
 
