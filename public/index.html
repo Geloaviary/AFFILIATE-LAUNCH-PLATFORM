@@ -328,6 +328,133 @@ body{
 
 }
 
+.section-header{
+
+  margin-top:40px;
+
+  margin-bottom:20px;
+
+  font-size:28px;
+
+  font-weight:700;
+
+  color:white;
+
+}
+
+.section-header span{
+
+  display:block;
+
+  margin-top:8px;
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  font-weight:400;
+
+  letter-spacing:.5px;
+
+}
+
+.workforce-grid{
+
+  margin-top:30px;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:20px;
+
+}
+
+.agent-card{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:20px;
+
+  padding:24px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  transition:
+  transform .3s ease,
+  box-shadow .3s ease;
+
+}
+
+.agent-card:hover{
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 0 25px
+    rgba(0,229,255,.15);
+
+}
+
+.agent-card::before{
+
+  content:'';
+
+  position:absolute;
+
+  top:0;
+
+  left:-100%;
+
+  width:100%;
+
+  height:2px;
+
+  background:
+    var(--primary);
+
+  animation:
+    scanLine 4s linear infinite;
+
+}
+
+.agent-name{
+
+  font-size:18px;
+
+  font-weight:700;
+
+  margin-bottom:12px;
+
+}
+
+.agent-status{
+
+  color:var(--primary);
+
+  margin-bottom:10px;
+
+  animation:
+    pulseStatus 2s ease-in-out infinite;
+
+}
+
+.agent-meta{
+
+  color:var(--muted);
+
+  font-size:14px;
+
+}
+
 @keyframes neuralMove{
 
   from{
@@ -336,6 +463,52 @@ body{
 
   to{
     transform:translateY(60px);
+  }
+
+}
+
+@keyframes scanLine{
+
+  from{
+    left:-100%;
+  }
+
+  to{
+    left:100%;
+  }
+
+}
+
+@keyframes pulseStatus{
+
+  0%{
+
+    opacity:.6;
+
+    text-shadow:
+      0 0 0px
+      rgba(0,229,255,0);
+
+  }
+
+  50%{
+
+    opacity:1;
+
+    text-shadow:
+      0 0 12px
+      rgba(0,229,255,.6);
+
+  }
+
+  100%{
+
+    opacity:.6;
+
+    text-shadow:
+      0 0 0px
+      rgba(0,229,255,0);
+
   }
 
 }
@@ -417,9 +590,9 @@ body{
     <div id="topbar">
 
   <div>
-    AI Workforce
-    <strong>47 Online</strong>
-  </div>
+  AI Workforce
+  <strong>24/7 Autonomous Operations</strong>
+</div>
 
   <div>
     Jobs Running
@@ -495,6 +668,116 @@ body{
   >
 
   </div>
+
+  <div class="section-header">
+
+  AI WORKFORCE
+
+  <span>
+    Autonomous Departments Currently Operating
+  </span>
+
+</div>
+
+  <div class="workforce-grid">
+
+  <div class="agent-card">
+
+  <div class="agent-name">
+    Research Director
+  </div>
+
+  <div class="agent-status">
+    ANALYZING MARKET SIGNALS
+  </div>
+
+  <div class="agent-meta">
+    Confidence: 94%
+  </div>
+
+</div>
+
+  <div class="agent-card">
+
+    <div class="agent-name">
+      Market Intelligence
+    </div>
+
+    <div class="agent-status">
+      SCANNING OPPORTUNITIES
+    </div>
+
+    <div class="agent-tasks">
+     Confidence: 92%
+    </div>
+
+  </div>
+
+  <div class="agent-card">
+
+    <div class="agent-name">
+      Strategy Architect
+    </div>
+
+    <div class="agent-status">
+      MODELING GROWTH SCENARIOS
+    </div>
+
+    <div class="agent-tasks">
+     Confidence: 89%
+    </div>
+
+  </div>
+
+  <div class="agent-card">
+
+    <div class="agent-name">
+      Content Director
+    </div>
+
+    <div class="agent-status">
+     GENERATING CONTENT PLANS
+    </div>
+
+    <div class="agent-tasks">
+     Confidence: 95%
+    </div>
+
+  </div>
+
+  <div class="agent-card">
+
+    <div class="agent-name">
+      Production Director
+    </div>
+
+    <div class="agent-status">
+      PRODUCING ASSETS
+    </div>
+
+    <div class="agent-tasks">
+      Confidence: 93%
+    </div>
+
+  </div>
+
+  <div class="agent-card">
+
+    <div class="agent-name">
+      Revenue Optimizer
+    </div>
+
+    <div class="agent-status">
+      OPTIMIZING CONVERSIONS
+    </div>
+
+    <div class="agent-tasks">
+      Confidence: 91%
+    </div>
+
+  </div>
+
+</div>
 
 </div>
 
