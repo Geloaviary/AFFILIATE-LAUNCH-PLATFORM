@@ -316,25 +316,26 @@ const listiclePlan =
     }
   );
 
+  const jobs =
   await createCampaignJobs({
 
-  campaignId,
+    campaignId,
 
-  winner,
+    winner,
 
-  campaignIntelligence,
+    campaignIntelligence,
 
-  productIntelligence,
+    productIntelligence,
 
-  reviewPlan,
+    reviewPlan,
 
-  tutorialPlan,
+    tutorialPlan,
 
-  comparisonPlan,
+    comparisonPlan,
 
-  listiclePlan
+    listiclePlan
 
-});
+  });
 
 console.log(
   "CAMPAIGN JOBS CREATED:",
