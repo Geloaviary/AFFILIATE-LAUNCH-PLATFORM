@@ -368,6 +368,10 @@ function renderCurrentView(){
     currentCampaign?.campaignPackage
       ?.productionAssets || [];
 
+  const productionQueue =
+  currentCampaign?.campaignPackage
+    ?.productionQueue || [];
+
   const pendingApprovals =
     currentCampaign?.workspace
       ?.pendingApprovals || 0;
@@ -467,6 +471,48 @@ function renderCurrentView(){
     </div>
 
   </div>
+
+</div>
+
+<div class="card">
+
+  <h3>
+    Production Queue
+  </h3>
+
+  ${
+    productionQueue.length
+
+      ? productionQueue
+          .map(
+            item => `
+
+<div class="system-item">
+
+  <strong>
+    ${item.type}
+  </strong>
+
+  <span>
+    ${item.status}
+  </span>
+
+</div>
+
+`
+          )
+          .join("")
+
+      : `
+
+<div class="system-item">
+
+  No queued jobs.
+
+</div>
+
+`
+  }
 
 </div>
 
