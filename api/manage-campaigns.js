@@ -336,6 +336,12 @@ const listiclePlan =
 
 });
 
+console.log(
+  "CAMPAIGN JOBS CREATED:",
+  jobs.length,
+  campaignId
+);
+
   try {
 
   await markCampaignCreated({
