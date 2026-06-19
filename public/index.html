@@ -183,6 +183,118 @@ body{
   margin-bottom:20px;
 }
 
+.mission-control{
+
+  display:grid;
+
+  grid-template-columns:
+    1.3fr .7fr;
+
+  gap:24px;
+
+}
+
+.hero-panel{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:24px;
+
+  padding:40px;
+
+  backdrop-filter:
+    blur(20px);
+
+}
+
+.hero-badge{
+
+  color:var(--primary);
+
+  font-size:13px;
+
+  letter-spacing:2px;
+
+  margin-bottom:20px;
+
+}
+
+.hero-title{
+
+  font-size:72px;
+
+  line-height:.9;
+
+  margin-bottom:20px;
+
+}
+
+.mission-text{
+
+  font-size:28px;
+
+  color:var(--primary);
+
+  margin-bottom:20px;
+
+}
+
+.hero-copy{
+
+  max-width:700px;
+
+  color:var(--muted);
+
+  line-height:1.7;
+
+  margin-bottom:30px;
+
+}
+
+.launch-ai-btn{
+
+  padding:18px 40px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:var(--primary);
+
+  color:black;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 0 40px
+    rgba(0,229,255,.4);
+
+}
+
+.activity-stream{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:24px;
+
+  padding:24px;
+
+  min-height:420px;
+
+  overflow:hidden;
+
+}
+
 #neural-bg{
 
   position:fixed;
@@ -329,13 +441,64 @@ body{
     <div id="workspace">
 
       <section
-        id="dashboard"
-        class="page active"
-      >
-        <h1 class="page-title">
-          Dashboard
-        </h1>
-      </section>
+  id="dashboard"
+  class="page active"
+>
+
+<div class="mission-control">
+
+  <div class="hero-panel">
+
+    <div class="hero-badge">
+      AI WORKFORCE ONLINE
+    </div>
+
+    <h1 class="hero-title">
+
+      AUTONOMOUS
+      AFFILIATE
+      ENTERPRISE
+
+    </h1>
+
+    <div
+      id="missionText"
+      class="mission-text"
+    >
+
+      Researching Markets
+
+    </div>
+
+    <p class="hero-copy">
+
+      Your AI workforce continuously
+      researches opportunities,
+      creates campaigns,
+      generates assets,
+      publishes content,
+      and optimizes revenue.
+
+    </p>
+
+    <button class="launch-ai-btn">
+
+      DEPLOY AI BUSINESS
+
+    </button>
+
+  </div>
+
+  <div
+    id="activityStream"
+    class="activity-stream"
+  >
+
+  </div>
+
+</div>
+
+</section>
 
       <section
   id="campaigns"
@@ -1342,6 +1505,128 @@ status.innerHTML =
   await loadCampaigns();
 
 })();
+
+const missions = [
+
+  "Researching Markets",
+
+  "Discovering Opportunities",
+
+  "Generating Assets",
+
+  "Publishing Content",
+
+  "Optimizing Revenue"
+
+];
+
+let missionIndex = 0;
+
+setInterval(() => {
+
+  missionIndex++;
+
+  const el =
+    document.getElementById(
+      "missionText"
+    );
+
+  if(el){
+
+    el.textContent =
+      missions[
+        missionIndex %
+        missions.length
+      ];
+
+  }
+
+},2500);
+
+const activityStream =
+document.getElementById(
+"activityStream"
+);
+
+const activityEvents = [
+
+"Research Director discovered SaaS trend",
+
+"Affiliate Validator confirmed offer",
+
+"Strategy Architect generated blueprint",
+
+"Content Director created article",
+
+"Publisher queued publication",
+
+"Revenue Optimizer updated forecast"
+
+];
+
+setInterval(() => {
+
+if(!activityStream) return;
+
+const item =
+document.createElement(
+"div"
+);
+
+item.style.marginBottom =
+"16px";
+
+item.style.paddingBottom =
+"16px";
+
+item.style.borderBottom =
+"1px solid rgba(255,255,255,.08)";
+
+item.innerHTML = `
+
+<div
+style="
+color:#00e5ff;
+font-size:12px;
+margin-bottom:6px;
+"
+>
+
+${new Date().toLocaleTimeString()}
+
+</div>
+
+<div>
+
+${
+activityEvents[
+Math.floor(
+Math.random() *
+activityEvents.length
+)
+]
+}
+
+</div>
+
+`;
+
+activityStream.prepend(
+item
+);
+
+while(
+activityStream.children.length >
+12
+){
+
+activityStream.removeChild(
+activityStream.lastChild
+);
+
+}
+
+},3000);
 
 </script>
 
