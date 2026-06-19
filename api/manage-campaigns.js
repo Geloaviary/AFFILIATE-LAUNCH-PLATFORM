@@ -1,7 +1,11 @@
 const { kv } = require("@vercel/kv");
 
 const {
-  createCampaignIndex
+
+  createCampaignIndex,
+
+  createCampaignJobs
+
 } = require(
   "../lib/campaign-engine"
 );
@@ -16,6 +20,12 @@ const {
   generateCampaignPackage
 } = require(
   "../lib/business-strategist/generate-campaign-package"
+);
+
+const {
+  buildVideoPlan
+} = require(
+  "../lib/video-planner"
 );
 
 exports.default = async function handler(req, res) {
@@ -263,6 +273,66 @@ for (
 
   campaignKey:
     `${userId}-campaign-${campaignId}`
+
+});
+
+const reviewPlan =
+  buildVideoPlan(
+    "review",
+    {
+      winner,
+      campaignIntelligence,
+      productIntelligence
+    }
+  );
+
+const tutorialPlan =
+  buildVideoPlan(
+    "tutorial",
+    {
+      winner,
+      campaignIntelligence,
+      productIntelligence
+    }
+  );
+
+const comparisonPlan =
+  buildVideoPlan(
+    "comparison",
+    {
+      winner,
+      campaignIntelligence,
+      productIntelligence
+    }
+  );
+
+const listiclePlan =
+  buildVideoPlan(
+    "listicle",
+    {
+      winner,
+      campaignIntelligence,
+      productIntelligence
+    }
+  );
+
+  await createCampaignJobs({
+
+  campaignId,
+
+  winner,
+
+  campaignIntelligence,
+
+  productIntelligence,
+
+  reviewPlan,
+
+  tutorialPlan,
+
+  comparisonPlan,
+
+  listiclePlan
 
 });
 
