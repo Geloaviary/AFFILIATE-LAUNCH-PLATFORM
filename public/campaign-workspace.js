@@ -390,7 +390,7 @@ function renderCurrentView(){
 
       <div class="health-description">
 
-        ${production.queued || 0}
+         ${queuedCount}
 
       </div>
 
@@ -404,7 +404,7 @@ function renderCurrentView(){
 
       <div class="health-description">
 
-        ${queuedCount}
+       ${production.processing || 0}
 
       </div>
 
