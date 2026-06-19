@@ -12,15 +12,29 @@
 <style>
 
 :root{
-  --bg:#f8fafc;
-  --sidebar:#0f172a;
-  --sidebar-hover:#1e293b;
-  --card:#ffffff;
-  --border:#e2e8f0;
-  --text:#0f172a;
-  --muted:#64748b;
-  --primary:#2563eb;
-  --success:#16a34a;
+
+  --bg:#050816;
+
+  --surface:#0b1220;
+
+  --surface-2:#111c31;
+
+  --border:rgba(0,229,255,.12);
+
+  --text:#ffffff;
+
+  --muted:#94a3b8;
+
+  --primary:#00e5ff;
+
+  --secondary:#7c3aed;
+
+  --success:#00ff94;
+
+  --warning:#ffc857;
+
+  --danger:#ff4d6d;
+
 }
 
 *{
@@ -30,13 +44,24 @@
 }
 
 body{
+
   font-family:
     Inter,
     system-ui,
     sans-serif;
 
-  background:var(--bg);
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(0,229,255,.08),
+      transparent 40%
+    ),
+    var(--bg);
+
   color:var(--text);
+
+  overflow-x:hidden;
+
 }
 
 #app{
@@ -45,18 +70,43 @@ body{
 }
 
 #sidebar{
-  width:260px;
-  background:var(--sidebar);
+
+  width:280px;
+
+  background:
+    rgba(11,18,32,.92);
+
+  backdrop-filter:
+    blur(20px);
+
+  border-right:
+    1px solid var(--border);
+
   color:white;
+
   display:flex;
+
   flex-direction:column;
+
 }
 
 .logo{
-  padding:24px;
-  font-size:20px;
-  font-weight:700;
-  border-bottom:1px solid rgba(255,255,255,.1);
+
+  padding:28px;
+
+  font-size:22px;
+
+  font-weight:800;
+
+  line-height:1.15;
+
+  letter-spacing:1px;
+
+  color:var(--primary);
+
+  border-bottom:
+    1px solid var(--border);
+
 }
 
 .nav{
@@ -86,13 +136,26 @@ body{
 }
 
 #topbar{
-  height:70px;
-  background:white;
-  border-bottom:1px solid var(--border);
+
+  height:80px;
+
+  background:
+    rgba(11,18,32,.92);
+
+  backdrop-filter:
+    blur(20px);
+
+  border-bottom:
+    1px solid var(--border);
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
   padding:0 24px;
+
 }
 
 #workspace{
@@ -120,18 +183,80 @@ body{
   margin-bottom:20px;
 }
 
+#neural-bg{
+
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:.25;
+
+  z-index:0;
+
+  background-image:
+
+    linear-gradient(
+      rgba(0,229,255,.04) 1px,
+      transparent 1px
+    ),
+
+    linear-gradient(
+      90deg,
+      rgba(0,229,255,.04) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    60px 60px;
+
+  animation:
+    neuralMove 25s linear infinite;
+
+}
+
+@keyframes neuralMove{
+
+  from{
+    transform:translateY(0);
+  }
+
+  to{
+    transform:translateY(60px);
+  }
+
+}
+
+#app{
+  position:relative;
+  z-index:1;
+}
+
 </style>
 </head>
 
 <body>
+
+<div id="neural-bg"></div>
 
 <div id="app">
 
   <aside id="sidebar">
 
     <div class="logo">
-      Affiliate Launch
-    </div>
+
+  AUTONOMOUS
+
+  <br>
+
+  AFFILIATE
+
+  <br>
+
+  ENTERPRISE
+
+</div>
 
     <div class="nav">
 
@@ -179,15 +304,27 @@ body{
 
     <div id="topbar">
 
-      <h3>
-        Affiliate Launch Platform
-      </h3>
+  <div>
+    AI Workforce
+    <strong>47 Online</strong>
+  </div>
 
-      <div>
-        Production Mode
-      </div>
+  <div>
+    Jobs Running
+    <strong>94</strong>
+  </div>
 
-    </div>
+  <div>
+    Revenue Forecast
+    <strong>$78,420</strong>
+  </div>
+
+  <div>
+    System Health
+    <strong>99.8%</strong>
+  </div>
+
+</div>
 
     <div id="workspace">
 
