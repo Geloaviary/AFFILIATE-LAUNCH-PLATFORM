@@ -988,17 +988,19 @@ async function approveAsset(
       },
       body: JSON.stringify({
 
-        action:
-          "update-production-asset",
+  userId: "admin",
 
-        campaignId,
+  action:
+    "update-production-asset",
 
-        assetId,
+  campaignId,
 
-        status:
-          "approved"
+  assetId,
 
-      })
+  status:
+    "approved"
+
+})
     }
   );
 
@@ -1019,6 +1021,8 @@ async function rejectAsset(
           "application/json"
       },
       body: JSON.stringify({
+
+        userId: "admin",
 
         action:
           "update-production-asset",
