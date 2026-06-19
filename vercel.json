@@ -1,5 +1,15 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/login.html" }
+    {
+      "source": "/",
+      "destination": "/login.html"
+    }
+  ],
+
+  "crons": [
+    {
+      "path": "/api/video?action=process-render-jobs",
+      "schedule": "*/5 * * * *"
+    }
   ]
 }
