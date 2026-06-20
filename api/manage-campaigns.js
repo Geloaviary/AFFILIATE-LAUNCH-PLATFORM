@@ -276,6 +276,16 @@ for (
 
 });
 
+const videoPlan =
+  buildVideoPlan(
+    "short",
+    {
+      winner,
+      campaignIntelligence,
+      productIntelligence
+    }
+  );
+
 const reviewPlan =
   buildVideoPlan(
     "review",
@@ -326,6 +336,8 @@ const listiclePlan =
     campaignIntelligence,
 
     productIntelligence,
+
+    videoPlan,
 
     reviewPlan,
 
