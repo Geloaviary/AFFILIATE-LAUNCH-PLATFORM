@@ -159,7 +159,11 @@ body{
 }
 
 #workspace{
+
   padding:24px;
+
+  color:white;
+
 }
 
 .page{
@@ -232,9 +236,37 @@ a:hover{
 }
 
 .page-title{
-  font-size:28px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:18px;
+
+  font-size:48px;
+
   font-weight:700;
-  margin-bottom:20px;
+
+  color:white;
+
+  margin-bottom:24px;
+
+}
+
+.page-icon{
+
+  width:44px;
+
+  height:44px;
+
+  color:var(--primary);
+
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(0,229,255,.5)
+    );
+
 }
 
 .mission-control{
@@ -463,6 +495,108 @@ a:hover{
 
 }
 
+.ai-init-card{
+
+  min-height:220px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+}
+
+.ai-init-text{
+
+  font-size:28px;
+
+  color:var(--primary);
+
+  font-family:
+    "JetBrains Mono",
+    monospace;
+
+  text-shadow:
+    0 0 15px rgba(0,229,255,.4);
+
+}
+
+.typing-text{
+
+  overflow:hidden;
+
+  white-space:nowrap;
+
+  border-right:none;
+
+  display:inline-block;
+
+  animation:
+    typing 3s steps(26,end);
+
+}
+
+.cursor{
+
+  animation:
+    blink .8s infinite;
+
+}
+
+.loading-dots::after{
+
+  content:"";
+
+  animation:
+    dots 1.5s infinite;
+
+}
+
+@keyframes typing{
+
+  from{
+    width:0;
+  }
+
+  to{
+    width:26ch;
+  }
+
+}
+
+@keyframes blink{
+
+  50%{
+    opacity:0;
+  }
+
+}
+
+@keyframes dots{
+
+  0%{
+    content:"";
+  }
+
+  25%{
+    content:".";
+  }
+
+  50%{
+    content:"..";
+  }
+
+  75%{
+    content:"...";
+  }
+
+  100%{
+    content:"";
+  }
+
+}
+
 .agent-card::before{
 
   content:'';
@@ -580,6 +714,9 @@ a:hover{
 }
 
 </style>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
 
 <body>
@@ -850,8 +987,31 @@ a:hover{
 >
 
 <h1 class="page-title">
+
+  <i
+    data-lucide="target"
+    class="page-icon"
+  ></i>
+
   Campaigns
+
 </h1>
+
+<div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
 
 <div
   style="
@@ -1060,8 +1220,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Research
-        </h1>
+
+  <i
+    data-lucide="search"
+    class="page-icon"
+  ></i>
+
+  Research
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1069,8 +1252,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Strategy
-        </h1>
+
+  <i
+    data-lucide="brain"
+    class="page-icon"
+  ></i>
+
+  Strategy
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1078,8 +1284,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Production
-        </h1>
+
+  <i
+    data-lucide="cpu"
+    class="page-icon"
+  ></i>
+
+  Production
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1087,8 +1316,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Compliance
-        </h1>
+
+  <i
+    data-lucide="shield-check"
+    class="page-icon"
+  ></i>
+
+  Compliance
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1096,8 +1348,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Publishing
-        </h1>
+
+  <i
+    data-lucide="radio-tower"
+    class="page-icon"
+  ></i>
+
+  Publishing
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1105,8 +1380,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Analytics
-        </h1>
+
+  <i
+    data-lucide="bar-chart-3"
+    class="page-icon"
+  ></i>
+
+  Analytics
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
       <section
@@ -1114,8 +1412,31 @@ a:hover{
         class="page"
       >
         <h1 class="page-title">
-          Settings
-        </h1>
+
+  <i
+    data-lucide="settings"
+    class="page-icon"
+  ></i>
+
+  Settings
+
+</h1>
+
+        <div class="card ai-init-card">
+
+  <div class="ai-init-text">
+
+    <span class="typing-text">
+      AI Department Initializing
+    </span>
+
+    <span class="cursor">|</span>
+
+    <span class="loading-dots"></span>
+
+  </div>
+
+</div>
       </section>
 
     </div>
@@ -1974,6 +2295,8 @@ activityStream.lastChild
 }
 
 },3000);
+
+lucide.createIcons();
 
 </script>
 
