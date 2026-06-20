@@ -16,18 +16,6 @@ const {
   "../lib/portfolio-manager"
 );
 
-const {
-  generateCampaignPackage
-} = require(
-  "../lib/business-strategist/generate-campaign-package"
-);
-
-const {
-  buildVideoPlan
-} = require(
-  "../lib/video-planner"
-);
-
 exports.default = async function handler(req, res) {
 try {
 const userId =
@@ -122,24 +110,20 @@ if (req.method === "POST") {
   const {
 
   name,
-
   productUrl,
-
-  niche,
-
   affiliateUrl,
-
-  winner,
-
   revenueGoal,
-
-  revenueProjection,
-
-  productIntelligence,
-
-  campaignIntelligence
+  research
 
 } = req.body;
+
+const {
+
+  niche,
+  winner,
+  revenueProjection
+
+} = research;
 
   if (!name || !productUrl) {
     return res.status(400).json({
@@ -190,25 +174,28 @@ for (
       .toString(36)
       .substring(2, 8);
 
-  const campaignPackage =
-  generateCampaignPackage({
+  const campaignPackage = {
 
-    winner,
+  version: "2.0",
 
-    affiliateLink:
-      affiliateUrl,
+  status: "active",
 
-    revenueGoal,
+  createdAt:
+    new Date().toISOString(),
 
-    revenueProjection,
+  research,
 
-    productIntelligence,
+  productionAssets: [],
 
-    campaignIntelligence
+  publishingQueue: [],
 
-  });
+  publishedAssets: []
+
+};
 
   const campaign = {
+
+  id: campaignId,
 
   name,
 
@@ -218,10 +205,7 @@ for (
 
   niche,
 
-  status:
-    "active",
-
-  winner,
+  status: "active",
 
   revenueGoal,
 
@@ -276,76 +260,10 @@ for (
 
 });
 
-const videoPlan =
-  buildVideoPlan(
-    "short",
-    {
-      winner,
-      campaignIntelligence,
-      productIntelligence
-    }
-  );
-
-const reviewPlan =
-  buildVideoPlan(
-    "review",
-    {
-      winner,
-      campaignIntelligence,
-      productIntelligence
-    }
-  );
-
-const tutorialPlan =
-  buildVideoPlan(
-    "tutorial",
-    {
-      winner,
-      campaignIntelligence,
-      productIntelligence
-    }
-  );
-
-const comparisonPlan =
-  buildVideoPlan(
-    "comparison",
-    {
-      winner,
-      campaignIntelligence,
-      productIntelligence
-    }
-  );
-
-const listiclePlan =
-  buildVideoPlan(
-    "listicle",
-    {
-      winner,
-      campaignIntelligence,
-      productIntelligence
-    }
-  );
-
   const jobs =
   await createCampaignJobs({
 
-    campaignId,
-
-    winner,
-
-    campaignIntelligence,
-
-    productIntelligence,
-
-    videoPlan,
-
-    reviewPlan,
-
-    tutorialPlan,
-
-    comparisonPlan,
-
-    listiclePlan
+    campaignId
 
   });
 

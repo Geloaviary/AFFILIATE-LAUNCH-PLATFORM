@@ -2059,39 +2059,22 @@ status.innerHTML =
           'POST',
 
           {
+  userId: "admin",
 
-            userId:
-              'admin',
+  name:
+    winner.name,
 
-            name:
-              winner.name,
+  productUrl:
+    winner.productUrl,
 
-            productUrl:
-              winner.productUrl,
+  affiliateUrl:
+    affiliateLink,
 
-            affiliateUrl:
-              affiliateLink,
+  revenueGoal,
 
-            niche:
-              currentResearch.niche,
-
-            winner,
-
-            revenueGoal,
-
-            revenueProjection:
-              currentResearch
-                .revenueProjection,
-
-            productIntelligence:
-              currentResearch
-                .productIntelligence,
-
-            campaignIntelligence:
-              currentResearch
-                .campaignIntelligence
-
-          }
+  research:
+    currentResearch
+}
 
         );
 
