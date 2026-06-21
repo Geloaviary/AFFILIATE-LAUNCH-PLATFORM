@@ -260,6 +260,11 @@ for (
 
 });
 
+console.log(
+  "STARTING JOB CREATION",
+  campaignId
+);
+
   const jobs =
   await createCampaignJobs({
 
