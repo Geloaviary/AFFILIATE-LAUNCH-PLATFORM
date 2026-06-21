@@ -708,6 +708,71 @@ a:hover{
 
 }
 
+.research-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:20px;
+
+  margin-bottom:24px;
+
+}
+
+.research-metric{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:20px;
+
+  padding:24px;
+
+  text-align:center;
+
+}
+
+.metric-value{
+
+  font-size:42px;
+
+  font-weight:800;
+
+  color:var(--primary);
+
+}
+
+.metric-label{
+
+  color:var(--muted);
+
+  margin-top:8px;
+
+}
+
+.research-feed{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:20px;
+
+  padding:24px;
+
+  min-height:400px;
+
+  overflow:hidden;
+
+}
+
 #app{
   position:relative;
   z-index:1;
@@ -1230,19 +1295,9 @@ a:hover{
 
 </h1>
 
-        <div class="card ai-init-card">
+        <div id="researchOverview">
 
-  <div class="ai-init-text">
-
-    <span class="typing-text">
-      AI Department Initializing
-    </span>
-
-    <span class="cursor">|</span>
-
-    <span class="loading-dots"></span>
-
-  </div>
+  Loading Research Intelligence...
 
 </div>
       </section>
@@ -1549,6 +1604,108 @@ async function loadCampaigns(){
   );
 
   renderCampaigns();
+
+}
+
+async function renderResearchCenter(){
+
+  const container =
+    document.getElementById(
+      'researchOverview'
+    );
+
+  if(!container){
+    return;
+  }
+
+  if(!campaigns.length){
+
+    container.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          Research Status
+        </h3>
+
+        <br>
+
+        Awaiting Research
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  const latest =
+    campaigns[0];
+
+  container.innerHTML = `
+
+    <div class="research-grid">
+
+      <div class="research-metric">
+
+        <div class="metric-value">
+          ${
+            latest.niche || 'N/A'
+          }
+        </div>
+
+        <div class="metric-label">
+          Active Niche
+        </div>
+
+      </div>
+
+      <div class="research-metric">
+
+        <div class="metric-value">
+          ${
+            latest.name || 'N/A'
+          }
+        </div>
+
+        <div class="metric-label">
+          Top Opportunity
+        </div>
+
+      </div>
+
+      <div class="research-metric">
+
+        <div class="metric-value">
+          ${
+            campaigns.length
+          }
+        </div>
+
+        <div class="metric-label">
+          Campaigns Created
+        </div>
+
+      </div>
+
+      <div class="research-metric">
+
+        <div class="metric-value">
+          ${
+            latest.status || 'Active'
+          }
+        </div>
+
+        <div class="metric-label">
+          Campaign Status
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
 
 }
 
@@ -2155,6 +2312,8 @@ status.innerHTML =
 
   await loadCampaigns();
 
+  renderResearchCenter();
+
 })();
 
 const missions = [
@@ -2280,6 +2439,88 @@ activityStream.lastChild
 },3000);
 
 lucide.createIcons();
+
+const researchFeed =
+document.getElementById(
+"researchFeed"
+);
+
+const researchEvents = [
+
+"New SaaS trend detected",
+
+"Affiliate program validated",
+
+"Market demand increased",
+
+"Competitor weakness identified",
+
+"Revenue opportunity discovered",
+
+"Search volume spike detected"
+
+];
+
+setInterval(() => {
+
+if(!researchFeed) return;
+
+const item =
+document.createElement(
+"div"
+);
+
+item.style.padding =
+"12px 0";
+
+item.style.borderBottom =
+"1px solid rgba(255,255,255,.08)";
+
+item.innerHTML = `
+
+<div
+style="
+color:#00e5ff;
+font-size:12px;
+margin-bottom:6px;
+"
+>
+
+${new Date().toLocaleTimeString()}
+
+</div>
+
+<div>
+
+${
+researchEvents[
+Math.floor(
+Math.random() *
+researchEvents.length
+)
+]
+}
+
+</div>
+
+`;
+
+researchFeed.prepend(
+item
+);
+
+while(
+researchFeed.children.length >
+15
+){
+
+researchFeed.removeChild(
+researchFeed.lastChild
+);
+
+}
+
+},3500);
 
 </script>
 
