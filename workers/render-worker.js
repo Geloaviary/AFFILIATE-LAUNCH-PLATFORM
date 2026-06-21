@@ -23,12 +23,27 @@ async function processNextRenderJob({
 
 } = {}) {
 
+  console.log(
+  "RENDER WORKER START",
+  workerId
+);
+
   const job =
     await claimJob({
 
       workerId
 
     });
+
+    console.log(
+  "RENDER WORKER CLAIMED",
+  {
+    id: job?.id,
+    campaignId: job?.campaignId,
+    type: job?.type,
+    status: job?.status
+  }
+);
 
   if (
 
