@@ -11,6 +11,12 @@ const {
 );
 
 const {
+  processNextRenderJob
+} = require(
+  "../workers/render-worker"
+);
+
+const {
   markCampaignCreated
 } = require(
   "../lib/portfolio-manager"
@@ -265,7 +271,12 @@ console.log(
   campaignId
 );
 
-  const jobs =
+  console.log(
+  "STARTING JOB CREATION",
+  campaignId
+);
+
+const jobs =
   await createCampaignJobs({
 
     campaignId
@@ -277,6 +288,40 @@ console.log(
   jobs.length,
   campaignId
 );
+
+try {
+
+  console.log(
+    "STARTING RENDER WORKERS"
+  );
+
+  for (
+    let i = 0;
+    i < jobs.length;
+    i++
+  ) {
+
+    await processNextRenderJob({
+
+      workerId:
+        "campaign-launcher"
+
+    });
+
+  }
+
+  console.log(
+    "INITIAL RENDER PASS COMPLETE"
+  );
+
+} catch (e) {
+
+  console.error(
+    "RENDER START FAILED:",
+    e.message
+  );
+
+}
 
   try {
 

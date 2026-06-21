@@ -43,6 +43,12 @@ async function processNextRenderJob({
 
   }
 
+  console.log(
+    "PROCESSING RENDER JOB",
+    job.id,
+    job.campaignId
+  );
+
   try {
 
     const result =
