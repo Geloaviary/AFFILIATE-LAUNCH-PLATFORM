@@ -282,8 +282,6 @@ a:hover{
 
 .mission-stats{
 
-  margin-top:20px;
-
   display:grid;
 
   grid-template-columns:
@@ -513,6 +511,8 @@ a:hover{
 
 .agent-card{
 
+  min-height:160px;
+
   background:
     rgba(17,28,49,.75);
 
@@ -672,9 +672,13 @@ a:hover{
 
 .agent-name{
 
-  font-size:18px;
+  font-size:16px;
 
   font-weight:700;
+
+  line-height:1.3;
+
+  word-break:break-word;
 
   margin-bottom:12px;
 
@@ -1024,11 +1028,14 @@ a:hover{
   </div>
 
   <div class="agent-status">
-    ANALYZING MARKET SIGNALS
+    Research Engine
   </div>
 
-  <div class="agent-meta">
-    Confidence: 94%
+  <div
+    id="researchDirectorMetric"
+    class="agent-meta"
+  >
+    Campaigns: 0
   </div>
 
 </div>
@@ -1040,12 +1047,15 @@ a:hover{
     </div>
 
     <div class="agent-status">
-      SCANNING OPPORTUNITIES
+      Opportunity Discovery
     </div>
 
-    <div class="agent-tasks">
-     Confidence: 92%
-    </div>
+    <div
+  id="marketIntelligenceMetric"
+  class="agent-meta"
+>
+  Niche: Awaiting Data
+</div>
 
   </div>
 
@@ -1056,12 +1066,15 @@ a:hover{
     </div>
 
     <div class="agent-status">
-      MODELING GROWTH SCENARIOS
+      Campaign Strategy
     </div>
 
-    <div class="agent-tasks">
-     Confidence: 89%
-    </div>
+    <div
+  id="strategyMetric"
+  class="agent-meta"
+>
+  Status: Standby
+</div>
 
   </div>
 
@@ -1072,12 +1085,15 @@ a:hover{
     </div>
 
     <div class="agent-status">
-     GENERATING CONTENT PLANS
+     Content Pipeline
     </div>
 
-    <div class="agent-tasks">
-     Confidence: 95%
-    </div>
+    <div
+  id="contentMetric"
+  class="agent-meta"
+>
+  Queued: 0
+</div>
 
   </div>
 
@@ -1088,12 +1104,15 @@ a:hover{
     </div>
 
     <div class="agent-status">
-      PRODUCING ASSETS
+      Production Factory
     </div>
 
-    <div class="agent-tasks">
-      Confidence: 93%
-    </div>
+    <div
+  id="productionMetric"
+  class="agent-meta"
+>
+  Processing: 0
+</div>
 
   </div>
 
@@ -1104,12 +1123,15 @@ a:hover{
     </div>
 
     <div class="agent-status">
-      OPTIMIZING CONVERSIONS
+      Revenue Target
     </div>
 
-    <div class="agent-tasks">
-      Confidence: 91%
-    </div>
+    <div
+  id="revenueMetric"
+  class="agent-meta"
+>
+  Goal: Awaiting Data
+</div>
 
   </div>
 
@@ -1687,6 +1709,98 @@ if(activeCount){
 
   activeCount.textContent =
     campaigns.length;
+
+}
+
+const latest =
+  campaigns[0] || {};
+
+const researchMetric =
+  document.getElementById(
+    'researchDirectorMetric'
+  );
+
+if(researchMetric){
+
+  researchMetric.textContent =
+    `Campaigns: ${campaigns.length}`;
+
+}
+
+const marketMetric =
+  document.getElementById(
+    'marketIntelligenceMetric'
+  );
+
+if(marketMetric){
+
+  marketMetric.textContent =
+    `Niche: ${
+      latest.niche ||
+      'Awaiting Data'
+    }`;
+
+}
+
+const strategyMetric =
+  document.getElementById(
+    'strategyMetric'
+  );
+
+if(strategyMetric){
+
+  strategyMetric.textContent =
+    `Status: ${
+      latest.status ||
+      'Standby'
+    }`;
+
+}
+
+const contentMetric =
+  document.getElementById(
+    'contentMetric'
+  );
+
+if(contentMetric){
+
+  contentMetric.textContent =
+    `Queued: ${
+      latest.workspace
+        ?.production
+        ?.queued || 0
+    }`;
+
+}
+
+const productionMetric =
+  document.getElementById(
+    'productionMetric'
+  );
+
+if(productionMetric){
+
+  productionMetric.textContent =
+    `Processing: ${
+      latest.workspace
+        ?.production
+        ?.processing || 0
+    }`;
+
+}
+
+const revenueMetric =
+  document.getElementById(
+    'revenueMetric'
+  );
+
+if(revenueMetric){
+
+  revenueMetric.textContent =
+    `Goal: ${
+      latest.revenueGoal ||
+      'Awaiting Data'
+    }`;
 
 }
 
