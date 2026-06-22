@@ -280,6 +280,53 @@ a:hover{
 
 }
 
+.mission-stats{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:20px;
+
+  margin-bottom:24px;
+
+}
+
+.mission-stats > div{
+
+  background:
+    rgba(17,28,49,.75);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:20px;
+
+  padding:20px;
+
+  color:#94a3b8;
+
+  font-size:13px;
+
+  letter-spacing:.5px;
+
+}
+
+.mission-stats strong{
+
+  display:block;
+
+  margin-top:10px;
+
+  color:white;
+
+  font-size:24px;
+
+  font-weight:700;
+
+}
+
 .hero-panel{
 
   background:
@@ -864,25 +911,35 @@ a:hover{
 
     <div id="topbar">
 
+  <div class="mission-stats">
+
   <div>
-  AI Workforce
-  <strong>24/7 Autonomous Operations</strong>
+    AI Workforce
+    <strong>24/7 Autonomous Operations</strong>
+  </div>
+
+  <div>
+    Active Campaigns
+    <strong id="activeCampaignCount">
+      0
+    </strong>
+  </div>
+
+  <div>
+    Revenue Goal
+    <strong id="revenueGoalMetric">
+      Awaiting Data
+    </strong>
+  </div>
+
+  <div>
+    Production Queue
+    <strong id="productionQueueMetric">
+      Standby
+    </strong>
+  </div>
+
 </div>
-
-  <div>
-    Jobs Running
-    <strong>94</strong>
-  </div>
-
-  <div>
-    Revenue Forecast
-    <strong>$78,420</strong>
-  </div>
-
-  <div>
-    System Health
-    <strong>99.8%</strong>
-  </div>
 
 </div>
 
@@ -1616,6 +1673,18 @@ async function loadCampaigns(){
   );
 
   renderCampaigns();
+
+  const activeCount =
+  document.getElementById(
+    'activeCampaignCount'
+  );
+
+if(activeCount){
+
+  activeCount.textContent =
+    campaigns.length;
+
+}
 
 }
 
