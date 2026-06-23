@@ -11,6 +11,12 @@ const {
 );
 
 const {
+  getAllJobs
+} = require(
+  "../lib/job-queue"
+);
+
+const {
   markCampaignCreated
 } = require(
   "../lib/portfolio-manager"
@@ -37,19 +43,46 @@ if (req.method === "GET") {
 
   const campaigns = [];
 
-  for (const key of keys) {
-    const data = await kv.get(key);
+  const allJobs =
+  await getAllJobs();
 
-    if (data) {
-      campaigns.push({
-        id: key.replace(
-          `${userId}-campaign-`,
-          ""
-        ),
-        ...data
-      });
-    }
+for (const key of keys) {
+
+  const data =
+    await kv.get(key);
+
+  if (!data) {
+    continue;
   }
+
+  const campaignId =
+    key.replace(
+      `${userId}-campaign-`,
+      ""
+    );
+
+  const campaignJobs =
+    allJobs.filter(
+      job =>
+        job.campaignId ===
+        campaignId
+    );
+
+  data.campaignPackage =
+    data.campaignPackage || {};
+
+  data.campaignPackage.productionQueue =
+    campaignJobs;
+
+  campaigns.push({
+
+    id: campaignId,
+
+    ...data
+
+  });
+
+}
 
   campaigns.sort(
     (a, b) =>
