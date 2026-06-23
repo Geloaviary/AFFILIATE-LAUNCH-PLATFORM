@@ -703,9 +703,7 @@ ${
 
 <a
   href="${
-    asset.renderUrl ||
-
-    asset.renderResult.renderResult.url
+    asset.renderUrl
   }"
   target="_blank"
   class="primary-btn"
@@ -742,7 +740,7 @@ ${
   "
 >
   <source
-    src="${asset.renderResult.renderResult.url}"
+    src="${asset.renderUrl}"
     type="video/mp4"
   >
 </video>
@@ -752,7 +750,7 @@ ${
   font-size:12px;
   word-break:break-all;
 ">
-  ${asset.renderResult.renderResult.url}
+  ${asset.renderUrl}
 </div>
 `
       : ""
