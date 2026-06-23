@@ -593,28 +593,6 @@ function renderCurrentView(){
 `
 }
 
-    <button
-  class="primary-btn"
-  onclick="
-    approveAsset(
-      '${asset.id}'
-    )
-  "
->
-  Approve
-</button>
-
-    <button
-  class="secondary-btn"
-  onclick="
-    rejectAsset(
-      '${asset.id}'
-    )
-  "
->
-  Reject
-</button>
-
   </div>
 
 </div>
@@ -677,19 +655,84 @@ function renderCurrentView(){
 <div class="task-card">
 
   <div class="task-title">
-
     ${asset.title || asset.type}
-
   </div>
 
   <div class="task-description">
 
     ${
-      asset.publishingStatus ||
-      "queued"
+      asset.approvalStatus === "approved"
+        ? "✅ Approved"
+        : asset.approvalStatus === "rejected"
+        ? "❌ Rejected"
+        : "⏳ Pending Approval"
     }
 
   </div>
+
+  ${
+    asset.renderResult?.url
+      ? `
+<video
+  controls
+  style="
+    width:100%;
+    margin-top:12px;
+    border-radius:8px;
+  "
+>
+  <source
+    src="${asset.renderResult.url}"
+    type="video/mp4"
+  >
+</video>
+
+<div style="
+  margin-top:8px;
+  font-size:12px;
+  word-break:break-all;
+">
+  ${asset.renderResult.url}
+</div>
+`
+      : ""
+  }
+
+  ${
+    asset.approvalStatus !== "pending"
+      ? ""
+      : `
+<div style="
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+">
+
+  <button
+    class="primary-btn"
+    onclick="
+      approveAsset(
+        '${asset.id}'
+      )
+    "
+  >
+    Approve
+  </button>
+
+  <button
+    class="secondary-btn"
+    onclick="
+      rejectAsset(
+        '${asset.id}'
+      )
+    "
+  >
+    Reject
+  </button>
+
+</div>
+`
+  }
 
 </div>
 
