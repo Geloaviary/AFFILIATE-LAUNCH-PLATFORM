@@ -2594,6 +2594,42 @@ Recommended Winner:
     }
   );
 
+} catch (e) {
+
+  console.error(
+    e
+  );
+
+  clearInterval(
+    stepTimer
+  );
+
+  status.innerHTML = `
+
+<div
+  style="
+    padding:16px;
+    background:#7f1d1d;
+    border:1px solid #dc2626;
+    border-radius:8px;
+    color:white;
+  "
+>
+
+  ❌ Research Failed
+
+  <br><br>
+
+  ${e.message}
+
+</div>
+
+`;
+
+}
+
+});
+
   (async function(){
 
   await loadNiches();
