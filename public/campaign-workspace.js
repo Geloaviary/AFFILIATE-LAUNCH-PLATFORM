@@ -526,10 +526,10 @@ function renderCurrentView(){
 
     productionAssets.length
 
-      ? productionAssets
-  .slice(-10)
-  .reverse()
-  .map(asset => `
+  ? productionAssets
+      .slice(-10)
+      .reverse()
+      .map(asset => `
 
 <div class="task-card">
 
@@ -537,34 +537,73 @@ function renderCurrentView(){
 
     ${asset.title || asset.type}
 
- <div class="task-description">
+  </div>
+
+  <div class="task-description">
+
+    ${
+      asset.approvalStatus === "approved"
+
+        ? "✅ Approved"
+
+        : asset.approvalStatus === "rejected"
+
+        ? "❌ Rejected"
+
+        : "⏳ Pending Approval"
+    }
+
+  </div>
 
   ${
-    asset.approvalStatus === "approved"
+    asset.renderUrl
 
-      ? "✅ Approved"
+      ? `
 
-      : asset.approvalStatus === "rejected"
+<video
+  controls
+  width="100%"
+  src="${asset.renderUrl}"
+  style="
+    margin-top:12px;
+    border-radius:8px;
+  "
+></video>
 
-      ? "❌ Rejected"
+<div style="
+  margin-top:10px;
+">
 
-      : "⏳ Pending Approval"
-  }
+  <a
+    href="${asset.renderUrl}"
+    target="_blank"
+    class="primary-btn"
+  >
+    ▶ Play Video
+  </a>
 
 </div>
 
+`
+
+      : ""
+
+  }
+
   ${
-  asset.approvalStatus !== "pending"
+    asset.approvalStatus !== "pending"
 
-    ? ""
+      ? ""
 
-    : `
+      : `
 
-<div style="
-  display:flex;
-  gap:10px;
-  margin-top:12px;
-">
+<div
+  style="
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+  "
+>
 
   <button
     class="primary-btn"
@@ -591,16 +630,14 @@ function renderCurrentView(){
 </div>
 
 `
-}
 
-  </div>
+  }
 
 </div>
 
 `)
-  .join("")
-          
-
+      .join("")
+  
       : `
 
         <p>
@@ -656,6 +693,29 @@ function renderCurrentView(){
 
   <div class="task-title">
     ${asset.title || asset.type}
+
+${
+  asset.renderUrl ||
+
+  asset?.renderResult?.renderResult?.url
+
+    ? `
+
+<a
+  href="${
+    asset.renderUrl ||
+
+    asset.renderResult.renderResult.url
+  }"
+  target="_blank"
+  class="primary-btn"
+>
+  ▶ Play Video
+</a>
+
+`
+    : ""
+}
   </div>
 
   <div class="task-description">
@@ -671,7 +731,7 @@ function renderCurrentView(){
   </div>
 
   ${
-    asset.renderResult?.url
+    asset.renderUrl
       ? `
 <video
   controls
@@ -682,7 +742,7 @@ function renderCurrentView(){
   "
 >
   <source
-    src="${asset.renderResult.url}"
+    src="${asset.renderResult.renderResult.url}"
     type="video/mp4"
   >
 </video>
@@ -692,7 +752,7 @@ function renderCurrentView(){
   font-size:12px;
   word-break:break-all;
 ">
-  ${asset.renderResult.url}
+  ${asset.renderResult.renderResult.url}
 </div>
 `
       : ""

@@ -2200,7 +2200,9 @@ const stepTimer =
            data;
 
         const products =
-  data.validatedProducts || [];
+          data.top5 ||
+          data.validatedProducts ||
+          [];
 
   console.log(
   'FIRST PRODUCT',
@@ -2361,32 +2363,33 @@ document
   stepTimer
 );
 
+  const winner =
+  data.winner ||
+  products[0] ||
+  null;
+
+  console.log(
+  'WINNER FROM API',
+  data.winner
+);
+
+console.log(
+  'WINNER USED',
+  winner
+);
+
 status.innerHTML =
-  `
-  ✅ Research Complete
+`
+✅ Research Complete
 
-  <br><br>
+<br><br>
 
-  Recommended Winner:
+Recommended Winner:
 
-  <strong>
-    ${products[0]?.name || 'Unknown'}
-  </strong>
-  `;
-
-      } catch(e){
-
-        clearInterval(
-              stepTimer
-            );
-
-        status.innerHTML =
-          '❌ ' + e.message;
-
-      }
-
-    }
-  );
+<strong>
+  ${winner?.name || 'Unknown'}
+</strong>
+`;
 
   document
   .getElementById(
