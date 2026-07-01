@@ -1,4 +1,8 @@
-
+const {
+  runAffiliateResearcher
+} = require(
+  "../lib/affiliate-researcher/run-affiliate-researcher"
+);
 
 const {
   getNiches
@@ -58,12 +62,6 @@ async function handler(
         }
 
     }
-
-    const {
-  runAffiliateResearcher
-} = require(
-  "../lib/affiliate-researcher/run-affiliate-researcher"
-);
 
 console.log("[API] Research module loaded");
 
