@@ -1,8 +1,4 @@
-const {
-  runAffiliateResearcher
-} = require(
-  "../lib/affiliate-researcher/run-affiliate-researcher"
-);
+
 
 const {
   getNiches
@@ -27,61 +23,70 @@ async function handler(
 
   }
 
+ 
+
   try {
 
-    const options =
-  req.body || {};
+    console.log("[API] research-products START");
 
-const niches =
-  getNiches();
+    const options = req.body || {};
 
-if (
-  options.niche
-) {
+    console.log("[API] Request received");
 
-  const nicheExists =
-    niches.some(
-      niche =>
-        niche.id ===
-        options.niche
-    );
+    const niches = getNiches();
 
-  if (
-    !nicheExists
-  ) {
+    console.log("[API] Niches loaded");
 
-    return res.status(400).json({
+    if (options.niche) {
 
-      error:
-        "Invalid niche selected"
+        const nicheExists = niches.some(
+
+            niche => niche.id === options.niche
+
+        );
+
+        console.log("[API] Niche validated");
+
+        if (!nicheExists) {
+
+            return res.status(400).json({
+
+                error: "Invalid niche selected"
+
+            });
+
+        }
+
+    }
+
+    const {
+  runAffiliateResearcher
+} = require(
+  "../lib/affiliate-researcher/run-affiliate-researcher"
+);
+
+console.log("[API] Research module loaded");
+
+    console.log("[API] Calling Research");
+
+    const result = await runAffiliateResearcher(options);
+
+    console.log("[API] Research Finished");
+
+    return res.status(200).json(result);
+
+} catch (e) {
+
+    console.error("[API ERROR]", e);
+
+    return res.status(500).json({
+
+        error: e.message,
+
+        stack: e.stack
 
     });
 
   }
 
 }
-
-const result =
-  await runAffiliateResearcher(
-    options
-  );
-
-    return res.status(200).json(
-      result
-    );
-
-  } catch (e) {
-
-    console.error(
-      "Affiliate Researcher failed:",
-      e.message
-    );
-
-    return res.status(500).json({
-      error:
-        e.message
-    });
-
-  }
-
-};
