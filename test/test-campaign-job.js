@@ -1,8 +1,8 @@
-const {
-  runAffiliateResearcher
-} = require(
-  "../lib/affiliate-researcher/run-affiliate-researcher"
-);
+const Research =
+
+    require(
+        "../lib/affiliate-researcher"
+    );
 
 const {
   createJob,
@@ -20,7 +20,7 @@ const {
 async function run() {
 
   const research =
-    await runAffiliateResearcher({
+    await Research.execute({
 
       niche:
         "crm software"

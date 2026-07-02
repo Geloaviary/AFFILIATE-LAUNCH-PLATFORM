@@ -1,8 +1,8 @@
-const {
-  runAffiliateResearcher
-} = require(
-  "../lib/affiliate-researcher/run-affiliate-researcher"
-);
+const Research =
+
+    require(
+        "../lib/affiliate-researcher"
+    );
 
 const {
   getNiches
@@ -67,7 +67,11 @@ console.log("[API] Research module loaded");
 
     console.log("[API] Calling Research");
 
-    const result = await runAffiliateResearcher(options);
+    const result =
+
+    await Research.execute(
+        options
+    );
 
     console.log("[API] Research Finished");
 
