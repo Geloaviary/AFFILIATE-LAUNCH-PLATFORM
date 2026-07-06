@@ -207,22 +207,127 @@ for (
       .toString(36)
       .substring(2, 8);
 
-  const campaignPackage = {
+  const now = new Date().toISOString();
 
-  version: "2.0",
+const campaignPackage = {
 
-  status: "active",
+    /*
+    ----------------------------------
+    Constitutional Package
+    ----------------------------------
+    */
 
-  createdAt:
-    new Date().toISOString(),
+    version: "3.0",
 
-  research,
+    status: "active",
 
-  productionAssets: [],
+    createdAt: now,
 
-  publishingQueue: [],
+    /*
+    ----------------------------------
+    Department Runtime
+    ----------------------------------
+    */
 
-  publishedAssets: []
+    runtime: {
+
+        research: {
+
+            status: "completed",
+
+            artifactId:
+
+                research?.artifactId ||
+
+                null,
+
+            startedAt: now,
+
+            completedAt: now
+
+        },
+
+        strategy: {
+
+            status: "pending",
+
+            artifactId: null,
+
+            startedAt: null,
+
+            completedAt: null
+
+        },
+
+        production: {
+
+            status: "pending",
+
+            artifactId: null,
+
+            startedAt: null,
+
+            completedAt: null
+
+        },
+
+        publishing: {
+
+            status: "pending",
+
+            startedAt: null,
+
+            completedAt: null
+
+        }
+
+    },
+
+    /*
+    ----------------------------------
+    Certified Department Artifacts
+    ----------------------------------
+    */
+
+    research,
+
+    strategy: null,
+
+    production: null,
+
+    publishing: null,
+
+    /*
+    ----------------------------------
+    Assets
+    ----------------------------------
+    */
+
+    productionAssets: [],
+
+    publishingQueue: [],
+
+    publishedAssets: [],
+
+    /*
+    ----------------------------------
+    Department Activity Timeline
+    ----------------------------------
+    */
+
+    activity: [
+
+        {
+
+            department: "research",
+
+            event: "artifact-certified",
+
+            timestamp: now
+
+        }
+
+    ]
 
 };
 
