@@ -22,6 +22,14 @@ const {
   "../lib/portfolio-manager"
 );
 
+const StrategyEngine =
+
+    require(
+
+        "../departments/strategy/strategy-engine/engine"
+
+    );
+
 exports.default = async function handler(req, res) {
 try {
 const userId =
@@ -201,186 +209,49 @@ for (
 
 }
 
-  const campaignId =
+const campaignId =
+
     Date.now().toString(36) +
+
     Math.random()
-      .toString(36)
-      .substring(2, 8);
 
-  const now = new Date().toISOString();
+        .toString(36)
 
-const campaignPackage = {
+        .substring(2, 8);
 
-    /*
-    ----------------------------------
-    Constitutional Package
-    ----------------------------------
-    */
+const now =
 
-    version: "3.0",
+    new Date()
 
-    status: "active",
+        .toISOString();
 
-    createdAt: now,
+const {
 
-    /*
-    ----------------------------------
-    Department Runtime
-    ----------------------------------
-    */
+    strategy,
 
-    runtime: {
+    campaign
 
-        research: {
+} =
 
-            status: "completed",
+await StrategyEngine.execute({
 
-            artifactId:
+    campaignId,
 
-                research?.artifactId ||
+    name,
 
-                null,
+    productUrl,
 
-            startedAt: now,
+    affiliateUrl,
 
-            completedAt: now
-
-        },
-
-        strategy: {
-
-            status: "pending",
-
-            artifactId: null,
-
-            startedAt: null,
-
-            completedAt: null
-
-        },
-
-        production: {
-
-            status: "pending",
-
-            artifactId: null,
-
-            startedAt: null,
-
-            completedAt: null
-
-        },
-
-        publishing: {
-
-            status: "pending",
-
-            startedAt: null,
-
-            completedAt: null
-
-        }
-
-    },
-
-    /*
-    ----------------------------------
-    Certified Department Artifacts
-    ----------------------------------
-    */
+    revenueGoal,
 
     research,
 
-    strategy: null,
+    createdAt:
 
-    production: null,
+        now
 
-    publishing: null,
-
-    /*
-    ----------------------------------
-    Assets
-    ----------------------------------
-    */
-
-    productionAssets: [],
-
-    publishingQueue: [],
-
-    publishedAssets: [],
-
-    /*
-    ----------------------------------
-    Department Activity Timeline
-    ----------------------------------
-    */
-
-    activity: [
-
-        {
-
-            department: "research",
-
-            event: "artifact-certified",
-
-            timestamp: now
-
-        }
-
-    ]
-
-};
-
-  const campaign = {
-
-  id: campaignId,
-
-  name,
-
-  productUrl,
-
-  affiliateUrl,
-
-  niche,
-
-  status: "active",
-
-  revenueGoal,
-
-  revenueProjection,
-
-  campaignPackage,
-
-  workspace: {
-
-    health: "healthy",
-
-    activeTasks: 0,
-
-    pendingApprovals: 0,
-
-    aiRecommendations: [],
-
-    production: {
-
-      queued: 0,
-
-      processing: 0,
-
-      completed: 0,
-
-      failed: 0,
-
-      lastRenderAt: null
-
-    }
-
-  },
-
-  createdAt:
-    new Date().toISOString()
-
-};
+});
 
   await kv.set(
     `${userId}-campaign-${campaignId}`,
