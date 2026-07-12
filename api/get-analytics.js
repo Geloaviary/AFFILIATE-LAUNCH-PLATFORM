@@ -9,6 +9,14 @@ const ExecutionLedger =
 
     );
 
+const RuntimeDispatcher = require(
+  "../lib/departments/runtime/dispatcher"
+);
+
+const RuntimeRegistry = require(
+  "../lib/departments/runtime/registry"
+);
+
     async function runExecutionLedgerTest() {
 
     /*
@@ -600,6 +608,304 @@ exports.default = async function handler(req, res) {
     }
 
   }
+
+  if (
+  req.body?.action ===
+  "test-runtime-dispatcher"
+) {
+  const expectedNonce =
+    process.env.RUNTIME_LEDGER_TEST_NONCE;
+
+  const providedNonce =
+    req.headers["x-ledger-test-nonce"];
+
+  if (
+    !expectedNonce ||
+    providedNonce !== expectedNonce
+  ) {
+    return res.status(404).json({
+      error: "Not Found"
+    });
+  }
+
+  const testId =
+    `dispatcher-test-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 10)}`;
+
+  const department =
+    `runtime-dispatcher-test-${testId}`;
+
+  let invocationCount = 0;
+
+  let mode = "success";
+
+  RuntimeRegistry.register({
+    department,
+
+    requires: [],
+
+    enabled: true,
+
+    entrypoint: async () => {
+      invocationCount += 1;
+
+      if (mode === "fail") {
+        throw new Error(
+          "Intentional dispatcher certification failure."
+        );
+      }
+
+      return {
+        testId,
+        invocation: invocationCount
+      };
+    }
+  });
+
+  try {
+    const successPlan = {
+      campaignId:
+        `${testId}-success`,
+
+      department,
+
+      contracts: {
+        test: "success"
+      }
+    };
+
+    const success =
+      await RuntimeDispatcher.execute({
+        executionPlan: [
+          successPlan
+        ]
+      });
+
+    const invocationAfterSuccess =
+      invocationCount;
+
+    const replay =
+      await RuntimeDispatcher.execute({
+        executionPlan: [
+          successPlan
+        ]
+      });
+
+    const invocationAfterReplay =
+      invocationCount;
+
+    mode = "fail";
+
+    const failurePlan = {
+      campaignId:
+        `${testId}-failure`,
+
+      department,
+
+      contracts: {
+        test: "failure"
+      }
+    };
+
+    const failure =
+      await RuntimeDispatcher.execute({
+        executionPlan: [
+          failurePlan
+        ]
+      });
+
+    const invocationAfterFailure =
+      invocationCount;
+
+    mode = "success";
+
+    const retry =
+      await RuntimeDispatcher.execute({
+        executionPlan: [
+          failurePlan
+        ]
+      });
+
+    const invocationAfterRetry =
+      invocationCount;
+
+    const concurrentPlan = {
+      campaignId:
+        `${testId}-concurrency`,
+
+      department,
+
+      contracts: {
+        test: "concurrency"
+      }
+    };
+
+    const beforeConcurrency =
+      invocationCount;
+
+    const concurrentResults =
+      await Promise.all(
+        Array.from(
+          { length: 20 },
+          () =>
+            RuntimeDispatcher.execute({
+              executionPlan: [
+                concurrentPlan
+              ]
+            })
+        )
+      );
+
+    const afterConcurrency =
+      invocationCount;
+
+    const concurrentCompleted =
+      concurrentResults.filter(
+        result =>
+          result.totalCompleted === 1
+      ).length;
+
+    const concurrentSkipped =
+      concurrentResults.filter(
+        result =>
+          result.totalSkipped === 1
+      ).length;
+
+    const concurrentFailed =
+      concurrentResults.filter(
+        result =>
+          result.totalFailed === 1
+      ).length;
+
+    const successPassed =
+      success.totalCompleted === 1 &&
+      success.totalFailed === 0 &&
+      success.totalSkipped === 0 &&
+      success.results[0]?.status ===
+        "completed" &&
+      success.results[0]?.attempt === 1 &&
+      invocationAfterSuccess === 1;
+
+    const replayPassed =
+      replay.totalCompleted === 0 &&
+      replay.totalFailed === 0 &&
+      replay.totalSkipped === 1 &&
+      replay.results[0]?.status ===
+        "skipped" &&
+      invocationAfterReplay ===
+        invocationAfterSuccess;
+
+    const failurePassed =
+      failure.totalCompleted === 0 &&
+      failure.totalFailed === 1 &&
+      failure.totalSkipped === 0 &&
+      failure.results[0]?.status ===
+        "failed" &&
+      failure.results[0]?.attempt === 1 &&
+      invocationAfterFailure ===
+        invocationAfterReplay + 1;
+
+    const retryPassed =
+      retry.totalCompleted === 1 &&
+      retry.totalFailed === 0 &&
+      retry.totalSkipped === 0 &&
+      retry.results[0]?.status ===
+        "completed" &&
+      retry.results[0]?.attempt === 2 &&
+      invocationAfterRetry ===
+        invocationAfterFailure + 1;
+
+    const concurrencyPassed =
+      concurrentCompleted === 1 &&
+      concurrentSkipped === 19 &&
+      concurrentFailed === 0 &&
+      afterConcurrency -
+        beforeConcurrency ===
+        1;
+
+    const passed =
+      successPassed &&
+      replayPassed &&
+      failurePassed &&
+      retryPassed &&
+      concurrencyPassed;
+
+    return res.status(
+      passed ? 200 : 500
+    ).json({
+      test:
+        "runtime-dispatcher",
+
+      passed,
+
+      success: {
+        passed: successPassed,
+        status:
+          success.results[0]?.status,
+        attempt:
+          success.results[0]?.attempt,
+        invocationCount:
+          invocationAfterSuccess
+      },
+
+      replay: {
+        passed: replayPassed,
+        status:
+          replay.results[0]?.status,
+        invocationCount:
+          invocationAfterReplay
+      },
+
+      failure: {
+        passed: failurePassed,
+        status:
+          failure.results[0]?.status,
+        attempt:
+          failure.results[0]?.attempt,
+        invocationCount:
+          invocationAfterFailure
+      },
+
+      retry: {
+        passed: retryPassed,
+        status:
+          retry.results[0]?.status,
+        attempt:
+          retry.results[0]?.attempt,
+        invocationCount:
+          invocationAfterRetry
+      },
+
+      concurrency: {
+        passed:
+          concurrencyPassed,
+
+        attempted: 20,
+
+        completed:
+          concurrentCompleted,
+
+        skipped:
+          concurrentSkipped,
+
+        failed:
+          concurrentFailed,
+
+        entrypointInvocations:
+          afterConcurrency -
+          beforeConcurrency
+      },
+
+      totalEntrypointInvocations:
+        invocationCount
+    });
+  } finally {
+    RuntimeRegistry.unregister(
+      department
+    );
+  }
+}
 
   const { campaignId, userId } = req.body;
   if (!userId) return res.status(400).json({ error: "Missing userId" });
