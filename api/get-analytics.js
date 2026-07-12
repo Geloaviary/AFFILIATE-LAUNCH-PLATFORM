@@ -1,8 +1,605 @@
 const fetch = require("node-fetch");
 const { kv } = require("@vercel/kv");
 
+const ExecutionLedger =
+
+    require(
+
+        "../lib/departments/runtime/execution-ledger"
+
+    );
+
+    async function runExecutionLedgerTest() {
+
+    /*
+    ==================================================
+    Lifecycle Test
+    ==================================================
+    */
+
+    const lifecycleCampaignId =
+
+        `ledger-lifecycle-${Date.now()}`;
+
+    const department =
+
+        "research";
+
+    const lifecycleFingerprint =
+
+        ExecutionLedger.buildFingerprint({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            contracts:
+
+                {}
+
+        });
+
+    const canExecuteBefore =
+
+        await ExecutionLedger.canExecute({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const firstReservation =
+
+        await ExecutionLedger.reserve({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const canExecuteRunning =
+
+        await ExecutionLedger.canExecute({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    let doubleReservationBlocked =
+
+        false;
+
+    try {
+
+        await ExecutionLedger.reserve({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    } catch (
+
+        error
+
+    ) {
+
+        doubleReservationBlocked =
+
+            true;
+
+    }
+
+    const failedState =
+
+        await ExecutionLedger.fail({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint,
+
+            error:
+
+                new Error(
+
+                    "Intentional execution ledger test failure."
+
+                )
+
+        });
+
+    const canExecuteFailed =
+
+        await ExecutionLedger.canExecute({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const retryReservation =
+
+        await ExecutionLedger.reserve({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const completedState =
+
+        await ExecutionLedger.complete({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const canExecuteCompleted =
+
+        await ExecutionLedger.canExecute({
+
+            campaignId:
+
+                lifecycleCampaignId,
+
+            department,
+
+            fingerprint:
+
+                lifecycleFingerprint
+
+        });
+
+    const lifecyclePassed =
+
+        canExecuteBefore === true &&
+
+        firstReservation.status ===
+
+            "running" &&
+
+        firstReservation.attempt === 1 &&
+
+        canExecuteRunning === false &&
+
+        doubleReservationBlocked === true &&
+
+        failedState.status ===
+
+            "failed" &&
+
+        failedState.attempt === 1 &&
+
+        canExecuteFailed === true &&
+
+        retryReservation.status ===
+
+            "running" &&
+
+        retryReservation.attempt === 2 &&
+
+        completedState.status ===
+
+            "completed" &&
+
+        completedState.attempt === 2 &&
+
+        canExecuteCompleted === false;
+
+    /*
+    ==================================================
+    Concurrency Test
+    ==================================================
+    */
+
+    const concurrencyCampaignId =
+
+        `ledger-concurrency-${Date.now()}`;
+
+    const concurrencyFingerprint =
+
+        ExecutionLedger.buildFingerprint({
+
+            campaignId:
+
+                concurrencyCampaignId,
+
+            department,
+
+            contracts:
+
+                {}
+
+        });
+
+    const attempts =
+
+        Array.from({
+
+            length:
+
+                20
+
+        }).map(
+
+            async (
+
+                _,
+
+                index
+
+            ) => {
+
+                try {
+
+                    const state =
+
+                        await ExecutionLedger.reserve({
+
+                            campaignId:
+
+                                concurrencyCampaignId,
+
+                            department,
+
+                            fingerprint:
+
+                                concurrencyFingerprint
+
+                        });
+
+                    return {
+
+                        index,
+
+                        reserved:
+
+                            true,
+
+                        status:
+
+                            state.status,
+
+                        attempt:
+
+                            state.attempt
+
+                    };
+
+                } catch (
+
+                    error
+
+                ) {
+
+                    return {
+
+                        index,
+
+                        reserved:
+
+                            false
+
+                    };
+
+                }
+
+            }
+
+        );
+
+    const concurrencyResults =
+
+        await Promise.all(
+
+            attempts
+
+        );
+
+    const successfulReservations =
+
+        concurrencyResults.filter(
+
+            result =>
+
+                result.reserved === true
+
+        );
+
+    const blockedReservations =
+
+        concurrencyResults.filter(
+
+            result =>
+
+                result.reserved === false
+
+        );
+
+    const concurrencyPassed =
+
+        successfulReservations.length === 1 &&
+
+        blockedReservations.length === 19 &&
+
+        successfulReservations[0].status ===
+
+            "running" &&
+
+        successfulReservations[0].attempt === 1;
+
+    return {
+
+        passed:
+
+            lifecyclePassed &&
+
+            concurrencyPassed,
+
+        lifecycle: {
+
+            passed:
+
+                lifecyclePassed,
+
+            canExecuteBefore,
+
+            firstStatus:
+
+                firstReservation.status,
+
+            firstAttempt:
+
+                firstReservation.attempt,
+
+            canExecuteRunning,
+
+            doubleReservationBlocked,
+
+            failedStatus:
+
+                failedState.status,
+
+            failedAttempt:
+
+                failedState.attempt,
+
+            canExecuteFailed,
+
+            retryStatus:
+
+                retryReservation.status,
+
+            retryAttempt:
+
+                retryReservation.attempt,
+
+            completedStatus:
+
+                completedState.status,
+
+            completedAttempt:
+
+                completedState.attempt,
+
+            canExecuteCompleted
+
+        },
+
+        concurrency: {
+
+            passed:
+
+                concurrencyPassed,
+
+            attempted:
+
+                concurrencyResults.length,
+
+            successful:
+
+                successfulReservations.length,
+
+            blocked:
+
+                blockedReservations.length
+
+        }
+
+    };
+
+}
+
 exports.default = async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+
+  if (req.method !== "POST") {
+
+    return res.status(405).json({
+
+      error:
+
+        "Method Not Allowed"
+
+    });
+
+  }
+
+  /*
+  ==================================================
+  Temporary Runtime Execution Ledger Test
+
+  REMOVE AFTER VERIFICATION
+  ==================================================
+  */
+
+  if (
+
+    req.body?.action ===
+
+        "test-runtime-execution-ledger"
+
+  ) {
+
+    const authorized =
+
+        typeof process.env.LEDGER_TEST_NONCE ===
+
+            "string" &&
+
+        process.env.LEDGER_TEST_NONCE.length > 0 &&
+
+        req.headers["x-ledger-test-nonce"] ===
+
+            process.env.LEDGER_TEST_NONCE;
+
+    if (
+
+        !authorized
+
+    ) {
+
+        return res.status(
+
+            404
+
+        ).json({
+
+            error:
+
+                "Not Found"
+
+        });
+
+    }
+
+    try {
+
+        const result =
+
+            await runExecutionLedgerTest();
+
+        return res.status(
+
+            result.passed
+
+                ? 200
+
+                : 500
+
+        ).json({
+
+            test:
+
+                "runtime-execution-ledger",
+
+            ...result
+
+        });
+
+    } catch (
+
+        error
+
+    ) {
+
+        console.error(
+
+            "[Execution Ledger Test]",
+
+            error
+
+        );
+
+        return res.status(
+
+            500
+
+        ).json({
+
+            test:
+
+                "runtime-execution-ledger",
+
+            passed:
+
+                false,
+
+            error: {
+
+                name:
+
+                    error.name,
+
+                message:
+
+                    error.message
+
+            }
+
+        });
+
+    }
+
+  }
 
   const { campaignId, userId } = req.body;
   if (!userId) return res.status(400).json({ error: "Missing userId" });
