@@ -1,4 +1,8 @@
 const fetch = require("node-fetch");
+
+const Runtime = require(
+  "../lib/departments/runtime"
+);
 const { kv } = require("@vercel/kv");
 
 const {
@@ -11,6 +15,33 @@ const OPENAI_KEY = (process.env.OPENAI_API_KEY || "").replace(/[^\x20-\x7E]/g, "
 
 exports.default = async function handler(req, res) {
   const { action } = req.query;
+
+  // ============ RUNTIME OBSERVATION ============
+  if (action === "runtime-observation") {
+    try {
+      const campaignId =
+        typeof req.query.campaignId === "string" &&
+        req.query.campaignId.trim()
+          ? req.query.campaignId.trim()
+          : null;
+
+      const observation =
+        await Runtime.observe({
+          campaignId
+        });
+
+      return res.status(200).json(observation);
+    } catch (error) {
+      console.error(
+        "[RUNTIME OBSERVATION ERROR]",
+        error
+      );
+
+      return res.status(500).json({
+        error: error.message
+      });
+    }
+  }
 
   // ============ TRENDING SOUNDS ============
   if (action === "trending") {

@@ -22,11 +22,11 @@ const {
   "../lib/portfolio-manager"
 );
 
-const StrategyEngine =
+const Runtime =
 
     require(
 
-        "../departments/strategy/strategy-engine/engine"
+        "../lib/departments/runtime"
 
     );
 
@@ -225,6 +225,142 @@ const now =
 
         .toISOString();
 
+const runtimeResult =
+
+    await Runtime.execute({
+
+        campaignId,
+
+        name,
+
+        productUrl,
+
+        affiliateUrl,
+
+        revenueGoal,
+
+        research,
+
+        createdAt:
+
+            now
+
+    });
+
+const runtimeDepartments =
+
+    Array.isArray(
+
+        runtimeResult?.departments
+
+    )
+
+        ? runtimeResult.departments
+
+        : Array.isArray(
+
+            runtimeResult?.report?.departments
+
+        )
+
+            ? runtimeResult.report.departments
+
+            : [];
+
+const strategyDepartment =
+
+    runtimeDepartments.find(
+
+        department =>
+
+            department?.department ===
+
+                "strategy" ||
+
+            department?.name ===
+
+                "strategy" ||
+
+            department?.id ===
+
+                "strategy"
+
+    ) || null;
+
+const strategyStatus =
+
+    String(
+
+        strategyDepartment?.status ||
+
+        "UNKNOWN"
+
+    ).toUpperCase();
+
+if (
+
+    strategyStatus ===
+
+        "WAITING"
+
+) {
+
+    return res.status(202).json({
+
+        status:
+
+            "waiting",
+
+        department:
+
+            "strategy",
+
+        reason:
+
+            strategyDepartment?.reason ||
+
+            strategyDepartment?.message ||
+
+            "Strategy Department is waiting for required contracts.",
+
+        campaignId,
+
+        runtime:
+
+            runtimeResult
+
+    });
+
+}
+
+const strategyOutput =
+
+    strategyDepartment?.output ||
+
+    strategyDepartment?.result ||
+
+    strategyDepartment?.value ||
+
+    null;
+
+if (
+
+    !strategyOutput ||
+
+    !strategyOutput.strategy ||
+
+    !strategyOutput.campaign
+
+) {
+
+    throw new Error(
+
+        "Runtime completed without executable Strategy campaign output."
+
+    );
+
+}
+
 const {
 
     strategy,
@@ -233,25 +369,7 @@ const {
 
 } =
 
-await StrategyEngine.execute({
-
-    campaignId,
-
-    name,
-
-    productUrl,
-
-    affiliateUrl,
-
-    revenueGoal,
-
-    research,
-
-    createdAt:
-
-        now
-
-});
+    strategyOutput;
 
   await kv.set(
     `${userId}-campaign-${campaignId}`,

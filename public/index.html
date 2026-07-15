@@ -2630,6 +2630,245 @@ Recommended Winner:
 
 });
 
+let runtimeObservation = null;
+
+function ensureRuntimeDepartmentGrid(){
+
+  let runtimeDepartmentGrid =
+    document.getElementById(
+      'runtimeDepartmentGrid'
+    );
+
+  if(runtimeDepartmentGrid){
+
+    return runtimeDepartmentGrid;
+
+  }
+
+  const overview =
+    document.getElementById(
+      'overview'
+    );
+
+  if(!overview){
+
+    return null;
+
+  }
+
+  const runtimeSummary =
+    document.createElement(
+      'div'
+    );
+
+  runtimeSummary.id =
+    'runtimeSummary';
+
+  runtimeSummary.style.marginBottom =
+    '24px';
+
+  runtimeSummary.innerHTML = `
+
+<div
+  class="card"
+  style="
+    border:1px solid rgba(0,229,255,.12);
+    background:rgba(15,23,42,.72);
+  "
+>
+
+  <h2
+    style="
+      color:#00e5ff;
+      margin-bottom:8px;
+    "
+  >
+    RUNTIME DEPARTMENT OBSERVATION
+  </h2>
+
+  <div
+    style="
+      color:#94a3b8;
+      margin-bottom:18px;
+    "
+  >
+    Constitutional Runtime status
+  </div>
+
+  <div
+    id="runtimeDepartmentGrid"
+    style="
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+    "
+  ></div>
+
+</div>
+
+`;
+
+  overview.prepend(
+    runtimeSummary
+  );
+
+  runtimeDepartmentGrid =
+    document.getElementById(
+      'runtimeDepartmentGrid'
+    );
+
+  return runtimeDepartmentGrid;
+
+}
+
+function renderRuntimeObservation(
+  observation
+){
+
+  const runtimeDepartmentGrid =
+    ensureRuntimeDepartmentGrid();
+
+  if(!runtimeDepartmentGrid){
+
+    return;
+
+  }
+
+  const departments =
+    Array.isArray(
+      observation?.departments
+    )
+      ? observation.departments
+      : [];
+
+  runtimeDepartmentGrid.innerHTML =
+    '';
+
+  departments.forEach(
+    department => {
+
+      const runtimeDepartmentCard =
+        document.createElement(
+          'div'
+        );
+
+      runtimeDepartmentCard.className =
+        'runtime-department-card';
+
+      runtimeDepartmentCard.style.padding =
+        '14px';
+
+      runtimeDepartmentCard.style.border =
+        '1px solid rgba(255,255,255,.08)';
+
+      runtimeDepartmentCard.style.borderRadius =
+        '10px';
+
+      runtimeDepartmentCard.style.background =
+        'rgba(2,6,23,.55)';
+
+      const departmentName =
+        String(
+          department?.department ||
+          department?.name ||
+          department?.id ||
+          ''
+        );
+
+      const departmentStatus =
+        String(
+          department?.status ||
+          ''
+        );
+
+      const departmentReason =
+        String(
+          department?.reason ||
+          department?.message ||
+          ''
+        );
+
+      runtimeDepartmentCard.innerHTML = `
+
+<div
+  style="
+    color:#e2e8f0;
+    font-weight:700;
+    margin-bottom:8px;
+  "
+>
+  ${departmentName}
+</div>
+
+<div
+  style="
+    color:#00e5ff;
+    font-size:12px;
+    margin-bottom:8px;
+  "
+>
+  ${departmentStatus}
+</div>
+
+<div
+  style="
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.5;
+  "
+>
+  ${departmentReason}
+</div>
+
+`;
+
+      runtimeDepartmentGrid.appendChild(
+        runtimeDepartmentCard
+      );
+
+    }
+  );
+
+}
+
+async function loadRuntimeObservation(){
+
+  try {
+
+    const latestCampaign =
+      campaigns[0] ||
+      null;
+
+    const campaignId =
+      latestCampaign?.campaignId ||
+      latestCampaign?.id ||
+      null;
+
+    const query =
+      campaignId
+        ? `utils?action=runtime-observation&campaignId=${encodeURIComponent(campaignId)}`
+        : 'utils?action=runtime-observation';
+
+    runtimeObservation =
+      await apiCall(
+        query
+      );
+
+    renderRuntimeObservation(
+      runtimeObservation
+    );
+
+  } catch (e) {
+
+    console.error(
+      'Runtime observation failed',
+      e
+    );
+
+  }
+
+}
+
   (async function(){
 
   await loadNiches();
@@ -2637,6 +2876,8 @@ Recommended Winner:
   await loadCampaigns();
 
   renderResearchCenter();
+
+  await loadRuntimeObservation();
 
 })();
 
