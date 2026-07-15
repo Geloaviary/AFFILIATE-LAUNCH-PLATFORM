@@ -913,6 +913,10 @@ a:hover{
         Analytics
       </button>
 
+      <button data-page="runtime">
+        Runtime
+      </button>
+
       <button data-page="settings">
         Settings
       </button>
@@ -1561,6 +1565,211 @@ a:hover{
   </div>
 
 </div>
+      </section>
+
+      <section
+        id="runtime"
+        class="page"
+      >
+
+        <h1 class="page-title">
+
+          <i
+            data-lucide="activity"
+            class="page-icon"
+          ></i>
+
+          Runtime Control Plane
+
+        </h1>
+
+        <div
+          id="runtimeControlPlane"
+        >
+
+          <div
+            id="runtimeControlSummary"
+            class="research-grid"
+          >
+
+            <div class="research-metric">
+
+              <div class="metric-label">
+                Runtime Authority
+              </div>
+
+              <div
+                id="runtimeAuthorityMetric"
+                class="metric-text"
+              >
+                Runtime.observe
+              </div>
+
+            </div>
+
+            <div class="research-metric">
+
+              <div class="metric-label">
+                Runtime Status
+              </div>
+
+              <div
+                id="runtimeStatusMetric"
+                class="metric-text"
+              >
+                Awaiting Observation
+              </div>
+
+            </div>
+
+            <div class="research-metric">
+
+              <div class="metric-label">
+                Campaign Scope
+              </div>
+
+              <div
+                id="runtimeCampaignMetric"
+                class="metric-text"
+              >
+                Global
+              </div>
+
+            </div>
+
+            <div class="research-metric">
+
+              <div class="metric-label">
+                Observation Timestamp
+              </div>
+
+              <div
+                id="runtimeTimestampMetric"
+                class="metric-text"
+              >
+                Awaiting Observation
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            class="card"
+            style="
+              margin-bottom:24px;
+            "
+          >
+
+            <h2
+              style="
+                color:#00e5ff;
+                margin-bottom:8px;
+              "
+            >
+              DEPARTMENT EXECUTION STATE
+            </h2>
+
+            <div
+              style="
+                color:#94a3b8;
+                margin-bottom:20px;
+              "
+            >
+              Read-only Runtime eligibility and department state
+            </div>
+
+            <div
+              id="runtimeControlDepartmentGrid"
+              style="
+                display:grid;
+                grid-template-columns:
+                  repeat(
+                    auto-fit,
+                    minmax(220px,1fr)
+                  );
+                gap:12px;
+              "
+            ></div>
+
+          </div>
+
+          <div
+            class="card"
+            style="
+              margin-bottom:24px;
+            "
+          >
+
+            <h2
+              style="
+                color:#ffc857;
+                margin-bottom:8px;
+              "
+            >
+              WAITING / BLOCKED BOUNDARY
+            </h2>
+
+            <div
+              style="
+                color:#94a3b8;
+                margin-bottom:20px;
+              "
+            >
+              Departments not currently eligible for execution
+            </div>
+
+            <div
+              id="runtimeWaitingBoundary"
+            >
+              Awaiting Runtime observation...
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <h2
+              style="
+                color:#00e5ff;
+                margin-bottom:8px;
+              "
+            >
+              RAW RUNTIME OBSERVATION
+            </h2>
+
+            <div
+              style="
+                color:#94a3b8;
+                margin-bottom:20px;
+              "
+            >
+              Immutable read-only observation payload
+            </div>
+
+            <pre
+              id="runtimeRawObservation"
+              style="
+                margin:0;
+                padding:18px;
+                border:
+                  1px solid rgba(255,255,255,.08);
+                border-radius:12px;
+                background:rgba(2,6,23,.75);
+                color:#e2e8f0;
+                overflow:auto;
+                max-height:620px;
+                white-space:pre-wrap;
+                word-break:break-word;
+                line-height:1.5;
+                font-size:12px;
+              "
+            >Awaiting Runtime observation...</pre>
+
+          </div>
+
+        </div>
+
       </section>
 
       <section
@@ -2632,103 +2841,50 @@ Recommended Winner:
 
 let runtimeObservation = null;
 
-function ensureRuntimeDepartmentGrid(){
-
-  let runtimeDepartmentGrid =
-    document.getElementById(
-      'runtimeDepartmentGrid'
-    );
-
-  if(runtimeDepartmentGrid){
-
-    return runtimeDepartmentGrid;
-
-  }
-
-  const overview =
-    document.getElementById(
-      'overview'
-    );
-
-  if(!overview){
-
-    return null;
-
-  }
-
-  const runtimeSummary =
-    document.createElement(
-      'div'
-    );
-
-  runtimeSummary.id =
-    'runtimeSummary';
-
-  runtimeSummary.style.marginBottom =
-    '24px';
-
-  runtimeSummary.innerHTML = `
-
-<div
-  class="card"
-  style="
-    border:1px solid rgba(0,229,255,.12);
-    background:rgba(15,23,42,.72);
-  "
->
-
-  <h2
-    style="
-      color:#00e5ff;
-      margin-bottom:8px;
-    "
-  >
-    RUNTIME DEPARTMENT OBSERVATION
-  </h2>
-
-  <div
-    style="
-      color:#94a3b8;
-      margin-bottom:18px;
-    "
-  >
-    Constitutional Runtime status
-  </div>
-
-  <div
-    id="runtimeDepartmentGrid"
-    style="
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:12px;
-    "
-  ></div>
-
-</div>
-
-`;
-
-  overview.prepend(
-    runtimeSummary
-  );
-
-  runtimeDepartmentGrid =
-    document.getElementById(
-      'runtimeDepartmentGrid'
-    );
-
-  return runtimeDepartmentGrid;
-
-}
-
-function renderRuntimeObservation(
+function renderRuntimeControlPlane(
   observation
 ){
 
-  const runtimeDepartmentGrid =
-    ensureRuntimeDepartmentGrid();
+  const departmentGrid =
+    document.getElementById(
+      'runtimeControlDepartmentGrid'
+    );
 
-  if(!runtimeDepartmentGrid){
+  const waitingBoundary =
+    document.getElementById(
+      'runtimeWaitingBoundary'
+    );
+
+  const rawObservation =
+    document.getElementById(
+      'runtimeRawObservation'
+    );
+
+  const authorityMetric =
+    document.getElementById(
+      'runtimeAuthorityMetric'
+    );
+
+  const statusMetric =
+    document.getElementById(
+      'runtimeStatusMetric'
+    );
+
+  const campaignMetric =
+    document.getElementById(
+      'runtimeCampaignMetric'
+    );
+
+  const timestampMetric =
+    document.getElementById(
+      'runtimeTimestampMetric'
+    );
+
+  if(
+    !departmentGrid ||
+    !waitingBoundary ||
+    !rawObservation
+  ){
 
     return;
 
@@ -2741,30 +2897,101 @@ function renderRuntimeObservation(
       ? observation.departments
       : [];
 
-  runtimeDepartmentGrid.innerHTML =
+  const runtimeStatus =
+    String(
+      observation?.status ||
+      observation?.runtime?.status ||
+      observation?.state ||
+      'Observed'
+    );
+
+  const campaignScope =
+    String(
+      observation?.campaignId ||
+      observation?.campaign?.campaignId ||
+      observation?.campaign?.id ||
+      'Global'
+    );
+
+  const observationTimestamp =
+    String(
+      observation?.observedAt ||
+      observation?.timestamp ||
+      observation?.createdAt ||
+      new Date().toISOString()
+    );
+
+  if(authorityMetric){
+
+    authorityMetric.textContent =
+      'Runtime.observe';
+
+  }
+
+  if(statusMetric){
+
+    statusMetric.textContent =
+      runtimeStatus;
+
+  }
+
+  if(campaignMetric){
+
+    campaignMetric.textContent =
+      campaignScope;
+
+  }
+
+  if(timestampMetric){
+
+    timestampMetric.textContent =
+      observationTimestamp;
+
+  }
+
+  departmentGrid.innerHTML =
     '';
+
+  if(
+    departments.length === 0
+  ){
+
+    departmentGrid.innerHTML = `
+
+<div
+  style="
+    color:#94a3b8;
+    padding:18px;
+  "
+>
+  No department execution state was returned.
+</div>
+
+`;
+
+  }
 
   departments.forEach(
     department => {
 
-      const runtimeDepartmentCard =
+      const card =
         document.createElement(
           'div'
         );
 
-      runtimeDepartmentCard.className =
+      card.className =
         'runtime-department-card';
 
-      runtimeDepartmentCard.style.padding =
-        '14px';
+      card.style.padding =
+        '18px';
 
-      runtimeDepartmentCard.style.border =
+      card.style.border =
         '1px solid rgba(255,255,255,.08)';
 
-      runtimeDepartmentCard.style.borderRadius =
-        '10px';
+      card.style.borderRadius =
+        '12px';
 
-      runtimeDepartmentCard.style.background =
+      card.style.background =
         'rgba(2,6,23,.55)';
 
       const departmentName =
@@ -2772,13 +2999,13 @@ function renderRuntimeObservation(
           department?.department ||
           department?.name ||
           department?.id ||
-          ''
+          'Unknown Department'
         );
 
       const departmentStatus =
         String(
           department?.status ||
-          ''
+          'UNKNOWN'
         );
 
       const departmentReason =
@@ -2788,13 +3015,13 @@ function renderRuntimeObservation(
           ''
         );
 
-      runtimeDepartmentCard.innerHTML = `
+      card.innerHTML = `
 
 <div
   style="
     color:#e2e8f0;
     font-weight:700;
-    margin-bottom:8px;
+    margin-bottom:10px;
   "
 >
   ${departmentName}
@@ -2804,7 +3031,7 @@ function renderRuntimeObservation(
   style="
     color:#00e5ff;
     font-size:12px;
-    margin-bottom:8px;
+    margin-bottom:10px;
   "
 >
   ${departmentStatus}
@@ -2822,11 +3049,154 @@ function renderRuntimeObservation(
 
 `;
 
-      runtimeDepartmentGrid.appendChild(
-        runtimeDepartmentCard
+      departmentGrid.appendChild(
+        card
       );
 
     }
+  );
+
+  const waitingDepartments =
+    departments.filter(
+      department => {
+
+        const status =
+          String(
+            department?.status ||
+            ''
+          )
+            .trim()
+            .toLowerCase();
+
+        return (
+          status.includes(
+            'waiting'
+          ) ||
+          status.includes(
+            'blocked'
+          ) ||
+          status.includes(
+            'ineligible'
+          ) ||
+          status.includes(
+            'not-eligible'
+          )
+        );
+
+      }
+    );
+
+  if(
+    waitingDepartments.length === 0
+  ){
+
+    waitingBoundary.innerHTML = `
+
+<div
+  style="
+    color:#00ff94;
+    padding:14px 0;
+  "
+>
+  No waiting or blocked department boundary reported.
+</div>
+
+`;
+
+  } else {
+
+    waitingBoundary.innerHTML =
+      waitingDepartments
+        .map(
+          department => {
+
+            const departmentName =
+              String(
+                department?.department ||
+                department?.name ||
+                department?.id ||
+                'Unknown Department'
+              );
+
+            const departmentStatus =
+              String(
+                department?.status ||
+                'UNKNOWN'
+              );
+
+            const departmentReason =
+              String(
+                department?.reason ||
+                department?.message ||
+                ''
+              );
+
+            return `
+
+<div
+  style="
+    display:grid;
+    grid-template-columns:
+      minmax(160px,.8fr)
+      minmax(120px,.5fr)
+      minmax(260px,1.7fr);
+    gap:12px;
+    padding:14px;
+    border-bottom:
+      1px solid rgba(255,255,255,.08);
+  "
+>
+
+  <div
+    style="
+      color:#e2e8f0;
+      font-weight:700;
+    "
+  >
+    ${departmentName}
+  </div>
+
+  <div
+    style="
+      color:#ffc857;
+    "
+  >
+    ${departmentStatus}
+  </div>
+
+  <div
+    style="
+      color:#94a3b8;
+    "
+  >
+    ${departmentReason}
+  </div>
+
+</div>
+
+`;
+
+          }
+        )
+        .join('');
+
+  }
+
+  rawObservation.textContent =
+    JSON.stringify(
+      observation,
+      null,
+      2
+    );
+
+}
+
+function renderRuntimeObservation(
+  observation
+){
+
+  renderRuntimeControlPlane(
+    observation
   );
 
 }
