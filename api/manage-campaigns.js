@@ -229,21 +229,33 @@ const runtimeResult =
 
     await Runtime.execute({
 
+        command:
+
+            "launch-campaign",
+
         campaignId,
 
-        name,
+        requestedBy:
 
-        productUrl,
+            "api/manage-campaigns",
 
-        affiliateUrl,
+        options: {
 
-        revenueGoal,
+            name,
 
-        research,
+            productUrl,
 
-        createdAt:
+            affiliateUrl,
 
-            now
+            revenueGoal,
+
+            research,
+
+            createdAt:
+
+                now
+
+        }
 
     });
 

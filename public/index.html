@@ -2768,6 +2768,31 @@ Recommended Winner:
 
 }
 
+      if (
+        !response.ok
+      ) {
+
+        throw new Error(
+          result?.error ||
+          result?.message ||
+          `Campaign launch failed with HTTP ${response.status}.`
+        );
+
+      }
+
+      if (
+        !result ||
+        typeof result.campaignId !==
+          "string" ||
+        result.campaignId.trim().length === 0
+      ) {
+
+        throw new Error(
+          "Campaign launch returned an invalid success contract."
+        );
+
+      }
+
       console.log(
         'CAMPAIGN CREATED',
         result
