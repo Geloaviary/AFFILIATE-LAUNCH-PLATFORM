@@ -464,8 +464,12 @@ return res.status(405).json({
 });
 
 } catch (error) {
-return res.status(500).json({
-error: error.message
-});
+  console.error(error);
+  console.error(error.stack);
+
+  return res.status(500).json({
+    error: error.message,
+    stack: error.stack
+  });
 }
 };
