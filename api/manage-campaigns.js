@@ -259,6 +259,10 @@ const runtimeResult =
 
     });
 
+    console.dir(runtimeResult, {
+               depth: null
+     });
+
 const runtimeDepartments =
 
     Array.isArray(
