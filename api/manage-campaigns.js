@@ -259,9 +259,9 @@ const runtimeResult =
 
     });
 
-    console.dir(runtimeResult.artifact.dispatch, {
-                     depth: null
-              });
+    console.dir(runtimeResult, {
+               depth: null
+         });
 
 const runtimeDepartments =
 
