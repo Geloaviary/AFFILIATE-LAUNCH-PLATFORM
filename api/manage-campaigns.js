@@ -369,11 +369,12 @@ if (
 
 ) {
 
-    throw new Error(
-
-        "Runtime completed without executable Strategy campaign output."
-
-    );
+    return res.status(500).json({
+    error: "Runtime completed without executable Strategy campaign output.",
+    runtimeResult,
+    strategyDepartment,
+    strategyOutput
+});
 
 }
 
