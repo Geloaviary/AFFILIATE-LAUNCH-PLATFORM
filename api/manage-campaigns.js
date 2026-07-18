@@ -264,24 +264,10 @@ const runtimeResult =
          });
 
 const runtimeDepartments =
-
-    Array.isArray(
-
-        runtimeResult?.departments
-
-    )
-
-        ? runtimeResult.departments
-
-        : Array.isArray(
-
-            runtimeResult?.report?.departments
-
-        )
-
-            ? runtimeResult.report.departments
-
-            : [];
+    runtimeResult?.artifact?.planning?.observation?.departments ??
+    runtimeResult?.departments ??
+    runtimeResult?.report?.departments ??
+    [];
 
 const strategyDepartment =
 
@@ -371,11 +357,10 @@ if (
 
     return res.status(500).json({
     error: "Runtime completed without executable Strategy campaign output.",
+    bootstrap: runtimeResult.bootstrap,
     runtimeResult,
-    strategyDepartment,
-    strategyOutput
-});
-
+    registrySize: require("../lib/departments/runtime/registry").size()
+    });
 }
 
 const {
