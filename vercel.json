@@ -1,8 +1,14 @@
+
 {
   "rewrites": [
     {
       "source": "/",
       "destination": "/login.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "lib/departments/**"
+    }
+  }
 }
